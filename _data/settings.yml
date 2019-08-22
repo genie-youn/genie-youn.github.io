@@ -1,0 +1,32 @@
+# Change 'comments' to true for Disqus comments
+disqus:
+  comments: true
+  disqus_shortname: 'blog-RDzIu87BYM'
+
+# If you are not using Google Analytics, please change 'google-ID' to an empty string
+google-ID: 'UA-146256933-1'
+
+menu:
+- {name: 'About', path: 'menu', url: 'about.html'}
+- {name: 'Writing', path: 'menu', url: 'writing.html'}
+- {name: 'Contact', path: 'menu', url: 'contact.html'}
+
+# Available social icons are powered by Font Awesome, so you can use any icon that they offer
+social:
+- {icon: 'github', link: 'https://github.com/genie-youn'}
+# - {icon: 'twitter', link: 'https://twitter.com/paululele'}
+- {icon: 'linkedin', link: 'https://www.linkedin.com/in/%EC%A7%80%EC%88%98-%EC%9C%A4-78921a11b/'}
+- {icon: 'envelope', link: 'mailto:yjs930915@gmail.com'}
+# - {icon: 'rss-square', link: '/feed.xml'}
+# - {icon: 'rss-square', link: '/rss-feed.xml'}
+
+# Customize site text
+pagination:
+  next_page: 'Newer'
+  previous_page: 'Older'
+
+sharing_button_prompt: 'Feel free to share!'
+
+related_posts: 'You may also enjoy:'
+
+post_date_prefix: 'Written on'

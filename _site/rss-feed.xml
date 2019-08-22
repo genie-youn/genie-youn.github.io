@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:dc="http://purl.org/dc/elements/1.1/">
+	<channel>
+		<title>오르막길</title>
+		<description>잊기전에 기록하기</description>
+		<link></link>
+		<atom:link href="/rss-feed.xml" rel="self" type="application/rss+xml" />
+		
+			<item>
+				<title>Cloud Native day Seoul 2018 후기</title>
+				
+					<dc:creator>genie-youn</dc:creator>
+				
+				
+					<description>&lt;p&gt;Pivotal이 한국에서 처음 &lt;code class=&quot;highlighter-rouge&quot;&gt;Cloud Native Day&lt;/code&gt;라는 이름으로 세미나를 진행하였다. Spring의 리드그룹인 Pivotal이 어떤 방향성을 갖고 있는지 궁금하기도 했고, 혹시 향후에 Spring으로 MSA를 개발할 때 도움이 될까 싶어 참여하게 됐다.
+히로쿠의 &lt;a href=&quot;https://12factor.net/ko/&quot;&gt;The Twelve-Factor app&lt;/a&gt; 같은걸 기대하고 갔다.&lt;/p&gt;
+</description>
+				
+				<pubDate>Tue, 05 Jun 2018 00:00:00 +0900</pubDate>
+				<link>http://localhost:4000/journal/Cloud-Native-day-Seoul-2018.html</link>
+				<guid isPermaLink="true">http://localhost:4000/journal/Cloud-Native-day-Seoul-2018.html</guid>
+			</item>
+		
+	</channel>
+</rss>
