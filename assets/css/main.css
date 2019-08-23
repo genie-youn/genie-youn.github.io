@@ -505,3 +505,7 @@ th, td {
 .fa-rss-square:hover {
 	color: #ff6600;
 }
+
+img[alt=profile] {
+  width: 30% !important;
+}
