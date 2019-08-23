@@ -1,4 +1,560 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-08-23T09:34:00+09:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">오르막길</title><subtitle>잊기전에 기록하기</subtitle><author><name>genie-youn</name></author><entry><title type="html">Cloud Native day Seoul 2018 후기</title><link href="http://localhost:4000/journal/Cloud-Native-day-Seoul-2018.html" rel="alternate" type="text/html" title="Cloud Native day Seoul 2018 후기" /><published>2018-06-05T00:00:00+09:00</published><updated>2018-06-05T00:00:00+09:00</updated><id>http://localhost:4000/journal/Cloud-Native-day-Seoul-2018</id><content type="html" xml:base="http://localhost:4000/journal/Cloud-Native-day-Seoul-2018.html">&lt;p&gt;Pivotal이 한국에서 처음 &lt;code class=&quot;highlighter-rouge&quot;&gt;Cloud Native Day&lt;/code&gt;라는 이름으로 세미나를 진행하였다. Spring의 리드그룹인 Pivotal이 어떤 방향성을 갖고 있는지 궁금하기도 했고, 혹시 향후에 Spring으로 MSA를 개발할 때 도움이 될까 싶어 참여하게 됐다.
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.0.0">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2019-08-23T10:09:20+09:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">오르막길</title><subtitle>잊기전에 기록하기</subtitle><author><name>genie-youn</name></author><entry><title type="html">Vue는 왜 filter를 삭제하려고 했을까?</title><link href="http://localhost:4000/journal/Vue%EB%8A%94-%EC%99%9C-Filter%EB%A5%BC-%EC%82%AD%EC%A0%9C%ED%95%98%EB%A0%A4-%ED%96%88%EC%9D%84%EA%B9%8C.html" rel="alternate" type="text/html" title="Vue는 왜 filter를 삭제하려고 했을까?" /><published>2019-06-19T00:00:00+09:00</published><updated>2019-06-19T00:00:00+09:00</updated><id>http://localhost:4000/journal/Vue%EB%8A%94-%EC%99%9C-Filter%EB%A5%BC-%EC%82%AD%EC%A0%9C%ED%95%98%EB%A0%A4-%ED%96%88%EC%9D%84%EA%B9%8C</id><content type="html" xml:base="http://localhost:4000/journal/Vue%EB%8A%94-%EC%99%9C-Filter%EB%A5%BC-%EC%82%AD%EC%A0%9C%ED%95%98%EB%A0%A4-%ED%96%88%EC%9D%84%EA%B9%8C.html">&lt;center&gt;&lt;small&gt;Photo by frank &lt;a href=&quot;https://unsplash.com/@foodiesfeed?utm_source=unsplash&amp;amp;utm_medium=referral&amp;amp;utm_content=creditCopyText&quot;&gt;Jakub Kapusnak&lt;/a&gt; on &lt;a href=&quot;https://unsplash.com/&quot;&gt;Unsplash&lt;/a&gt;&lt;/small&gt;&lt;/center&gt;
+
+&lt;p&gt;지나가다 &lt;code class=&quot;highlighter-rouge&quot;&gt;filter&lt;/code&gt;에 값이 변경될 때만 다시 랜더링하게 해달라는 이슈를 보았고, 그 댓글에 뷰의 메인테이너인 &lt;code class=&quot;highlighter-rouge&quot;&gt;Evan You&lt;/code&gt;가 &lt;code class=&quot;highlighter-rouge&quot;&gt;filter&lt;/code&gt; 를 3.0에서 삭제하고 싶었지만, 2.0에서 삭제되었다가 커뮤니티의 요청으로 가장 일반적인 문법만이 다시 추가되었다는 이야기를 남긴걸 보고 2.0 설계 쓰레드에서 왜 &lt;code class=&quot;highlighter-rouge&quot;&gt;filter&lt;/code&gt; 가 삭제될 뻔 했는지를 따라가 보았다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;쓰레드 원글은 https://github.com/vuejs/vue/issues/2756 여기를 참고하면 된다.
+추가로 본래 이슈는 https://github.com/vuejs/rfcs/pull/6 여기를 참고하면 된다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
+
+&lt;p&gt;무려 9개월간 논의된 이 쓰레드에는 v2.0 에서 &lt;code class=&quot;highlighter-rouge&quot;&gt;filter&lt;/code&gt;의 삭제를 두고 의견이 팽팽히 대립되는걸 볼 수 있었다.&lt;/p&gt;
+
+&lt;p&gt;과거 (2.0 이전) 뷰의 필터는 다음과 같은 파이프 라인 문법과 기본 필터들을 지원하였다.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;thing in things | filterBy 'foo' | orderBy 'bar' | limitBy 5&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;뷰 코어 팀이 필터를 삭제한 이유는 다음과 같다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;초보자에게 직관적이지가 않다.
+    &lt;ul&gt;
+      &lt;li&gt;필터는 기본적으로 함수이다.&lt;/li&gt;
+      &lt;li&gt;그렇지만 일반적인 함수 호출과는 그 생김새가 다르다 &lt;code class=&quot;highlighter-rouge&quot;&gt;foo()&lt;/code&gt; 처럼 괄호로 호출할 수 없다.&lt;/li&gt;
+      &lt;li&gt;계산된 속성등의 다른곳에서 사용이 불가능하고 오로지 템플릿안에서 파이프라인 문법을 통한 사용만이 가능하다.&lt;/li&gt;
+      &lt;li&gt;초보자에게 예외사항은 허들이 된다. 필터는 함수임에도 불구하고 특별한 문법과 어느 상황에서나 사용할 수는 없다는 제약이 있다.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;파이프라인 문법에 대한 &lt;a href=&quot;http://tc39.github.io/proposal-pipeline-operator/&quot;&gt;초안&lt;/a&gt;이 tc39 에 올라온 상태. 정식 문법으로 채택되면 현재 필터에서 사용하는 파이프라인 문법과 헷갈릴 여지가 있으며, 이때 자바스크립트 표준을 따르는게 옳지 않을까?&lt;/li&gt;
+  &lt;li&gt;뷰는 유틸리티 라이브러리가 아니다.
+    &lt;ul&gt;
+      &lt;li&gt;통화와 날짜를 다루고, 배열을 필터링하는건 뷰의 관심도 아니고, 뷰보다 훨씬 더 좋은 라이브러리들이 많다.&lt;/li&gt;
+      &lt;li&gt;Accounting.js를 통해 통화를 다루고 Moment.js로 날짜를 다루고 pluralize로 복수화를 하고 json을 통해 직렬화를 할것을 권장한다.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;필터를 사용하는 대신 다음과 같은 방법을 권장하고 있다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;필터를 사용하는 대신 계산된 속성을 사용할것.&lt;/li&gt;
+  &lt;li&gt;계산된 속성의 값은 컴포넌트의 어디서나 쉽게 재사용될 수 있다.&lt;/li&gt;
+  &lt;li&gt;필터와 마찬가지로 템플릿으로부터 구현의 상세내용을 분리시켜 깔끔한 상태를 유지할 있다.&lt;/li&gt;
+  &lt;li&gt;필터는 전역으로 선언되어 이 필터가 어떻게 동작하는지 확인하려면 해당 함수가 선언된 파일을 열어서 찾아봐야하지만, 계산된 속성은 해당 관심이 컴포넌트내에 명확하게 존재한다.&lt;/li&gt;
+  &lt;li&gt;배열에서 &lt;code class=&quot;highlighter-rouge&quot;&gt;map&lt;/code&gt;과 &lt;code class=&quot;highlighter-rouge&quot;&gt;filter&lt;/code&gt; 를 통해 체이닝 하는것이 파이프라인 문법과 똑같은 역할을 하면서도 더 선언적이고 쉽게 조작할 수 있다.&lt;/li&gt;
+  &lt;li&gt;글로벌 선언의 유용성이 꼭 필요하다면?
+    &lt;ul&gt;
+      &lt;li&gt;만약 글로벌 선언이 필터를 사용하는 큰 이유라면 뷰 인스턴스에 선언하면 된다.&lt;/li&gt;
+      &lt;li&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Vue.prototype.whateverIWant = mySuperCoolFunction&lt;/code&gt; 이렇게&lt;/li&gt;
+      &lt;li&gt;하지만 이 방식은 그다지 추천하지 않는다. 헬퍼 메소드를 모듈로 분리하여 이것을 &lt;code class=&quot;highlighter-rouge&quot;&gt;import&lt;/code&gt; 하여 사용할 것을 권장한다.&lt;/li&gt;
+      &lt;li&gt;하지만 핵심은 필터없이도 글로벌한게 선언하는것이 어렵지 않다는것을 설명하는 것이다. 즉, 글로벌 선언과 필터는 별개의 솔루션이라는 이야기다.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;필터가 유용한것은 사실이지만 순수 javascript의 함수와 같은 일을 하면서도 함수처럼 유연한 사용이 불가능한점, 표준으로 파이프라인 문법이 &lt;code class=&quot;highlighter-rouge&quot;&gt;draft&lt;/code&gt;로 올라와 있는점이 filter를 삭제하려는 가장 큰 이유라고 할 수 있다.&lt;/p&gt;
+
+&lt;h2 id=&quot;discussion&quot;&gt;Discussion&lt;/h2&gt;
+
+&lt;p&gt;하지만 커뮤니티의 반응은 사뭇 달랐다. 필터를 다시 복원해달라는 의견이 지배적이였다. 다음과 같은 논의들이 오고갔다.&lt;/p&gt;
+
+&lt;p&gt;Q1. 만약 필터를 사용하지 않으면 다음과 같이 코드를 작성해야 한다.&lt;/p&gt;
+
+&lt;div class=&quot;language-html highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;ul&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;li&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;v-for=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;item in filteredItems&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&amp;lt;/li&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/ul&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Vue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;el&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+
+    &lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;items&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[],&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;filter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;''&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+
+    &lt;span class=&quot;na&quot;&gt;computed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;filteredItems&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;
+            &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;items&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;filter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;item&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;item&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;indexOf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;self&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;filter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;매번 이렇게 쓸려면 얼마나 번거롭겠는가?&lt;/p&gt;
+
+&lt;p&gt;또한 파이프 라인 문법이 없으면 다음과 같은 코드를 작성해야 한다.&lt;/p&gt;
+
+&lt;div class=&quot;language-html highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;ul&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;v-for=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;word in filters.limitBy(filters.orderBy(filters.filterBy(words, userInput), column, -1), limit)&quot;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;&amp;gt;&lt;/span&gt;
+    &lt;span class=&quot;nt&quot;&gt;&amp;lt;li&amp;gt;&amp;lt;/li&amp;gt;&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;&amp;lt;/ul&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;얼마나 번거롭겠는가?&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;본인도 그렇고, 이 의견을 본 많은 사람들도 그렇고 두번째 예제는 적절치 않은것 같다. 템플릿이 너무 많은 관심을 가지고 있기 때문인데, 해당 관심은 계산된 속성으로 분리하는게 더 나은 방법같아 보인다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;A1. 첫번째 예제에 대해선 매번 컴포넌트에 작성하는게 번거롭다면 global Mixin 을 쓰거나, 메소드를 모듈로 분리하거나, 계산된 속성 함수로 모듈을 분리하거나..&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;이 경우에도 매번 import 시켜주는것 또한 번거로운 일로 느껴지는것 같다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Q2. 자바스크립트의 표준 문법과 헷갈릴 여지가 있다면 차라리 ES7 스타일로 필터의 파이프라인 문법을를 변경하는건?&lt;/p&gt;
+
+&lt;p&gt;A2. 그것도 2.0에 바벨을 통해 적용될 예정 렌더 함수 코드를 파이프를 통해 사용할 수 있게 할 것이다. 순수한 자바스크립트를 헤치지 않는 선에서&lt;/p&gt;
+
+&lt;p&gt;Q3. 객체지향적인 관점에서 보면 필터는 static한 순수함수에 가깝고 method는 그렇지 않다. 이런 이질적인 속성을 methods 안에 넣으라는건 조금 이상하지 않나?&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;이 질문에 대한 답은 딱히 없었던것 같다. 나도 이 의견에 동의한다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Q4. 필터의 삭제를 반대하는 사람들이 이야기하는 필터의 주요 피처는 글로벌, 체이닝, 파이프라인 문법이다.
+좀더 순수한 자바스크립트로 다가가는것은 인정하지만, 그것이 꼭 프레임워크에서 최우선적으로 고려해야 할 일인가?
+리액트 대신 뷰를 선택하는 많은 이들이 고려하는 가치는 러닝커브이고, js를 잘 다루지 못하는 사람들도 쉽게 익혀서 쓸 수 있다는 점이다. lavarel이 프론트 프레임워크로 Vue를 채택한것도 비슷한 맥락일것.&lt;/p&gt;
+
+&lt;p&gt;뷰를 사용하는 사람이 모두 훌륭한 자바스크립트 개발자는 아니다. 심지어 디자이너들도 있다. 뷰는 템플릿엔진/시스템 그 이상이지만 템플릿엔진/시스템의 역할도 가지고 있다. 다른 템플릿엔진들이 자바스크립트가 아닌 프레임워크만 익혀서 사용할 수 있도록 기본적인 내장필터를 가진것처럼 뷰도 이와 비슷한 맥락으로 쉽게 익혀서 사용할 수 있었던 필터를 유지해주었으면 좋겟다.&lt;/p&gt;
+
+&lt;p&gt;뷰를 자바스크립트를 배우지 않고 사용할 수 없지만, 기본적으로 충실하게 동작하게 하면 비개발자들 (디자이너를 포함해서)도 쉽게 접근할 수 있고, 그들이 뷰를 사용하다가 기본적인 동작만으로 부족하게 되면 그때 자바스크립트를 익히고 best practice를 찾아 학습할 것이다&lt;/p&gt;
+
+&lt;p&gt;A4. 파이프라인 문법이 필요한거라면 TC39의 스펙이 표준으로 정의되기전 바벨을 통해 사용할 수 있다. 그건 바벨의 관심이고 UI의 관심은 아닌것같다. 만약 뷰가 필터가 처음부터 없었더라면 javascript 문법을 확장해서 새로운 문법을 만들어달라고 요청했을 것인가?&lt;/p&gt;
+
+&lt;p&gt;개발자가 아닌 사람들, 그리고 초심자들에 대한 이야기를 했는데 물론 이들의 관점도 고려를 하고 있다. (실제로 뷰 코어팀에는 디자이너들도 존재하고, 매일 업무로 뷰를 사용하고 있다) 이 사람들에게 필터는 처음에는 마법같아 보일지 모르지만 곧 배우는데 더 복잡하고 한계를 마주치게 될 것이다.&lt;/p&gt;
+
+&lt;p&gt;Q5. 장고에도있고 twig에도 있는 필터를 왜 없애려고하냐! {} 안의 영역은 html도 javascript도 아닌 템플릿의 영역인데! 왜! 자꾸! js! 를!&lt;/p&gt;
+
+&lt;p&gt;A5. 템플릿 프레임워크의 특징들은 서버사이드 템플릿 언어에서는 필요한 기능이다 (계산된 속성도 없고 표현도 한계가 있으니) 하지만 뷰와 같은 유연성 높은 프론트 사이드 템플릿에서는 별로 필요하지 않은것 같다. 뷰가 생각하는 템플릿은 DOM과의 상호작용을 나타내고 있다. 앞서말한 서버사이드 템플릿 엔진이 정적인 문자열 출력을 만들어 내는것과는 달리. 양반향 바인딩이나, 이벤트를 핸들링하거나 등등.. 필터는 뷰의 환경에서 특수한 한정된 유즈 케이스에 맞춰저 있는 문법이다. 필터를 유지하는 한가지 대안은  안에서만 텍스트를 변형하기 위해 사용하는것이야.&lt;/p&gt;
+
+&lt;p&gt;Q6. 배열을 정렬하는등 조작하는건 계산된 속성이 하는게 명확하기 때문에 더 낫다. 하지만 데이터를 여러 포맷으로 보여주는건? 이걸 매번 메소드에 정의하는게 맞아? 성능상으로도 더 안좋잖아? 모든 객체에 프로퍼티로 포함되어야 할테니?&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;이 부분이 2.0 이후에 filter를 남기는 결정적인 이유가 된듯 하다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;— 그래서 최종적으로 Vue는 filter를 다시 되돌리게 된다. 다만 기능이 많이 간소화되었다.&lt;/p&gt;
+
+&lt;p&gt;오로지  내부에서만 사용해야하고, 논리적인 로직은 자바스크립트영역에서 하면서 텍스트를 포맷팅 하는 용도로만 사용해야 한다.
+빌트인 필터는 삭제된다. 필요하다면 커뮤니티에서 플러그인이나 라이브러리를 만들어 배포할 수 있다.
+필터 구문은 공백으로 인자를 받지 않고, 함수 호출 구문을 사용하여 표시한다.&lt;/p&gt;
+
+&lt;h2 id=&quot;마치며&quot;&gt;마치며&lt;/h2&gt;
+
+&lt;p&gt;오픈소스 프로젝트가 어떻게 커뮤니티와 상생하며 발전해나가는지 볼 수 있어서 좋았던 경험이였다. 특히 메인테이너인 Evan You가 커뮤니케이션 하는 모습은 인상깊었다. 토론에 참여하는 사람들이 차분해질 수 있도록, 그들이 사용하는 워딩을 환기시키며 대화를 이끌어 가는 모습이 앞으로 협업하는데 좋은 참고가 될 것 같다.&lt;/p&gt;</content><author><name>genie-youn</name></author><category term="vue" /><category term="filter" /><summary type="html">Photo by frank Jakub Kapusnak on Unsplash</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/jakub-kapusnak-Rt2t11IUizs-unsplash.jpg" /></entry><entry><title type="html">Vue 디렉티브와 Hook</title><link href="http://localhost:4000/journal/Vue%EC%99%80-Custom-Directive.html" rel="alternate" type="text/html" title="Vue 디렉티브와 Hook" /><published>2019-04-26T00:00:00+09:00</published><updated>2019-04-26T00:00:00+09:00</updated><id>http://localhost:4000/journal/Vue%EC%99%80-Custom-Directive</id><content type="html" xml:base="http://localhost:4000/journal/Vue%EC%99%80-Custom-Directive.html">&lt;center&gt;&lt;small&gt;Photo by frank &lt;a href=&quot;https://unsplash.com/@35mm?utm_source=unsplash&amp;amp;utm_medium=referral&amp;amp;utm_content=creditCopyText&quot;&gt;35mm&lt;/a&gt; on &lt;a href=&quot;https://unsplash.com/&quot;&gt;Unsplash&lt;/a&gt;&lt;/small&gt;&lt;/center&gt;
+
+&lt;p&gt;이번엔 커스텀하게 만든 디렉티브가 예상치 못한 버그를 만들어내서 디버깅을 찍다보니 &lt;code class=&quot;highlighter-rouge&quot;&gt;unbind&lt;/code&gt; 훅을 제대로 구현해 주지 않아 디렉티브 내부의 &lt;code class=&quot;highlighter-rouge&quot;&gt;innerHTML&lt;/code&gt; 이 제대로 초기화되지 않아서 발생한 이슈였다. 이 참에 Vue 와 디렉티브에 관하여 정리하려 한다.&lt;/p&gt;
+
+&lt;h2 id=&quot;directive&quot;&gt;Directive?&lt;/h2&gt;
+
+&lt;p&gt;디렉티브는 &lt;code class=&quot;highlighter-rouge&quot;&gt;v-&lt;/code&gt; 접두어를 가진 특별한 attribute 이다. 값으로 단일 자바스크립트 표현식을 받으며 하는 일은 이 표현식의 결과값이 변경되었을 때 ‘반응형’으로 DOM 에 side-effect 를 적용하는 것이다.&lt;/p&gt;
+
+&lt;p&gt;가장 처음 접하는 &lt;code class=&quot;highlighter-rouge&quot;&gt;v-if&lt;/code&gt;가 디렉티브중 하나인데&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;p&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;seen&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Now&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;you&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;see&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;me&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sr&quot;&gt;/p&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;위 코드는 &lt;code class=&quot;highlighter-rouge&quot;&gt;seen&lt;/code&gt; 의 값의 변경에 따라 반응하여 &lt;code class=&quot;highlighter-rouge&quot;&gt;seen&lt;/code&gt; 이 truthy 한 값으로 변경되면 DOM에 &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;p&amp;gt;&lt;/code&gt; 엘리먼트를 추가하고 falsy 한 값으로 변경되면 DOM에 &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;p&amp;gt;&lt;/code&gt; 엘리먼트를 삭제하게 된다.&lt;/p&gt;
+
+&lt;h2 id=&quot;custom-directive&quot;&gt;Custom Directive?&lt;/h2&gt;
+
+&lt;p&gt;사용자 정의 디렉티브 (custom directive) 란 말 그대로 개발자가 정의한 디렉티브이다. 즉, 전달받은 표현식의 값에 따라 반응형으로 DOM 에 side-effect 를 주는 컴포넌트라고 할 수 있겠다.&lt;/p&gt;
+
+&lt;h2 id=&quot;문제&quot;&gt;문제&lt;/h2&gt;
+
+&lt;p&gt;Vue는 주어진 문자열을 &lt;code class=&quot;highlighter-rouge&quot;&gt;innerHTML&lt;/code&gt; 에 넣어 HTML 렌더링 하는 디렉티브로 &lt;code class=&quot;highlighter-rouge&quot;&gt;v-html&lt;/code&gt; 디렉티브를 제공한다. 다만 기본적인 XSS 를 방어할 수 있는 디렉티브는 따로 제공하지 않고, 그럴 생각도 없다고 한다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;https://github.com/vuejs/vue/issues/7860&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;문제가 되는 경우는 NCR 을 렌더링 해야 하는 경우인데, 렌더링은 해야겠고 XSS는 막아야겠으니 &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;&lt;/code&gt; 와 &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;gt;&lt;/code&gt; 만 escape 하는 커스텀 디렉티브를 만들어야겠다고 결심한다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;NCR (Numeric Character Reference) 에 대해서는 다음을 참고하자. https://en.wikipedia.org/wiki/Numeric_character_reference&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;아마 다음과 같이 구현할 수 있을 것이다.&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;escapeTag&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;el&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;binding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;fakeElement&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;createElement&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;div&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;fakeElement&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;innerHTML&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;binding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;el&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;innerText&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;fakeElement&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;innerHTML&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;Vue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;directive&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;escape-tag&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;escapeTag&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-HTML&quot;&gt;&amp;lt;div&amp;gt;
+  &amp;lt;span class=&quot;test&quot; v-escape-tag='&quot;&amp;amp;#9822&quot;'&amp;gt;&amp;lt;/span&amp;gt;
+&amp;lt;/div&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;v-escape-tag&lt;/code&gt;에 &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;amp;#9822&lt;/code&gt; 를 넣으면 의도한대로 &lt;code class=&quot;highlighter-rouge&quot;&gt;♞&lt;/code&gt; 가 출력되는걸 볼 수 있다.&lt;/p&gt;
+
+&lt;p&gt;이 디렉티브가 virtual dom 과 만나면 굉장히 기묘한 일이 발생하게 된다.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-HTML&quot;&gt;&amp;lt;div&amp;gt;
+  &amp;lt;span v-if=&quot;!a&quot; class=&quot;test&quot; v-escape-tag=&quot;'&amp;amp;#9822'&quot;&amp;gt;&amp;lt;/span&amp;gt;
+  &amp;lt;span v-if=&quot;a&quot; class=&quot;test&quot;&amp;gt;기본 텍스트&amp;lt;/span&amp;gt;
+&amp;lt;/div&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;다음과 같이 &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt;의 값에 따라서 두 &lt;code class=&quot;highlighter-rouge&quot;&gt;&amp;lt;span&amp;gt;&lt;/code&gt; 중 하나를 노출한다고 가정해보자.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; 가 처음에 false 일때는 ‘♞’ 만 보이다가 true로 바뀌는 순간 ‘♞기본 텍스트’ 로 노출되게 된다.
+분명 다른 element 로 변경되었는데 기존에 있던 ‘♞’가 지워지지 않게 된것.&lt;/p&gt;
+
+&lt;p&gt;그 이유는 첫번째 &lt;code class=&quot;highlighter-rouge&quot;&gt;span&lt;/code&gt; 에서 두번째 &lt;code class=&quot;highlighter-rouge&quot;&gt;span&lt;/code&gt; 으로 변경될 때 뷰의 virtual dom 이 해당 element 를 재활용하기 때문인데, 디렉티브가 &lt;code class=&quot;highlighter-rouge&quot;&gt;unbind&lt;/code&gt; 될 때의 훅이 설정되어 있지 않아서 ♞가 지워지지 않고 남아있게 되는것이다.&lt;/p&gt;
+
+&lt;h2 id=&quot;해결&quot;&gt;해결&lt;/h2&gt;
+
+&lt;p&gt;해결책은 간단한데, &lt;code class=&quot;highlighter-rouge&quot;&gt;Vue.directive(...)&lt;/code&gt;의 인자로 함수가 아니라 각 훅마다 동작할 콜백이 정의된 객체를 넘기는 것이다.&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;Vue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;directive&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;escape-tag&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;bind&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;el&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;binding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;fakeElement&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;createElement&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;div&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;fakeElement&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;innerHTML&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;binding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;el&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;innerText&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;fakeElement&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;innerHTML&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;unbind&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;el&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;binding&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;el&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;innerText&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;''&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// unbind 될 때 innerText 를 초기화 해 준다.&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;이처럼 &lt;code class=&quot;highlighter-rouge&quot;&gt;Vue.directive()&lt;/code&gt; 함수 파라미터로 전달해줄 객체에 선언할 수 있는 훅은 다음과 같다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;bind: 디렉티브가 엘리먼트에 처음 바인딩 되었을 때&lt;/li&gt;
+  &lt;li&gt;inserted: 바인딩 된 엘리먼트가 부모 노드에 삽입되었을 &lt;/li&gt;
+  &lt;li&gt;update: 포함하는 컴포넌트가 업데이트 되었을 때, 하지만 자식 컴포넌트가 업데이트 된 것을 보장하지는 않는다.&lt;/li&gt;
+  &lt;li&gt;componentUpdated: 포함하는 컴포넌트와, 그 컴포넌트의 자식 컴포넌트가 모두 업데이트 되었을 때&lt;/li&gt;
+  &lt;li&gt;unbind: 디렉티브가 엘리먼트에 처음 언바인딩 되었을 때&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;각 훅에 파라미터로 전달되는 객체는 다음과 같다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;el: 디렉티브가 바인딩될 엘리먼트&lt;/li&gt;
+  &lt;li&gt;binding
+    &lt;ul&gt;
+      &lt;li&gt;name: 디렉티브 이름, v- 프리픽스가 없습니다.&lt;/li&gt;
+      &lt;li&gt;value: 디렉티브에서 전달받은 값.&lt;/li&gt;
+      &lt;li&gt;oldValue: 이전 값.&lt;/li&gt;
+      &lt;li&gt;expression: 표현식 문자열. v-my-directive=”1 + 1” -&amp;gt; “1 + 1”&lt;/li&gt;
+      &lt;li&gt;arg: 디렉티브의 전달인자, 있는 경우에만 존재합니다. v-my-directive:foo -&amp;gt; “foo”&lt;/li&gt;
+      &lt;li&gt;modifiers: 포함된 수식어 객체, 있는 경우에만 존재한다. v-my-directive.foo.bar -&amp;gt; { foo: true, bar: true }&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;vnode: Vue 컴파일러가 만든 버추얼 노드.&lt;/li&gt;
+  &lt;li&gt;oldVnode: 이전의 버추얼 노드.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;결론&quot;&gt;결론&lt;/h2&gt;
+
+&lt;p&gt;Custom Directive 를 구현할 때는 상황에 맞게 훅을 구현해주는것이 좋다.&lt;/p&gt;</content><author><name>genie-youn</name></author><category term="vue" /><summary type="html">Photo by frank 35mm on Unsplash</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/35mm-IstXvxHGoA4-unsplash.jpg" /></entry><entry><title type="html">intellij에서 webpack path alias 적용하기</title><link href="http://localhost:4000/journal/Intellij%EC%97%90%EC%84%9C-webpack-path-alias-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0.html" rel="alternate" type="text/html" title="intellij에서 webpack path alias 적용하기" /><published>2019-04-11T00:00:00+09:00</published><updated>2019-04-11T00:00:00+09:00</updated><id>http://localhost:4000/journal/Intellij%EC%97%90%EC%84%9C-webpack-path-alias-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0</id><content type="html" xml:base="http://localhost:4000/journal/Intellij%EC%97%90%EC%84%9C-webpack-path-alias-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0.html">&lt;center&gt;&lt;small&gt;Photo by Fotis Fotopoulos on Unsplash&lt;/small&gt;&lt;/center&gt;
+
+&lt;h2 id=&quot;webpack-path-alias&quot;&gt;Webpack path alias&lt;/h2&gt;
+
+&lt;p&gt;Webpack 은 다른 모듈을 불러오는걸 좀 더 간편하게 하기 위해 다음과 같은 설정을 제공한다. 예를들면&lt;/p&gt;
+
+&lt;p&gt;webpack.config.js&lt;/p&gt;
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;module&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;exports&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;//...&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;resolve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;alias&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;@:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;resolve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;__dirname&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;src/&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nd&quot;&gt;unit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;resolve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;__dirname&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;test/unit&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;nd&quot;&gt;functions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;resolve&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;__dirname&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;src/commons/utils/functions&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;불필요하게 &lt;code class=&quot;highlighter-rouge&quot;&gt;src/components&lt;/code&gt; 이런 경로가 반복되서 나타나지 않으니 참 간편하긴 한데, 문제는 intellij 에서 이렇게 불러올 경우 해당 모듈을 찾지도 못하고, 그로 인해 code assistant 도 동작하지 않는다..&lt;/p&gt;
+
+&lt;p&gt;해결책은 간단하다. intellij 에 해당 웹팩 설정파일 경로를 잡아주면 된다.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Preference&lt;/code&gt; &amp;gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;Languages&amp;amp;Frameworks&lt;/code&gt; &amp;gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;Javascript&lt;/code&gt; &amp;gt; &lt;code class=&quot;highlighter-rouge&quot;&gt;Webpack&lt;/code&gt; 에 &lt;code class=&quot;highlighter-rouge&quot;&gt;webpack.config.js&lt;/code&gt; 파일의 경로를 넣어주면 잘 찾아준다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://user-images.githubusercontent.com/16642635/54926134-0cf87480-4f53-11e9-9dfa-266c06b50d03.png&quot; alt=&quot;image&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;with-vue-cli&quot;&gt;with Vue-cli&lt;/h2&gt;
+
+&lt;p&gt;vue-cli 와 함께 사용할 경우 설정파일로 &lt;code class=&quot;highlighter-rouge&quot;&gt;vue.config.js&lt;/code&gt; 파일을 사용하게 되어 있다. 이때 alias 설정은 그대로 &lt;code class=&quot;highlighter-rouge&quot;&gt;vue.config.js&lt;/code&gt; 파일에 하고 인텔리제이에게만 &lt;code class=&quot;highlighter-rouge&quot;&gt;node_modules/@vue/cli-service/webpack.config.js&lt;/code&gt; 파일을 잡아주면 된다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;https://cli.vuejs.org/guide/webpack.html#using-resolved-config-as-a-file 를 참고한다.&lt;/p&gt;
+&lt;/blockquote&gt;</content><author><name>genie-youn</name></author><category term="webpack" /><category term="vue" /><category term="intellij" /><category term="webpack" /><summary type="html">Photo by Fotis Fotopoulos on Unsplash</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/fotis-fotopoulos-LJ9KY8pIH3E-unsplash.jpg" /></entry><entry><title type="html">Vue와 반응형에 대해서 (Data)</title><link href="http://localhost:4000/journal/Vue%EC%99%80-%EB%B0%98%EC%9D%91%ED%98%95-DATA.html" rel="alternate" type="text/html" title="Vue와 반응형에 대해서 (Data)" /><published>2019-04-07T00:00:00+09:00</published><updated>2019-04-07T00:00:00+09:00</updated><id>http://localhost:4000/journal/Vue%EC%99%80-%EB%B0%98%EC%9D%91%ED%98%95-DATA</id><content type="html" xml:base="http://localhost:4000/journal/Vue%EC%99%80-%EB%B0%98%EC%9D%91%ED%98%95-DATA.html">&lt;center&gt;&lt;small&gt;Photo by frank &lt;a href=&quot;https://unsplash.com/@frankiefoto?utm_source=unsplash&amp;amp;utm_medium=referral&amp;amp;utm_content=creditCopyText&quot;&gt;mckenna&lt;/a&gt; on &lt;a href=&quot;https://unsplash.com/&quot;&gt;Unsplash&lt;/a&gt;&lt;/small&gt;&lt;/center&gt;
+
+&lt;p&gt;얼마 전 특정 유저의 상태에 따라 알림 레이어를 노출해야 하는 스펙을 구현중에 의도한 대로 동작하지 않아 한참을 해맸다. Vue 의 반응형이 어떻게 동작하는지 제대로 이해하고 있지 않아 생긴 문제였고 이 기회에 Vue와 반응형에 대하여 정리하려 한다.&lt;/p&gt;
+
+&lt;h2 id=&quot;반응형&quot;&gt;반응형?&lt;/h2&gt;
+
+&lt;p&gt;Vue에서 반응형 &lt;sup&gt;Reactivity&lt;/sup&gt; 이란 Vue 인스턴스에 &lt;code class=&quot;highlighter-rouge&quot;&gt;data&lt;/code&gt; 프로퍼티로 자바스크립트 객체를 전달하면 이 객체의 변경을 감지하여 전파하는것을 일컫는다.&lt;/p&gt;
+
+&lt;div class=&quot;language-html highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;&amp;lt;template&amp;gt;&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;div&amp;gt;&lt;/span&gt;
+    
+  &lt;span class=&quot;nt&quot;&gt;&amp;lt;/div&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/template&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;script&amp;gt;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;default&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;hello world&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;&amp;lt;/script&amp;gt;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;위와 같은 컴포넌트가 존재할 때 &lt;code class=&quot;highlighter-rouge&quot;&gt;message&lt;/code&gt; 의 값이 바뀌면 &lt;code class=&quot;highlighter-rouge&quot;&gt;div&lt;/code&gt; 내부의 문자열도 이에 &lt;strong&gt;반응&lt;/strong&gt; 하여 변경되게 된다.&lt;/p&gt;
+
+&lt;h2 id=&quot;반응형이-적용되는-과정&quot;&gt;반응형이 적용되는 과정&lt;/h2&gt;
+
+&lt;p&gt;Vue 인스턴스에서 반응형은 이벤트와 라이프사이클이 초기화 된 이후 설정된다. (&lt;code class=&quot;highlighter-rouge&quot;&gt;beforeCreate&lt;/code&gt; 훅과 &lt;code class=&quot;highlighter-rouge&quot;&gt;created&lt;/code&gt; 훅 사이)&lt;/p&gt;
+
+&lt;p&gt;core/instance/init.js&lt;/p&gt;
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nx&quot;&gt;callHook&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;beforeCreate&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;initInjections&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;initState&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// 여기서 반응형 설정이 이루어진다.&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;initProvide&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;callHook&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;created&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;해당 시점에 &lt;code class=&quot;highlighter-rouge&quot;&gt;props&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;methods&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;data&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;computed&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;watch&lt;/code&gt; 에 대한 초기화가 이루어 진다.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;data&lt;/code&gt; 객체에 &lt;code class=&quot;highlighter-rouge&quot;&gt;__ob__&lt;/code&gt; 라는 이름의 옵저버 객체를 프로퍼티로 등록한 후 각 &lt;code class=&quot;highlighter-rouge&quot;&gt;key&lt;/code&gt; 들을 순회하면서 해당 프로퍼티가 수정 가능하다면 (&lt;code class=&quot;highlighter-rouge&quot;&gt;configurable&lt;/code&gt;) &lt;code class=&quot;highlighter-rouge&quot;&gt;reactiveGetter&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;reactiveSetter&lt;/code&gt; 를 각각 프로퍼티의 getter 와 setter 로 등록한다. 또한 각각의 프로퍼티는 클로저로 &lt;code class=&quot;highlighter-rouge&quot;&gt;Dep&lt;/code&gt; 이라는 다수의 Subscriber 를 가질 수 있는 객체를 가지게 되고 템플릿의 디렉티브는 이 &lt;code class=&quot;highlighter-rouge&quot;&gt;Dep&lt;/code&gt; 객체를 구독하게 된다.&lt;/p&gt;
+
+&lt;p&gt;core/observer/index.js defineReactive()&lt;/p&gt;
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dep&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Dep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+
+&lt;span class=&quot;nb&quot;&gt;Object&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;defineProperty&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;obj&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;enumerable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;configurable&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;reactiveGetter&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;reactiveSetter&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;newVal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// ...&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;이후 &lt;code class=&quot;highlighter-rouge&quot;&gt;mount&lt;/code&gt; 하는 과정에서 새로운 &lt;code class=&quot;highlighter-rouge&quot;&gt;Watcher&lt;/code&gt; (Subscriber) 객체를 생성하고 뷰 인스턴스를 업데이트 하는 &lt;code class=&quot;highlighter-rouge&quot;&gt;vm._update()&lt;/code&gt; 함수를 변경이 생겼을 때 실행할 함수로 넣어둔다. &lt;code class=&quot;highlighter-rouge&quot;&gt;vm._update()&lt;/code&gt; 는 &lt;code class=&quot;highlighter-rouge&quot;&gt;vm._render()&lt;/code&gt; 함수를 실행한 결과인 &lt;code class=&quot;highlighter-rouge&quot;&gt;vnode&lt;/code&gt; 객체를 받아서 DOM 을 업데이트한다.&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;span class=&quot;nx&quot;&gt;updateComponent&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;_update&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;_render&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;hydrating&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Watcher&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;updateComponent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;noop&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;before&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;_isMounted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;_isDestroyed&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;callHook&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;beforeUpdate&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt; &lt;span class=&quot;cm&quot;&gt;/* isRenderWatcher */&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// Watcher constructor&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;constructor&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Component&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;expOrFn&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;string&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;|&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;cb&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Function&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;options&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;?:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;?&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;Object&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;isRenderWatcher&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;?:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;boolean&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;vm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;vm&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;isRenderWatcher&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;_watcher&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;이 객체를 &lt;code class=&quot;highlighter-rouge&quot;&gt;vm._watcher&lt;/code&gt; 프로퍼티에 등록하고 &lt;code class=&quot;highlighter-rouge&quot;&gt;Watcher.get()&lt;/code&gt; 을 통해 뷰 인스턴스를 한번 업데이트를 한다. 렌더링 함수를 호출해 &lt;code class=&quot;highlighter-rouge&quot;&gt;template&lt;/code&gt; 내의 구문을 컴파일하고 템플릿의 디렉티브에서 참조하고 있는 &lt;code class=&quot;highlighter-rouge&quot;&gt;data&lt;/code&gt; 프로퍼티의 &lt;code class=&quot;highlighter-rouge&quot;&gt;getter&lt;/code&gt;를 호출하게 된다. &lt;code class=&quot;highlighter-rouge&quot;&gt;getter&lt;/code&gt; 로 등록된 &lt;code class=&quot;highlighter-rouge&quot;&gt;reactiveGetter&lt;/code&gt;를 자세히 보면&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;get&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;reactiveGetter&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;getter&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;getter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;obj&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;val&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Dep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;dep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;depend&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;childOb&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;childOb&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;depend&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;Array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;isArray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;dependArray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+      &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;Dep.target&lt;/code&gt; 에는 앞서 뷰 인스턴스를 업데이트 하는 함수를 담고있는 &lt;code class=&quot;highlighter-rouge&quot;&gt;Watcher&lt;/code&gt; 객체가 들어있다. 그래서 프로퍼티가 참조하고 있는 &lt;code class=&quot;highlighter-rouge&quot;&gt;Dep&lt;/code&gt; 객체에 &lt;code class=&quot;highlighter-rouge&quot;&gt;depend()&lt;/code&gt; 함수를 호출하게 된다.&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// Dep (Observable) 객체의 함수다.&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;depend&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;Dep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;Dep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;target&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;addDep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;// 앞서 등록된 `Watcher` (Subscriber) 객체의 함수다&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;addDep&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Dep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;dep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;newDepIds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;has&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;newDepIds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;add&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;newDeps&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;depIds&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;has&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;nx&quot;&gt;dep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;addSub&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;위와 같은 핑퐁을 거쳐 해당 프로퍼티의 &lt;code class=&quot;highlighter-rouge&quot;&gt;Dep(Observable)&lt;/code&gt; 을 뷰 인스턴스를 업데이트 하는 함수를 가진 &lt;code class=&quot;highlighter-rouge&quot;&gt;Wathcer(Subscriber)&lt;/code&gt; 의 구독이 등록되게 된다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;이런식으로 Dep 과 Wathcer 가 서로 핑퐁을 하면서 구독 등록의 과정이 이루어 지는데 중간에 this 가 계속 인자로 주어지다 보니 코드가 읽기가 많이 헷갈렸던것 같다..&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;이후 &lt;code class=&quot;highlighter-rouge&quot;&gt;message&lt;/code&gt; 의 값을 변경하게 되면 setter 로 등록해 두었던 &lt;code class=&quot;highlighter-rouge&quot;&gt;reactiveSetter&lt;/code&gt; 함수가 호출되게 된다.&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;reactiveSetter&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;newVal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;getter&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;?&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;getter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;obj&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;val&lt;/span&gt;
+  &lt;span class=&quot;cm&quot;&gt;/* eslint-disable no-self-compare */&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;newVal&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;===&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;||&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;newVal&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!==&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;newVal&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!==&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;cm&quot;&gt;/* eslint-enable no-self-compare */&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;process&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;env&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;NODE_ENV&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!==&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;production&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;customSetter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;customSetter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// #7981: for accessor properties without setter&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getter&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;setter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;setter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;setter&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;call&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;obj&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;newVal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;else&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;val&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;newVal&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;childOb&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;shallow&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;observe&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;newVal&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;dep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;notify&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;새로 받은 값을 set 하고 나면 프로퍼티의 &lt;code class=&quot;highlighter-rouge&quot;&gt;dep (Observable)&lt;/code&gt; 객체에 &lt;code class=&quot;highlighter-rouge&quot;&gt;notify&lt;/code&gt; 를 호출하여 상태의 전파를 일으킨다.&lt;/p&gt;
+
+&lt;p&gt;이 객체를 구독하고 있던 &lt;code class=&quot;highlighter-rouge&quot;&gt;Watcher&lt;/code&gt; 객체가 &lt;code class=&quot;highlighter-rouge&quot;&gt;updateComponent&lt;/code&gt; 함수를 실행시켜 변경된 &lt;code class=&quot;highlighter-rouge&quot;&gt;message&lt;/code&gt; 의 값을 읽어가고 virtual dom 을 계산하고 변경된 부분을 다시 렌더링 함으로써 &lt;code class=&quot;highlighter-rouge&quot;&gt;message&lt;/code&gt; 의 값에 템플릿 내 디렉티브가 반응형으로 동작하게 된다.&lt;/p&gt;
+
+&lt;p&gt;객체를 초기화 하는 과정에서 &lt;code class=&quot;highlighter-rouge&quot;&gt;data&lt;/code&gt; 객체에 있는 프로퍼티를 순회하며 반응형을 설정하기 때문에 이 시점에 존재하지 않았던 프로퍼티에 대해서는 반응형으로 동작하지 않게 된다. 초기화 이후 &lt;code class=&quot;highlighter-rouge&quot;&gt;data&lt;/code&gt; 객체에 프로퍼티를 아무리 추가해봤자 변경을 감지하지 못한다는 이야기다. 그렇기 때문에 빈 값으로라도 초기에 선언하여 인스턴스를 초기화 해야 하는 것이다.&lt;/p&gt;
+
+&lt;h2 id=&quot;놓치기-쉬운것들&quot;&gt;놓치기 쉬운것들&lt;/h2&gt;
+
+&lt;h3 id=&quot;중첩된-객체&quot;&gt;중첩된 객체&lt;/h3&gt;
+
+&lt;p&gt;만약 반응형으로 동작해야할 값이 중첩된 객체라면 &lt;code class=&quot;highlighter-rouge&quot;&gt;data&lt;/code&gt; 객체의 key 를 순회하며 반응형을 설정하는 과정에서 내부 객체를 재귀적으로 훑으며 반응형을 설정하므로 &lt;strong&gt;중첩된 객체의 프로퍼티 또한 빈값으로라도 선언되어 있어야 한다&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;코드를 보다가 이부분이 좀 헷갈렸는데 분명 &lt;code class=&quot;highlighter-rouge&quot;&gt;reactiveSetter&lt;/code&gt; 내부에도 새로 받은 값에 대해서 재귀적으로 반응형하는 부분이 있었기 때문에 그렇다면 루트 수준에만 존재하면 자동으로 반응형이 되지 않나? 하고 생각했었다. 예를들어&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;vm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Vue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;다음과 같은 컴포넌트가 있을 때 &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; 에는 이미 반응형이 설정되어 있으니, &lt;code class=&quot;highlighter-rouge&quot;&gt;vm.a.c = {d : 1}&lt;/code&gt; 라고 주어졌을때 &lt;code class=&quot;highlighter-rouge&quot;&gt;a&lt;/code&gt; 의 &lt;code class=&quot;highlighter-rouge&quot;&gt;reactiveSetter&lt;/code&gt; 가 호출될것이고, 그러면 &lt;code class=&quot;highlighter-rouge&quot;&gt;{d : 1}&lt;/code&gt; 객체에 대해서도 반응형이 잡히겠지. 하고 생각한 것인데 이는 기존에 알고있던 중첩된 객체의 프로퍼티 또한 빈값으로라도 선언이 되어 있어야 한다는 사실과 어긋나는 것이였다.&lt;/p&gt;
+
+&lt;p&gt;그 이유는 단순하게 자바스크립트에서 &lt;code class=&quot;highlighter-rouge&quot;&gt;a.c = 4&lt;/code&gt; 를 주었을 때 a 의 setter 가 호출되지 않는다. c 에 대한 setter 를 호출할뿐..&lt;/p&gt;
+
+&lt;p&gt;위 상황에서는 a 와 b 모두 재귀적으로 &lt;code class=&quot;highlighter-rouge&quot;&gt;reactiveSetter&lt;/code&gt; 가 등록되어 있으니 &lt;code class=&quot;highlighter-rouge&quot;&gt;data.a.b = 3&lt;/code&gt; 은 반응형을 타겠지만 &lt;code class=&quot;highlighter-rouge&quot;&gt;data.a.c = 3&lt;/code&gt; 은 c 에 대한 &lt;code class=&quot;highlighter-rouge&quot;&gt;reactiveSetter&lt;/code&gt; 가 등록되어 있지 않으니 반응형을 타지 않는다. 이럴때 사용하기위해 만들어둔 API 가 &lt;code class=&quot;highlighter-rouge&quot;&gt;Vue.set&lt;/code&gt; 이다.&lt;/p&gt;
+
+&lt;p&gt;루트 수준 (&lt;code class=&quot;highlighter-rouge&quot;&gt;data&lt;/code&gt; 객체의 직접적인 프로퍼티) 에 반응형을 추가하는 방법은 존재하지 않지만, 초기화시 존재했던 중첩된 프로퍼티 객체에 새로운 프로퍼티를 추가할 수 있는 API 는 제공한다.&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;vm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;Vue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;b&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+
+&lt;span class=&quot;nx&quot;&gt;Vue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;$set&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;vm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;a&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;c&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// 또는&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;마찬가지로 다음과 같은 케이스도 반응형으로 동작하지 않는다.&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;Object&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;assign&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;userProfile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;age&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;27&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;favoriteColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Vue Green&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;setter 를 명시적으로 호출해주어야 한다.&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;userProfile&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Object&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;assign&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({},&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;userProfile&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;age&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;27&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;favoriteColor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;Vue Green&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;배열&quot;&gt;배열&lt;/h3&gt;
+
+&lt;p&gt;두번째로 놓치기 쉬운게 배열이다. 뷰가 일반 객체의 setter 를 조작해 반응형을 태우는것 처럼 배열도 배열의 몇가지 함수를 조작해 반응형을 태운다.&lt;/p&gt;
+
+&lt;p&gt;우선 반응형의 대상이 되는 객체의 타입이 &lt;code class=&quot;highlighter-rouge&quot;&gt;Array&lt;/code&gt; 일 경우 이 객체의 프로토타입을 기존의 &lt;code class=&quot;highlighter-rouge&quot;&gt;Array.prototype&lt;/code&gt; 객체를 확장한 커스텀 객체로 변경한다&lt;/p&gt;
+
+&lt;div class=&quot;language-javascript highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;
+&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;arrayProto&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;prototype&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;export&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;arrayMethods&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Object&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;create&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;arrayProto&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;methodsToPatch&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+  &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;pop&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;shift&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;unshift&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;splice&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;sort&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;reverse&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;cm&quot;&gt;/**
+ * Intercept mutating methods and emit events
+ */&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;methodsToPatch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;forEach&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;method&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// cache original method&lt;/span&gt;
+  &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;original&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;arrayProto&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;method&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;def&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;arrayMethods&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;method&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;function&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;mutator&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(...&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;original&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;apply&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ob&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;this&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;__ob__&lt;/span&gt;
+    &lt;span class=&quot;kd&quot;&gt;let&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;inserted&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;switch&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;method&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;push&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;unshift&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;inserted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;args&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;case&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;splice&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;nx&quot;&gt;inserted&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;slice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;break&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;inserted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;ob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;observeArray&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;inserted&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;// notify change&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;ob&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;dep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;notify&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;result&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;확장된 &lt;code class=&quot;highlighter-rouge&quot;&gt;Array.prototype&lt;/code&gt; 객체는 &lt;code class=&quot;highlighter-rouge&quot;&gt;push&lt;/code&gt;,&lt;code class=&quot;highlighter-rouge&quot;&gt;pop&lt;/code&gt;,&lt;code class=&quot;highlighter-rouge&quot;&gt;shift&lt;/code&gt;,&lt;code class=&quot;highlighter-rouge&quot;&gt;unshift&lt;/code&gt;,&lt;code class=&quot;highlighter-rouge&quot;&gt;splice&lt;/code&gt;,&lt;code class=&quot;highlighter-rouge&quot;&gt;sort&lt;/code&gt;,&lt;code class=&quot;highlighter-rouge&quot;&gt;reverse&lt;/code&gt; 함수들에 대하여 호출될 때마다 변경사항을 구독자들에게 전파하고 특히 &lt;code class=&quot;highlighter-rouge&quot;&gt;push&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;unshift&lt;/code&gt;, &lt;code class=&quot;highlighter-rouge&quot;&gt;splice&lt;/code&gt; 의 경우 새롭게 배열에 추가된 객체에 대하여 반응형을 설정한다. 즉 위 함수외에는 배열이 변경되어도 변경된 내용이 반응형으로 동작하지 않게된다.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;highlighter-rouge&quot;&gt;arr[1] = &quot;abc&quot;;&lt;/code&gt; 와 같은 방법으로 배열을 변경하지 않도록 하자&lt;/p&gt;</content><author><name>genie-youn</name></author><category term="vue" /><category term="reactive" /><summary type="html">Photo by frank mckenna on Unsplash</summary><media:thumbnail xmlns:media="http://search.yahoo.com/mrss/" url="http://localhost:4000/frank-mckenna-iVVBVb2RqLc-unsplash.jpg" /></entry><entry><title type="html">Cloud Native day Seoul 2018 후기</title><link href="http://localhost:4000/journal/Cloud-Native-day-Seoul-2018.html" rel="alternate" type="text/html" title="Cloud Native day Seoul 2018 후기" /><published>2018-06-05T00:00:00+09:00</published><updated>2018-06-05T00:00:00+09:00</updated><id>http://localhost:4000/journal/Cloud-Native-day-Seoul-2018</id><content type="html" xml:base="http://localhost:4000/journal/Cloud-Native-day-Seoul-2018.html">&lt;p&gt;Pivotal이 한국에서 처음 &lt;code class=&quot;highlighter-rouge&quot;&gt;Cloud Native Day&lt;/code&gt;라는 이름으로 세미나를 진행하였다. Spring의 리드그룹인 Pivotal이 어떤 방향성을 갖고 있는지 궁금하기도 했고, 혹시 향후에 Spring으로 MSA를 개발할 때 도움이 될까 싶어 참여하게 됐다.
 히로쿠의 &lt;a href=&quot;https://12factor.net/ko/&quot;&gt;The Twelve-Factor app&lt;/a&gt; 같은걸 기대하고 갔다.&lt;/p&gt;
 
 &lt;p&gt;진행세션은 다음과 같다.&lt;/p&gt;

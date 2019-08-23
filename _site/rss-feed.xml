@@ -7,6 +7,62 @@
 		<atom:link href="/rss-feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Vue는 왜 filter를 삭제하려고 했을까?</title>
+				
+					<dc:creator>genie-youn</dc:creator>
+				
+				
+					<description>&lt;center&gt;&lt;small&gt;Photo by frank &lt;a href=&quot;https://unsplash.com/@foodiesfeed?utm_source=unsplash&amp;amp;utm_medium=referral&amp;amp;utm_content=creditCopyText&quot;&gt;Jakub Kapusnak&lt;/a&gt; on &lt;a href=&quot;https://unsplash.com/&quot;&gt;Unsplash&lt;/a&gt;&lt;/small&gt;&lt;/center&gt;
+</description>
+				
+				<pubDate>Wed, 19 Jun 2019 00:00:00 +0900</pubDate>
+				<link>http://localhost:4000/journal/Vue%EB%8A%94-%EC%99%9C-Filter%EB%A5%BC-%EC%82%AD%EC%A0%9C%ED%95%98%EB%A0%A4-%ED%96%88%EC%9D%84%EA%B9%8C.html</link>
+				<guid isPermaLink="true">http://localhost:4000/journal/Vue%EB%8A%94-%EC%99%9C-Filter%EB%A5%BC-%EC%82%AD%EC%A0%9C%ED%95%98%EB%A0%A4-%ED%96%88%EC%9D%84%EA%B9%8C.html</guid>
+			</item>
+		
+			<item>
+				<title>Vue 디렉티브와 Hook</title>
+				
+					<dc:creator>genie-youn</dc:creator>
+				
+				
+					<description>&lt;center&gt;&lt;small&gt;Photo by frank &lt;a href=&quot;https://unsplash.com/@35mm?utm_source=unsplash&amp;amp;utm_medium=referral&amp;amp;utm_content=creditCopyText&quot;&gt;35mm&lt;/a&gt; on &lt;a href=&quot;https://unsplash.com/&quot;&gt;Unsplash&lt;/a&gt;&lt;/small&gt;&lt;/center&gt;
+</description>
+				
+				<pubDate>Fri, 26 Apr 2019 00:00:00 +0900</pubDate>
+				<link>http://localhost:4000/journal/Vue%EC%99%80-Custom-Directive.html</link>
+				<guid isPermaLink="true">http://localhost:4000/journal/Vue%EC%99%80-Custom-Directive.html</guid>
+			</item>
+		
+			<item>
+				<title>intellij에서 webpack path alias 적용하기</title>
+				
+					<dc:creator>genie-youn</dc:creator>
+				
+				
+					<description>&lt;center&gt;&lt;small&gt;Photo by Fotis Fotopoulos on Unsplash&lt;/small&gt;&lt;/center&gt;
+</description>
+				
+				<pubDate>Thu, 11 Apr 2019 00:00:00 +0900</pubDate>
+				<link>http://localhost:4000/journal/Intellij%EC%97%90%EC%84%9C-webpack-path-alias-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0.html</link>
+				<guid isPermaLink="true">http://localhost:4000/journal/Intellij%EC%97%90%EC%84%9C-webpack-path-alias-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0.html</guid>
+			</item>
+		
+			<item>
+				<title>Vue와 반응형에 대해서 (Data)</title>
+				
+					<dc:creator>genie-youn</dc:creator>
+				
+				
+					<description>&lt;center&gt;&lt;small&gt;Photo by frank &lt;a href=&quot;https://unsplash.com/@frankiefoto?utm_source=unsplash&amp;amp;utm_medium=referral&amp;amp;utm_content=creditCopyText&quot;&gt;mckenna&lt;/a&gt; on &lt;a href=&quot;https://unsplash.com/&quot;&gt;Unsplash&lt;/a&gt;&lt;/small&gt;&lt;/center&gt;
+</description>
+				
+				<pubDate>Sun, 07 Apr 2019 00:00:00 +0900</pubDate>
+				<link>http://localhost:4000/journal/Vue%EC%99%80-%EB%B0%98%EC%9D%91%ED%98%95-DATA.html</link>
+				<guid isPermaLink="true">http://localhost:4000/journal/Vue%EC%99%80-%EB%B0%98%EC%9D%91%ED%98%95-DATA.html</guid>
+			</item>
+		
+			<item>
 				<title>Cloud Native day Seoul 2018 후기</title>
 				
 					<dc:creator>genie-youn</dc:creator>

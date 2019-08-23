@@ -1,0 +1,501 @@
+<!doctype html>
+<html>
+
+<head>
+
+  <title>
+    
+      Vue와 반응형에 대해서 (Data) | 오르막길
+    
+  </title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/syntax.css">
+  <!-- Use Atom -->
+  <link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="오르막길" />
+  <!-- Use RSS-2.0 -->
+  <!--<link href="/rss-feed.xml" type="application/rss+xml" rel="alternate" title="오르막길 | 잊기전에 기록하기"/>
+  //-->
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700%7CPT+Sans:400">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quattrocento+Sans">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+
+  <!-- Google Analytics -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-146256933-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <!-- Use Jekyll SEO plugin -->
+  <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Vue와 반응형에 대해서 (Data) | 오르막길</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Vue와 반응형에 대해서 (Data)" />
+<meta name="author" content="genie-youn" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Photo by frank mckenna on Unsplash" />
+<meta property="og:description" content="Photo by frank mckenna on Unsplash" />
+<link rel="canonical" href="http://localhost:4000/journal/Vue%EC%99%80-%EB%B0%98%EC%9D%91%ED%98%95-DATA.html" />
+<meta property="og:url" content="http://localhost:4000/journal/Vue%EC%99%80-%EB%B0%98%EC%9D%91%ED%98%95-DATA.html" />
+<meta property="og:site_name" content="오르막길" />
+<meta property="og:image" content="http://localhost:4000/frank-mckenna-iVVBVb2RqLc-unsplash.jpg" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-04-07T00:00:00+09:00" />
+<script type="application/ld+json">
+{"author":{"@type":"Person","name":"genie-youn"},"description":"Photo by frank mckenna on Unsplash","headline":"Vue와 반응형에 대해서 (Data)","dateModified":"2019-04-07T00:00:00+09:00","datePublished":"2019-04-07T00:00:00+09:00","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/journal/Vue%EC%99%80-%EB%B0%98%EC%9D%91%ED%98%95-DATA.html"},"image":"http://localhost:4000/frank-mckenna-iVVBVb2RqLc-unsplash.jpg","url":"http://localhost:4000/journal/Vue%EC%99%80-%EB%B0%98%EC%9D%91%ED%98%95-DATA.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+</head>
+
+
+<body>
+
+  <div class="container">
+    <header class="masthead">
+  <h3 class="masthead-title">
+    <a href="/">오르막길</a>
+    <small class="masthead-subtitle">잊기전에 기록하기</small>
+    <div class="menu">
+  <nav class="menu-content">
+    
+      <a href="/menu/about.html">About</a>
+    
+      <a href="/menu/writing.html">Writing</a>
+    
+  </nav>
+  <nav class="social-icons">
+    
+  
+  
+    <a href="https://github.com/genie-youn" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+  
+
+  
+  
+    <a href="https://www.linkedin.com/in/%EC%A7%80%EC%88%98-%EC%9C%A4-78921a11b/" target="_blank"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+  
+
+  
+  
+    <a href="mailto:yjs930915@gmail.com" target="_blank"><i class="fa fa-envelope" aria-hidden="true"></i></a>
+  
+
+  </nav>
+</div>
+
+  </h3>
+</header>
+
+
+    <div class="post-container">
+      <h1>
+  Vue와 반응형에 대해서 (Data)
+</h1>
+
+
+  <img src="/assets/img/frank-mckenna-iVVBVb2RqLc-unsplash.jpg">
+
+
+<center><small>Photo by frank <a href="https://unsplash.com/@frankiefoto?utm_source=unsplash&amp;utm_medium=referral&amp;utm_content=creditCopyText">mckenna</a> on <a href="https://unsplash.com/">Unsplash</a></small></center>
+
+<p>얼마 전 특정 유저의 상태에 따라 알림 레이어를 노출해야 하는 스펙을 구현중에 의도한 대로 동작하지 않아 한참을 해맸다. Vue 의 반응형이 어떻게 동작하는지 제대로 이해하고 있지 않아 생긴 문제였고 이 기회에 Vue와 반응형에 대하여 정리하려 한다.</p>
+
+<h2 id="반응형">반응형?</h2>
+
+<p>Vue에서 반응형 <sup>Reactivity</sup> 이란 Vue 인스턴스에 <code class="highlighter-rouge">data</code> 프로퍼티로 자바스크립트 객체를 전달하면 이 객체의 변경을 감지하여 전파하는것을 일컫는다.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;template&gt;</span>
+  <span class="nt">&lt;div&gt;</span>
+    
+  <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/template&gt;</span>
+<span class="nt">&lt;script&gt;</span>
+<span class="k">export</span> <span class="k">default</span> <span class="p">{</span>
+  <span class="nx">data</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+      <span class="na">message</span><span class="p">:</span> <span class="dl">'</span><span class="s1">hello world</span><span class="dl">'</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<p>위와 같은 컴포넌트가 존재할 때 <code class="highlighter-rouge">message</code> 의 값이 바뀌면 <code class="highlighter-rouge">div</code> 내부의 문자열도 이에 <strong>반응</strong> 하여 변경되게 된다.</p>
+
+<h2 id="반응형이-적용되는-과정">반응형이 적용되는 과정</h2>
+
+<p>Vue 인스턴스에서 반응형은 이벤트와 라이프사이클이 초기화 된 이후 설정된다. (<code class="highlighter-rouge">beforeCreate</code> 훅과 <code class="highlighter-rouge">created</code> 훅 사이)</p>
+
+<p>core/instance/init.js</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">callHook</span><span class="p">(</span><span class="nx">vm</span><span class="p">,</span> <span class="dl">'</span><span class="s1">beforeCreate</span><span class="dl">'</span><span class="p">)</span>
+<span class="nx">initInjections</span><span class="p">(</span><span class="nx">vm</span><span class="p">)</span>
+<span class="nx">initState</span><span class="p">(</span><span class="nx">vm</span><span class="p">)</span> <span class="c1">// 여기서 반응형 설정이 이루어진다.</span>
+<span class="nx">initProvide</span><span class="p">(</span><span class="nx">vm</span><span class="p">)</span>
+<span class="nx">callHook</span><span class="p">(</span><span class="nx">vm</span><span class="p">,</span> <span class="dl">'</span><span class="s1">created</span><span class="dl">'</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>해당 시점에 <code class="highlighter-rouge">props</code>, <code class="highlighter-rouge">methods</code>, <code class="highlighter-rouge">data</code>, <code class="highlighter-rouge">computed</code>, <code class="highlighter-rouge">watch</code> 에 대한 초기화가 이루어 진다.</p>
+
+<p><code class="highlighter-rouge">data</code> 객체에 <code class="highlighter-rouge">__ob__</code> 라는 이름의 옵저버 객체를 프로퍼티로 등록한 후 각 <code class="highlighter-rouge">key</code> 들을 순회하면서 해당 프로퍼티가 수정 가능하다면 (<code class="highlighter-rouge">configurable</code>) <code class="highlighter-rouge">reactiveGetter</code>, <code class="highlighter-rouge">reactiveSetter</code> 를 각각 프로퍼티의 getter 와 setter 로 등록한다. 또한 각각의 프로퍼티는 클로저로 <code class="highlighter-rouge">Dep</code> 이라는 다수의 Subscriber 를 가질 수 있는 객체를 가지게 되고 템플릿의 디렉티브는 이 <code class="highlighter-rouge">Dep</code> 객체를 구독하게 된다.</p>
+
+<p>core/observer/index.js defineReactive()</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">dep</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Dep</span><span class="p">()</span>
+
+<span class="nb">Object</span><span class="p">.</span><span class="nx">defineProperty</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">key</span><span class="p">,</span> <span class="p">{</span>
+  <span class="na">enumerable</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="na">configurable</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+  <span class="na">get</span><span class="p">:</span> <span class="kd">function</span> <span class="nx">reactiveGetter</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+  <span class="p">},</span>
+  <span class="na">set</span><span class="p">:</span> <span class="kd">function</span> <span class="nx">reactiveSetter</span> <span class="p">(</span><span class="nx">newVal</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c1">// ...</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>이후 <code class="highlighter-rouge">mount</code> 하는 과정에서 새로운 <code class="highlighter-rouge">Watcher</code> (Subscriber) 객체를 생성하고 뷰 인스턴스를 업데이트 하는 <code class="highlighter-rouge">vm._update()</code> 함수를 변경이 생겼을 때 실행할 함수로 넣어둔다. <code class="highlighter-rouge">vm._update()</code> 는 <code class="highlighter-rouge">vm._render()</code> 함수를 실행한 결과인 <code class="highlighter-rouge">vnode</code> 객체를 받아서 DOM 을 업데이트한다.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="nx">updateComponent</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">vm</span><span class="p">.</span><span class="nx">_update</span><span class="p">(</span><span class="nx">vm</span><span class="p">.</span><span class="nx">_render</span><span class="p">(),</span> <span class="nx">hydrating</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">new</span> <span class="nx">Watcher</span><span class="p">(</span><span class="nx">vm</span><span class="p">,</span> <span class="nx">updateComponent</span><span class="p">,</span> <span class="nx">noop</span><span class="p">,</span> <span class="p">{</span>
+  <span class="nx">before</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">vm</span><span class="p">.</span><span class="nx">_isMounted</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">vm</span><span class="p">.</span><span class="nx">_isDestroyed</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">callHook</span><span class="p">(</span><span class="nx">vm</span><span class="p">,</span> <span class="dl">'</span><span class="s1">beforeUpdate</span><span class="dl">'</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">},</span> <span class="kc">true</span> <span class="cm">/* isRenderWatcher */</span><span class="p">)</span>
+
+<span class="c1">// Watcher constructor</span>
+<span class="kd">constructor</span> <span class="p">(</span>
+  <span class="na">vm</span><span class="p">:</span> <span class="nx">Component</span><span class="p">,</span>
+  <span class="na">expOrFn</span><span class="p">:</span> <span class="nx">string</span> <span class="o">|</span> <span class="nb">Function</span><span class="p">,</span>
+  <span class="na">cb</span><span class="p">:</span> <span class="nb">Function</span><span class="p">,</span>
+  <span class="nx">options</span><span class="p">?:</span> <span class="p">?</span><span class="nb">Object</span><span class="p">,</span>
+  <span class="nx">isRenderWatcher</span><span class="p">?:</span> <span class="nx">boolean</span>
+<span class="p">)</span> <span class="p">{</span>
+  <span class="k">this</span><span class="p">.</span><span class="nx">vm</span> <span class="o">=</span> <span class="nx">vm</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">isRenderWatcher</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">vm</span><span class="p">.</span><span class="nx">_watcher</span> <span class="o">=</span> <span class="k">this</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>이 객체를 <code class="highlighter-rouge">vm._watcher</code> 프로퍼티에 등록하고 <code class="highlighter-rouge">Watcher.get()</code> 을 통해 뷰 인스턴스를 한번 업데이트를 한다. 렌더링 함수를 호출해 <code class="highlighter-rouge">template</code> 내의 구문을 컴파일하고 템플릿의 디렉티브에서 참조하고 있는 <code class="highlighter-rouge">data</code> 프로퍼티의 <code class="highlighter-rouge">getter</code>를 호출하게 된다. <code class="highlighter-rouge">getter</code> 로 등록된 <code class="highlighter-rouge">reactiveGetter</code>를 자세히 보면</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">get</span><span class="p">:</span> <span class="kd">function</span> <span class="nx">reactiveGetter</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">getter</span> <span class="p">?</span> <span class="nx">getter</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">:</span> <span class="nx">val</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">Dep</span><span class="p">.</span><span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">dep</span><span class="p">.</span><span class="nx">depend</span><span class="p">()</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">childOb</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">childOb</span><span class="p">.</span><span class="nx">dep</span><span class="p">.</span><span class="nx">depend</span><span class="p">()</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nb">Array</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">value</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nx">dependArray</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nx">value</span>
+<span class="p">},</span>
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">Dep.target</code> 에는 앞서 뷰 인스턴스를 업데이트 하는 함수를 담고있는 <code class="highlighter-rouge">Watcher</code> 객체가 들어있다. 그래서 프로퍼티가 참조하고 있는 <code class="highlighter-rouge">Dep</code> 객체에 <code class="highlighter-rouge">depend()</code> 함수를 호출하게 된다.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// Dep (Observable) 객체의 함수다.</span>
+<span class="nx">depend</span> <span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">Dep</span><span class="p">.</span><span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">Dep</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">addDep</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="c1">// 앞서 등록된 `Watcher` (Subscriber) 객체의 함수다</span>
+<span class="nx">addDep</span> <span class="p">(</span><span class="nx">dep</span><span class="p">:</span> <span class="nx">Dep</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">id</span> <span class="o">=</span> <span class="nx">dep</span><span class="p">.</span><span class="nx">id</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">newDepIds</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">newDepIds</span><span class="p">.</span><span class="nx">add</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">newDeps</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">dep</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="k">this</span><span class="p">.</span><span class="nx">depIds</span><span class="p">.</span><span class="nx">has</span><span class="p">(</span><span class="nx">id</span><span class="p">))</span> <span class="p">{</span>
+      <span class="nx">dep</span><span class="p">.</span><span class="nx">addSub</span><span class="p">(</span><span class="k">this</span><span class="p">)</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>위와 같은 핑퐁을 거쳐 해당 프로퍼티의 <code class="highlighter-rouge">Dep(Observable)</code> 을 뷰 인스턴스를 업데이트 하는 함수를 가진 <code class="highlighter-rouge">Wathcer(Subscriber)</code> 의 구독이 등록되게 된다.</p>
+
+<blockquote>
+  <p>이런식으로 Dep 과 Wathcer 가 서로 핑퐁을 하면서 구독 등록의 과정이 이루어 지는데 중간에 this 가 계속 인자로 주어지다 보니 코드가 읽기가 많이 헷갈렸던것 같다..</p>
+</blockquote>
+
+<p>이후 <code class="highlighter-rouge">message</code> 의 값을 변경하게 되면 setter 로 등록해 두었던 <code class="highlighter-rouge">reactiveSetter</code> 함수가 호출되게 된다.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">set</span><span class="p">:</span> <span class="kd">function</span> <span class="nx">reactiveSetter</span> <span class="p">(</span><span class="nx">newVal</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">getter</span> <span class="p">?</span> <span class="nx">getter</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">:</span> <span class="nx">val</span>
+  <span class="cm">/* eslint-disable no-self-compare */</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">newVal</span> <span class="o">===</span> <span class="nx">value</span> <span class="o">||</span> <span class="p">(</span><span class="nx">newVal</span> <span class="o">!==</span> <span class="nx">newVal</span> <span class="o">&amp;&amp;</span> <span class="nx">value</span> <span class="o">!==</span> <span class="nx">value</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">return</span>
+  <span class="p">}</span>
+  <span class="cm">/* eslint-enable no-self-compare */</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">process</span><span class="p">.</span><span class="nx">env</span><span class="p">.</span><span class="nx">NODE_ENV</span> <span class="o">!==</span> <span class="dl">'</span><span class="s1">production</span><span class="dl">'</span> <span class="o">&amp;&amp;</span> <span class="nx">customSetter</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">customSetter</span><span class="p">()</span>
+  <span class="p">}</span>
+  <span class="c1">// #7981: for accessor properties without setter</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">getter</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="nx">setter</span><span class="p">)</span> <span class="k">return</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">setter</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">setter</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">newVal</span><span class="p">)</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">val</span> <span class="o">=</span> <span class="nx">newVal</span>
+  <span class="p">}</span>
+  <span class="nx">childOb</span> <span class="o">=</span> <span class="o">!</span><span class="nx">shallow</span> <span class="o">&amp;&amp;</span> <span class="nx">observe</span><span class="p">(</span><span class="nx">newVal</span><span class="p">)</span>
+  <span class="nx">dep</span><span class="p">.</span><span class="nx">notify</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>새로 받은 값을 set 하고 나면 프로퍼티의 <code class="highlighter-rouge">dep (Observable)</code> 객체에 <code class="highlighter-rouge">notify</code> 를 호출하여 상태의 전파를 일으킨다.</p>
+
+<p>이 객체를 구독하고 있던 <code class="highlighter-rouge">Watcher</code> 객체가 <code class="highlighter-rouge">updateComponent</code> 함수를 실행시켜 변경된 <code class="highlighter-rouge">message</code> 의 값을 읽어가고 virtual dom 을 계산하고 변경된 부분을 다시 렌더링 함으로써 <code class="highlighter-rouge">message</code> 의 값에 템플릿 내 디렉티브가 반응형으로 동작하게 된다.</p>
+
+<p>객체를 초기화 하는 과정에서 <code class="highlighter-rouge">data</code> 객체에 있는 프로퍼티를 순회하며 반응형을 설정하기 때문에 이 시점에 존재하지 않았던 프로퍼티에 대해서는 반응형으로 동작하지 않게 된다. 초기화 이후 <code class="highlighter-rouge">data</code> 객체에 프로퍼티를 아무리 추가해봤자 변경을 감지하지 못한다는 이야기다. 그렇기 때문에 빈 값으로라도 초기에 선언하여 인스턴스를 초기화 해야 하는 것이다.</p>
+
+<h2 id="놓치기-쉬운것들">놓치기 쉬운것들</h2>
+
+<h3 id="중첩된-객체">중첩된 객체</h3>
+
+<p>만약 반응형으로 동작해야할 값이 중첩된 객체라면 <code class="highlighter-rouge">data</code> 객체의 key 를 순회하며 반응형을 설정하는 과정에서 내부 객체를 재귀적으로 훑으며 반응형을 설정하므로 <strong>중첩된 객체의 프로퍼티 또한 빈값으로라도 선언되어 있어야 한다</strong></p>
+
+<p>코드를 보다가 이부분이 좀 헷갈렸는데 분명 <code class="highlighter-rouge">reactiveSetter</code> 내부에도 새로 받은 값에 대해서 재귀적으로 반응형하는 부분이 있었기 때문에 그렇다면 루트 수준에만 존재하면 자동으로 반응형이 되지 않나? 하고 생각했었다. 예를들어</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">vm</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="na">data</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">a</span><span class="p">:</span> <span class="p">{</span>
+      <span class="na">b</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>다음과 같은 컴포넌트가 있을 때 <code class="highlighter-rouge">a</code> 에는 이미 반응형이 설정되어 있으니, <code class="highlighter-rouge">vm.a.c = {d : 1}</code> 라고 주어졌을때 <code class="highlighter-rouge">a</code> 의 <code class="highlighter-rouge">reactiveSetter</code> 가 호출될것이고, 그러면 <code class="highlighter-rouge">{d : 1}</code> 객체에 대해서도 반응형이 잡히겠지. 하고 생각한 것인데 이는 기존에 알고있던 중첩된 객체의 프로퍼티 또한 빈값으로라도 선언이 되어 있어야 한다는 사실과 어긋나는 것이였다.</p>
+
+<p>그 이유는 단순하게 자바스크립트에서 <code class="highlighter-rouge">a.c = 4</code> 를 주었을 때 a 의 setter 가 호출되지 않는다. c 에 대한 setter 를 호출할뿐..</p>
+
+<p>위 상황에서는 a 와 b 모두 재귀적으로 <code class="highlighter-rouge">reactiveSetter</code> 가 등록되어 있으니 <code class="highlighter-rouge">data.a.b = 3</code> 은 반응형을 타겠지만 <code class="highlighter-rouge">data.a.c = 3</code> 은 c 에 대한 <code class="highlighter-rouge">reactiveSetter</code> 가 등록되어 있지 않으니 반응형을 타지 않는다. 이럴때 사용하기위해 만들어둔 API 가 <code class="highlighter-rouge">Vue.set</code> 이다.</p>
+
+<p>루트 수준 (<code class="highlighter-rouge">data</code> 객체의 직접적인 프로퍼티) 에 반응형을 추가하는 방법은 존재하지 않지만, 초기화시 존재했던 중첩된 프로퍼티 객체에 새로운 프로퍼티를 추가할 수 있는 API 는 제공한다.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">var</span> <span class="nx">vm</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Vue</span><span class="p">({</span>
+  <span class="na">data</span><span class="p">:</span> <span class="p">{</span>
+    <span class="na">a</span><span class="p">:</span> <span class="p">{</span>
+      <span class="na">b</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+
+<span class="nx">Vue</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="nx">vm</span><span class="p">.</span><span class="nx">a</span><span class="p">,</span> <span class="dl">'</span><span class="s1">c</span><span class="dl">'</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="nx">vm</span><span class="p">.</span><span class="nx">$set</span><span class="p">(</span><span class="nx">vm</span><span class="p">.</span><span class="nx">a</span><span class="p">,</span> <span class="dl">'</span><span class="s1">c</span><span class="dl">'</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span> <span class="c1">// 또는</span>
+</code></pre></div></div>
+
+<p>마찬가지로 다음과 같은 케이스도 반응형으로 동작하지 않는다.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">userProfile</span><span class="p">,</span> <span class="p">{</span>
+  <span class="na">age</span><span class="p">:</span> <span class="mi">27</span><span class="p">,</span>
+  <span class="na">favoriteColor</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Vue Green</span><span class="dl">'</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>setter 를 명시적으로 호출해주어야 한다.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">this</span><span class="p">.</span><span class="nx">userProfile</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">({},</span> <span class="k">this</span><span class="p">.</span><span class="nx">userProfile</span><span class="p">,</span> <span class="p">{</span>
+  <span class="na">age</span><span class="p">:</span> <span class="mi">27</span><span class="p">,</span>
+  <span class="na">favoriteColor</span><span class="p">:</span> <span class="dl">'</span><span class="s1">Vue Green</span><span class="dl">'</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<h3 id="배열">배열</h3>
+
+<p>두번째로 놓치기 쉬운게 배열이다. 뷰가 일반 객체의 setter 를 조작해 반응형을 태우는것 처럼 배열도 배열의 몇가지 함수를 조작해 반응형을 태운다.</p>
+
+<p>우선 반응형의 대상이 되는 객체의 타입이 <code class="highlighter-rouge">Array</code> 일 경우 이 객체의 프로토타입을 기존의 <code class="highlighter-rouge">Array.prototype</code> 객체를 확장한 커스텀 객체로 변경한다</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="kd">const</span> <span class="nx">arrayProto</span> <span class="o">=</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">prototype</span>
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">arrayMethods</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">create</span><span class="p">(</span><span class="nx">arrayProto</span><span class="p">)</span>
+
+<span class="kd">const</span> <span class="nx">methodsToPatch</span> <span class="o">=</span> <span class="p">[</span>
+  <span class="dl">'</span><span class="s1">push</span><span class="dl">'</span><span class="p">,</span>
+  <span class="dl">'</span><span class="s1">pop</span><span class="dl">'</span><span class="p">,</span>
+  <span class="dl">'</span><span class="s1">shift</span><span class="dl">'</span><span class="p">,</span>
+  <span class="dl">'</span><span class="s1">unshift</span><span class="dl">'</span><span class="p">,</span>
+  <span class="dl">'</span><span class="s1">splice</span><span class="dl">'</span><span class="p">,</span>
+  <span class="dl">'</span><span class="s1">sort</span><span class="dl">'</span><span class="p">,</span>
+  <span class="dl">'</span><span class="s1">reverse</span><span class="dl">'</span>
+<span class="p">]</span>
+
+<span class="cm">/**
+ * Intercept mutating methods and emit events
+ */</span>
+<span class="nx">methodsToPatch</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">// cache original method</span>
+  <span class="kd">const</span> <span class="nx">original</span> <span class="o">=</span> <span class="nx">arrayProto</span><span class="p">[</span><span class="nx">method</span><span class="p">]</span>
+  <span class="nx">def</span><span class="p">(</span><span class="nx">arrayMethods</span><span class="p">,</span> <span class="nx">method</span><span class="p">,</span> <span class="kd">function</span> <span class="nx">mutator</span> <span class="p">(...</span><span class="nx">args</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="nx">original</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="k">this</span><span class="p">,</span> <span class="nx">args</span><span class="p">)</span>
+    <span class="kd">const</span> <span class="nx">ob</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">__ob__</span>
+    <span class="kd">let</span> <span class="nx">inserted</span>
+    <span class="k">switch</span> <span class="p">(</span><span class="nx">method</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">case</span> <span class="dl">'</span><span class="s1">push</span><span class="dl">'</span><span class="p">:</span>
+      <span class="k">case</span> <span class="dl">'</span><span class="s1">unshift</span><span class="dl">'</span><span class="p">:</span>
+        <span class="nx">inserted</span> <span class="o">=</span> <span class="nx">args</span>
+        <span class="k">break</span>
+      <span class="k">case</span> <span class="dl">'</span><span class="s1">splice</span><span class="dl">'</span><span class="p">:</span>
+        <span class="nx">inserted</span> <span class="o">=</span> <span class="nx">args</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">break</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">inserted</span><span class="p">)</span> <span class="nx">ob</span><span class="p">.</span><span class="nx">observeArray</span><span class="p">(</span><span class="nx">inserted</span><span class="p">)</span>
+    <span class="c1">// notify change</span>
+    <span class="nx">ob</span><span class="p">.</span><span class="nx">dep</span><span class="p">.</span><span class="nx">notify</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nx">result</span>
+  <span class="p">})</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>확장된 <code class="highlighter-rouge">Array.prototype</code> 객체는 <code class="highlighter-rouge">push</code>,<code class="highlighter-rouge">pop</code>,<code class="highlighter-rouge">shift</code>,<code class="highlighter-rouge">unshift</code>,<code class="highlighter-rouge">splice</code>,<code class="highlighter-rouge">sort</code>,<code class="highlighter-rouge">reverse</code> 함수들에 대하여 호출될 때마다 변경사항을 구독자들에게 전파하고 특히 <code class="highlighter-rouge">push</code>, <code class="highlighter-rouge">unshift</code>, <code class="highlighter-rouge">splice</code> 의 경우 새롭게 배열에 추가된 객체에 대하여 반응형을 설정한다. 즉 위 함수외에는 배열이 변경되어도 변경된 내용이 반응형으로 동작하지 않게된다.</p>
+
+<p><code class="highlighter-rouge">arr[1] = "abc";</code> 와 같은 방법으로 배열을 변경하지 않도록 하자</p>
+
+
+<span class="post-date">
+  Written on
+  
+  April
+  7th,
+  2019
+  by
+  
+    genie-youn
+  
+</span>
+
+<div class="post-date">Feel free to share!</div>
+  <div class="sharing-icons">
+    <a href="https://twitter.com/intent/tweet?text=Vue와 반응형에 대해서 (Data)&amp;url=/journal/Vue%EC%99%80-%EB%B0%98%EC%9D%91%ED%98%95-DATA.html" target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u=/journal/Vue%EC%99%80-%EB%B0%98%EC%9D%91%ED%98%95-DATA.html&amp;title=Vue와 반응형에 대해서 (Data)" target="_blank"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+    <a href="https://plus.google.com/share?url=/journal/Vue%EC%99%80-%EB%B0%98%EC%9D%91%ED%98%95-DATA.html" target="_blank"><i class="fa fa-google-plus" aria-hidden="true"></i></a>
+  </div>
+</div>
+
+
+<div class="related">
+  <h1 >You may also enjoy:</h1>
+  
+  <ul class="related-posts">
+    
+      
+        
+          <li>
+            <h3>
+              <a href="/journal/Vue%EB%8A%94-%EC%99%9C-Filter%EB%A5%BC-%EC%82%AD%EC%A0%9C%ED%95%98%EB%A0%A4-%ED%96%88%EC%9D%84%EA%B9%8C.html">
+                Vue는 왜 filter를 삭제하려고 했을까?
+                <!--<img src="http://localhost:4000/images/">-->
+                <!--<small>June 19, 2019</small>-->
+              </a>
+            </h3>
+          </li>
+          
+        
+      
+        
+          <li>
+            <h3>
+              <a href="/journal/Vue%EC%99%80-Custom-Directive.html">
+                Vue 디렉티브와 Hook
+                <!--<img src="http://localhost:4000/images/">-->
+                <!--<small>April 26, 2019</small>-->
+              </a>
+            </h3>
+          </li>
+          
+        
+      
+        
+          <li>
+            <h3>
+              <a href="/journal/Intellij%EC%97%90%EC%84%9C-webpack-path-alias-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0.html">
+                intellij에서 webpack path alias 적용하기
+                <!--<img src="http://localhost:4000/images/">-->
+                <!--<small>April 11, 2019</small>-->
+              </a>
+            </h3>
+          </li>
+          
+        
+      
+    
+      
+        
+        
+      
+    
+  </ul>
+</div>
+
+
+
+  <section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = "blog-RDzIu87BYM";
+    var disqus_identifier = "/journal/Vue%EC%99%80-%EB%B0%98%EC%9D%91%ED%98%95-DATA.html";
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+    </div>
+
+    <footer class="footer">
+  
+  
+  
+    <a href="https://github.com/genie-youn" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+  
+
+  
+  
+    <a href="https://www.linkedin.com/in/%EC%A7%80%EC%88%98-%EC%9C%A4-78921a11b/" target="_blank"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+  
+
+  
+  
+    <a href="mailto:yjs930915@gmail.com" target="_blank"><i class="fa fa-envelope" aria-hidden="true"></i></a>
+  
+
+  <div class="post-date"><a href="/menu/about.html">오르막길 | 잊기전에 기록하기 by genie-youn</a></div>
+</footer>
+
+  </div>
+
+</body>
+</html>

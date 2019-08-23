@@ -1,6 +1,4 @@
 ---
 layout: page
-title: Welcome to Lagrange!
+title: 윤지수_genie.youn
 ---
-
-test
