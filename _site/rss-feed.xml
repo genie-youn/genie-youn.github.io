@@ -7,6 +7,20 @@
 		<atom:link href="/rss-feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>[번역]Vue.js 3: Future-Oriented Programming</title>
+				
+					<dc:creator>genie-youn</dc:creator>
+				
+				
+					<description>&lt;p&gt;이 글은 &lt;a href=&quot;https://blog.bitsrc.io/vue-js-3-future-oriented-programming-54dee797988b&quot;&gt;Vue.js 3: Future-Oriented Programming&lt;/a&gt;를 원저자의 허락을 받아 번역하였습니다.&lt;/p&gt;
+</description>
+				
+				<pubDate>Fri, 23 Aug 2019 00:00:00 +0900</pubDate>
+				<link>http://localhost:4000/journal/%EB%B2%88%EC%97%AD-Vue.js-3-Future-Oriented-Programming.html</link>
+				<guid isPermaLink="true">http://localhost:4000/journal/%EB%B2%88%EC%97%AD-Vue.js-3-Future-Oriented-Programming.html</guid>
+			</item>
+		
+			<item>
 				<title>Vue는 왜 filter를 삭제하려고 했을까?</title>
 				
 					<dc:creator>genie-youn</dc:creator>

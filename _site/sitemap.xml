@@ -21,6 +21,10 @@
 <lastmod>2019-06-19T00:00:00+09:00</lastmod>
 </url>
 <url>
+<loc>http://localhost:4000/journal/%EB%B2%88%EC%97%AD-Vue.js-3-Future-Oriented-Programming.html</loc>
+<lastmod>2019-08-23T00:00:00+09:00</lastmod>
+</url>
+<url>
 <loc>http://localhost:4000/menu/about.html</loc>
 </url>
 <url>
@@ -31,5 +35,8 @@
 </url>
 <url>
 <loc>http://localhost:4000/menu/writing.html</loc>
+</url>
+<url>
+<loc>http://localhost:4000/page2/</loc>
 </url>
 </urlset>
