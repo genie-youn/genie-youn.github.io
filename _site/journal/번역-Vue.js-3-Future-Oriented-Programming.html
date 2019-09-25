@@ -332,7 +332,36 @@ Vue.use(plugin)
 
 <p>함수 기반의 API가 제공하는 주요한 기능은 <code class="highlighter-rouge">setup()</code> 이라는 새로운 컴포넌트 옵션이다. 이름에서 알 수 있듯 새로운 API의 함수를 사용하여 컴포넌트의 로직을 설정한다. 이를 통해 스크롤 위치에 따른 상단 영역을 구현해 보자. 기본적인 컴포넌트는 다음과 같다.</p>
 
-<pre><code class="language-JavaScript">&lt;script&gt;
+<pre><code class="language-JavaScript">&lt;template&gt;
+    &lt;div class="container"&gt;
+        &lt;p
+            v-if="isLoading"
+            class="loading"
+        &gt;Posts loading...&lt;/p&gt;
+        &lt;template v-else&gt;
+            &lt;div
+                class="topbar"
+                :class="{ open: pageOffset &gt; 120 }"
+            &gt;
+                &lt;div class="container content"&gt;
+                    &lt;h3&gt;User # posts&lt;/h3&gt;
+                    &lt;span class="count"&gt;8 items&lt;/span&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;h1&gt;User # posts&lt;/h1&gt;
+            &lt;span class="count"&gt;8 items&lt;/span&gt;
+            &lt;div
+                v-for="post in posts"
+                :key="post.id"
+                class="box"
+            &gt;
+                &lt;h3&gt;&lt;/h3&gt;
+                &lt;p&gt;&lt;/p&gt;
+            &lt;/div&gt;
+        &lt;/template&gt;
+    &lt;/div&gt;
+&lt;/template&gt;
+&lt;script&gt;
 export default {
   setup(props) {
     const pageOffset = 0
@@ -354,7 +383,8 @@ export default {
   <p>(역주) <code class="highlighter-rouge">value</code>는 현재 <code class="highlighter-rouge">ref</code>로 이름이 변경되었다.</p>
 </blockquote>
 
-<pre><code class="language-JavaScript">&lt;script&gt;
+<pre><code class="language-JavaScript">&lt;template&gt;생략..&lt;/template&gt;
+&lt;script&gt;
 import { value, onMounted, onUnmounted } from 'vue-function-api'
 export default {
   setup(props) {
