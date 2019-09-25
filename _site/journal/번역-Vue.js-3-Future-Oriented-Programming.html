@@ -1,0 +1,613 @@
+<!doctype html>
+<html>
+
+<head>
+
+  <title>
+    
+      [번역]Vue.js 3: Future-Oriented Programming | 오르막길
+    
+  </title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/syntax.css">
+  <!-- Use Atom -->
+  <link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="오르막길" />
+  <!-- Use RSS-2.0 -->
+  <!--<link href="/rss-feed.xml" type="application/rss+xml" rel="alternate" title="오르막길 | 잊기전에 기록하기"/>
+  //-->
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700%7CPT+Sans:400">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quattrocento+Sans">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+
+  <!-- Google Analytics -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-146256933-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <!-- Use Jekyll SEO plugin -->
+  <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>[번역]Vue.js 3: Future-Oriented Programming | 오르막길</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="[번역]Vue.js 3: Future-Oriented Programming" />
+<meta name="author" content="genie-youn" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="unsplash-logoKyaw Tun" />
+<meta property="og:description" content="unsplash-logoKyaw Tun" />
+<link rel="canonical" href="http://localhost:4000/journal/%EB%B2%88%EC%97%AD-Vue.js-3-Future-Oriented-Programming.html" />
+<meta property="og:url" content="http://localhost:4000/journal/%EB%B2%88%EC%97%AD-Vue.js-3-Future-Oriented-Programming.html" />
+<meta property="og:site_name" content="오르막길" />
+<meta property="og:image" content="http://localhost:4000/kyaw-tun-_ABBh9ffIJU-unsplash.jpg" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2019-08-23T00:00:00+09:00" />
+<script type="application/ld+json">
+{"headline":"[번역]Vue.js 3: Future-Oriented Programming","dateModified":"2019-08-23T00:00:00+09:00","datePublished":"2019-08-23T00:00:00+09:00","description":"unsplash-logoKyaw Tun","author":{"@type":"Person","name":"genie-youn"},"image":"http://localhost:4000/kyaw-tun-_ABBh9ffIJU-unsplash.jpg","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/journal/%EB%B2%88%EC%97%AD-Vue.js-3-Future-Oriented-Programming.html"},"url":"http://localhost:4000/journal/%EB%B2%88%EC%97%AD-Vue.js-3-Future-Oriented-Programming.html","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+</head>
+
+
+<body>
+
+  <div class="container">
+    <header class="masthead">
+  <h3 class="masthead-title">
+    <a href="/">오르막길</a>
+    <small class="masthead-subtitle">잊기전에 기록하기</small>
+    <div class="menu">
+  <nav class="menu-content">
+    
+      <a href="/menu/about.html">About</a>
+    
+      <a href="/menu/writing.html">Writing</a>
+    
+  </nav>
+  <nav class="social-icons">
+    
+  
+  
+    <a href="https://github.com/genie-youn" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+  
+
+  
+  
+    <a href="https://www.linkedin.com/in/%EC%A7%80%EC%88%98-%EC%9C%A4-78921a11b/" target="_blank"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+  
+
+  
+  
+    <a href="mailto:yjs930915@gmail.com" target="_blank"><i class="fa fa-envelope" aria-hidden="true"></i></a>
+  
+
+  </nav>
+</div>
+
+  </h3>
+</header>
+
+
+    <div class="post-container">
+      <h1>
+  [번역]Vue.js 3: Future-Oriented Programming
+</h1>
+
+
+  <img src="/assets/img/kyaw-tun-_ABBh9ffIJU-unsplash.jpg">
+
+
+<center><small><a style="background-color:black;color:white;text-decoration:none;padding:4px 6px;font-family:-apple-system, BlinkMacSystemFont, &quot;San Francisco&quot;, &quot;Helvetica Neue&quot;, Helvetica, Ubuntu, Roboto, Noto, &quot;Segoe UI&quot;, Arial, sans-serif;font-size:12px;font-weight:bold;line-height:1.2;display:inline-block;border-radius:3px" href="https://unsplash.com/@kyawthutun?utm_medium=referral&amp;utm_campaign=photographer-credit&amp;utm_content=creditBadge" target="_blank" rel="noopener noreferrer" title="Download free do whatever you want high-resolution photos from Kyaw Tun"><span style="display:inline-block;padding:2px 3px"><svg xmlns="http://www.w3.org/2000/svg" style="height:12px;width:auto;position:relative;vertical-align:middle;top:-2px;fill:white" viewBox="0 0 32 32"><title>unsplash-logo</title><path d="M10 9V0h12v9H10zm12 5h10v18H0V14h10v9h12v-9z"></path></svg></span><span style="display:inline-block;padding:2px 3px">Kyaw Tun</span></a></small></center>
+
+<h2 id="들어가며">들어가며</h2>
+<p>실무에 Vue를 사용하면서 재사용 할 수 있는 로직들은 주로 믹스인으로 분리하여 사용하고 있었다.</p>
+
+<p>믹스인은 많은 편리함을 가져다 주었지만 늘 몇가지 마음을 무겁게 하는 부분이 있었는데, 특히 컴포넌트가 복잡해지고 이로 인해 믹스인이 중첩될 때 이 속성이 혹은 이 메소드가 대체 어디서 왔는지 코드를 읽기가 쉽지 않다는 부분이었다.</p>
+
+<p>아마 로직을 어떻게 깔끔하게 재사용할지에 대한 고민은 Vue를 꽤나 크고 복잡한 프로젝트에서 사용중이라면 아마 많은 사람들이 겪었을 고민이고 Vue는 이에 대한 해결책으로 Composition API를 제시했다.</p>
+
+<p>이와 관련하여 쉽게 설명한 포스트가 있어 번역하여 공유한다.</p>
+
+<hr />
+
+<p>이 글은 <a href="https://blog.bitsrc.io/vue-js-3-future-oriented-programming-54dee797988b">Vue.js 3: Future-Oriented Programming</a>를 원저자의 허락을 받아 번역하였다.</p>
+
+<p>Vue.js에 관심을 가지고 있다면 아마 곧 3번째 버전이 출시된다는 것을 알고 있을것이다. (미래에 이 글을 읽고 있다면, 이 글이 아직, 여전히 유효하기를 바란다. 😉)</p>
+
+<p>활발하게 개발되고 있는 새로운 버전의 기능들은 다음 <a href="https://github.com/vuejs/rfcs">레파지토리</a>의 RFC(request for comments)를 통해 확인할 수 있다. 그 중 하나인 functional-api는 Vue 어플리케이션을 개발하는 방식에 드라마틱한 변화를 가져올것 같다.</p>
+
+<blockquote>
+  <p>이 글은 JavaScript와 Vue에 관하여 어느정도 사전지식을 가지고 있다고 가정하고 쓰여졌다.</p>
+</blockquote>
+
+<blockquote>
+  <p>(역주) 현재는 <code class="highlighter-rouge">Function-based Component API</code> 에서 <code class="highlighter-rouge">Composition API</code>로 이름이 변경되고 약간의 변화가 생겼다. RFC는 <a href="https://github.com/vuejs/rfcs/pull/78">여기</a> 현재 버전의 도큐먼트는 <a href="https://vue-composition-api-rfc.netlify.com/#summary">여기</a>를 참고하면 된다.</p>
+</blockquote>
+
+<p>(광고) 시작하기 전에, <a href="https://bit.dev">Bit</a>을 사용하면 Vue 컴포넌트를 의존하고 있는 모듈들과 함께 캡슐화 할 수 있습니다. 이는 더 쉽게 코드를 재사용하고 유지보수하며 더 적은 오버헤드를 갖도록 잘 모듈화 된 애플리케이션을 설계하는걸 돕습니다. <strong>Bit을 이용하여 독립작인 Vue 컴포넌트를 공유하여 협업하세요.</strong></p>
+
+<h2 id="현재-api들의-문제">현재 API들의 문제</h2>
+<p>이해를 돕는 가장 좋은 방법은 예제를 보는것이니, 예제를 살펴보도록 하자. 유저의 데이터를 API로 부터 받아오고, 그 동안 로딩중이라는 상태를 표시하고 스크롤의 높이에 따라 변하는 헤더를 가진 컴포넌트를 구현해야 한다고 생각해보자. 아마 이렇게 생긴?</p>
+
+<p><img src="https://user-images.githubusercontent.com/16642635/64574170-5aee2100-d3a9-11e9-9ee4-8966dc7f05c4.gif" alt="1_QQigXylzQ95jxCb_FI_dCQ" /></p>
+
+<p>실제로 동작하는 예제는 <a href="https://enkot.github.io/vue-function-api-test/">이 곳</a>에서 볼 수 있다.</p>
+
+<p>여러 컴포넌트에서 재사용될 수 있는 로직은 추출하는것이 좋다. 현재 Vue 2.x의 API에서는 잘 알려진 몇가지 패턴이 있다.</p>
+
+<ul>
+  <li>믹스인 (<code class="highlighter-rouge">mixins</code> 옵션)</li>
+  <li>고차 <sup>Higer-order</sup> 컴포넌트 (HOCs)</li>
+</ul>
+
+<p>스크롤의 위치를 쫓는 로직은 믹스인으로, 데이터를 가져오는 로직은 고차 컴포넌트로 옮겨보자. 일반적인 구현은 다음과 같을것이다.</p>
+
+<p>Scroll Mixin:</p>
+<pre><code class="language-JavaScript">const scrollMixin = {
+    data() {
+        return {
+            pageOffset: 0
+        }
+    },
+    mounted() {
+        window.addEventListener('scroll', this.update)
+    },
+    destroyed() {
+        window.removeEventListener('scroll', this.update)
+    },
+    methods: {
+        update() {
+            this.pageOffset = window.pageYOffset
+        }
+    }
+}
+</code></pre>
+
+<p>여기서 스크롤 이벤트에 리스너를 추가하고, 페이지의 offset을 따라 <code class="highlighter-rouge">pageOffset</code>이라는 프로퍼티에 이 값을 저장한다.</p>
+
+<p>유저 정보를 가져오는 고차 컴포넌트는 다음과 같이 구현할 수 있다.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">import</span> <span class="p">{</span> <span class="nx">fetchUserPosts</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@/api</span><span class="dl">'</span>
+
+<span class="kd">const</span> <span class="nx">withPostsHOC</span> <span class="o">=</span> <span class="nx">WrappedComponent</span> <span class="o">=&gt;</span> <span class="p">({</span>
+    <span class="na">props</span><span class="p">:</span> <span class="nx">WrappedComponent</span><span class="p">.</span><span class="nx">props</span><span class="p">,</span>
+    <span class="nx">data</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="na">postsIsLoading</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+            <span class="na">fetchedPosts</span><span class="p">:</span> <span class="p">[]</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="na">watch</span><span class="p">:</span> <span class="p">{</span>
+        <span class="na">id</span><span class="p">:</span> <span class="p">{</span>
+            <span class="na">handler</span><span class="p">:</span> <span class="dl">'</span><span class="s1">fetchPosts</span><span class="dl">'</span><span class="p">,</span>
+            <span class="na">immediate</span><span class="p">:</span> <span class="kc">true</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="na">methods</span><span class="p">:</span> <span class="p">{</span>
+        <span class="k">async</span> <span class="nx">fetchPosts</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">postsIsLoading</span> <span class="o">=</span> <span class="kc">true</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">fetchedPosts</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">fetchUserPosts</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">id</span><span class="p">)</span>
+            <span class="k">this</span><span class="p">.</span><span class="nx">postsIsLoading</span> <span class="o">=</span> <span class="kc">false</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="na">computed</span><span class="p">:</span> <span class="p">{</span>
+        <span class="nx">postsCount</span><span class="p">()</span> <span class="p">{</span>
+            <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">fetchedPosts</span><span class="p">.</span><span class="nx">length</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="nx">render</span><span class="p">(</span><span class="nx">h</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">h</span><span class="p">(</span><span class="nx">WrappedComponent</span><span class="p">,</span> <span class="p">{</span>
+            <span class="na">props</span><span class="p">:</span> <span class="p">{</span>
+                <span class="p">...</span><span class="k">this</span><span class="p">.</span><span class="nx">$props</span><span class="p">,</span>
+                <span class="na">isLoading</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">postsIsLoading</span><span class="p">,</span>
+                <span class="na">posts</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">fetchedPosts</span><span class="p">,</span>
+                <span class="na">count</span><span class="p">:</span> <span class="k">this</span><span class="p">.</span><span class="nx">postsCount</span>
+            <span class="p">}</span>
+        <span class="p">})</span>
+    <span class="p">}</span>
+<span class="p">})</span>
+</code></pre></div></div>
+
+<p>여기서 <code class="highlighter-rouge">isLoading</code>, <code class="highlighter-rouge">posts</code> 프로퍼티는 각각 로딩 상태와 유저의 포스트에 관한 데이터로 초기화된다.
+<code class="highlighter-rouge">fetchPosts</code> 메소드는 인스턴스가 생성된 후 <code class="highlighter-rouge">props.id</code>의 값이 변경될 때 마다 새로운 <code class="highlighter-rouge">id</code>를 가진 유저의 포스트를 가져오기 위해 호출된다.</p>
+
+<p>위 코드는 HOC의 완전한 구현은 아니지만, 이 예제에는 충분할 것이다.
+여기서 우리는 특정 컴포넌트를 감싸서 컴포넌트의 프로퍼티와 데이터를 가져오는것과 관련된 프로퍼티를 함께 전달한다.</p>
+
+<p>감싸지는 컴포넌트는 다음과 같다.</p>
+
+<pre><code class="language-JavaScript">export default {
+    name: 'PostsPage',
+    mixins: [scrollMixin],
+    props: {
+        id: Number,
+        isLoading: Boolean,
+        posts: Array,
+        count: Number
+    }
+}
+</code></pre>
+
+<p>해당 프로퍼티에 접근하려면 HOC로 감싸야 한다.</p>
+
+<p><code class="highlighter-rouge">const PostsPage = withPostsHOC(PostsPage)</code></p>
+
+<blockquote>
+  <p>(역주) 해당 컴포넌트의 전체 코드는 <a href="https://github.com/enkot/vue-function-api-test/blob/master/src/components/PostsPageOptions.vue">여기</a>서 확인하시면 된다.</p>
+</blockquote>
+
+<p>특정 로직을 믹스인과 고차 컴포넌트를 통해 분리해 냈으므로, 이제 이 로직들은 다른 그 어떤 컴포넌트에서도 재사용 가능하다. 모든게 아름답게 끝나면 참 좋겠다만, 이 접근법들에는 몇가지 문제가 존재한다.</p>
+
+<h3 id="1-네임스페이스의-충돌-️">1. 네임스페이스의 충돌 ⚔️</h3>
+
+<p><code class="highlighter-rouge">PostPage</code> 컴포넌트에 <code class="highlighter-rouge">update</code> 라는 메소드를 추가해야한다고 생각해보자.</p>
+<pre><code class="language-JavaScript">export default {
+    name: 'PostsPage',
+    mixins: [scrollMixin],
+    props: {
+        id: Number,
+        isLoading: Boolean,
+        posts: Array,
+        count: Number
+    },
+    methods: {
+        update() {
+            console.log('some update logic here')
+        }
+    }
+}
+</code></pre>
+
+<p>페이지를 다시 열고 스크롤을 하게 되면, 상단 영역은 더 이상 보여지지 않는다. 우리가 추가한 메소드가 믹스인의 <code class="highlighter-rouge">update</code> 메소드를 덮어쓰기 때문이다.</p>
+
+<p>고차 컴포넌트에서도 마찬가지이다. 만약 <code class="highlighter-rouge">data</code>의 <code class="highlighter-rouge">fetchedPosts</code>를 <code class="highlighter-rouge">posts</code>로 변경하게 되면 문제가 발생하게 된다.</p>
+
+<pre><code class="language-JavaScript">const withPostsHOC = WrappedComponent =&gt; ({
+    props: WrappedComponent.props, // ['posts', ...]
+    data() {
+        return {
+            postsIsLoading: false,
+            posts: [] // fetchedPosts -&gt; posts
+        }
+    },
+</code></pre>
+
+<p>아마 이런 에러를 보게 될 것이다.</p>
+
+<p><img width="677" alt="스크린샷 2019-09-25 오전 9 15 46" src="https://user-images.githubusercontent.com/16642635/65559290-1354c100-df75-11e9-9059-3f671915dd3b.png" /></p>
+
+<p>그 이유는 감싸려고 했던 컴포넌트가 이미 <code class="highlighter-rouge">posts</code> 라는 이름의 프로퍼티를 사용하고 있기 때문이다.</p>
+
+<h3 id="2-명확하지-않은-출처-">2. 명확하지 않은 출처 📦</h3>
+<p>얼마 후에 이 컴포넌트에 다른 믹스인을 사용해야겠다고 결심한다면 어떻게 될까?</p>
+
+<pre><code class="language-JavaScript">export default {
+    name: 'PostsPage',
+    mixins: [scrollMixin, mouseMixin],
+</code></pre>
+
+<p>이 코드를 보고 <code class="highlighter-rouge">pageOffset</code> 프로퍼티가 어느 믹스인으로부터 주입되었는지 정확히 설명할수 있는가? 또는 두 믹스인 모두 <code class="highlighter-rouge">yOffset</code> 프로퍼티를 가질수도 있다. 이럴 경우 마지막 믹스인이 이전 믹스인에 정의되어 있던 <code class="highlighter-rouge">yOffset</code> 프로퍼티를 오버라이드 하게된다. 이는 좋은 코드가 아니며 때로는 예상치 못한 많은 버그를 만들어 낼지도 모른다. 😕</p>
+
+<h3 id="3-성능-">3. 성능 ⏱</h3>
+
+<p>고차 컴포넌트의 또다른 문제는 단지 비즈니스 로직을 재사용하기 위한 목적의 별개의 컴포넌트 인스턴스를 생성해야한다는 것이고, 이 또한 비용임을 명심해야 한다.</p>
+
+<h2 id="준비-">준비 🏗</h2>
+
+<p>똑같은 문제를 다음 버전에서 제공될 <code class="highlighter-rouge">function-based API</code> 를 통해 해결해 보자.</p>
+
+<p>Vue3는 아직 릴리즈되지 않았지만, <code class="highlighter-rouge">vue-function-api</code> 라는 플러그인을 통해 2.x에서도 3.x의 함수형 API를 사용할 수 있다.</p>
+
+<blockquote>
+  <p>(역주) rfc의 변화에 맞춰 플러그인 이름도 <code class="highlighter-rouge">composition-api</code> 로 변경되었다.</p>
+</blockquote>
+
+<p>우선 이 플러그인을 설치해야 한다.</p>
+
+<p><code class="highlighter-rouge">$ npm install vue-function-api</code></p>
+
+<p>그런다음 <code class="highlighter-rouge">Vue.use()</code>를 통해 이 플러그인을 설치할것을 명시한다.</p>
+
+<pre><code class="language-JavaScript">import Vue from 'vue'
+import { plugin } from 'vue-function-api'
+
+Vue.use(plugin)
+</code></pre>
+
+<p>함수 기반의 API가 제공하는 주요한 기능은 <code class="highlighter-rouge">setup()</code> 이라는 새로운 컴포넌트 옵션이다. 이름에서 알 수 있듯 새로운 API의 함수를 사용하여 컴포넌트의 로직을 설정한다. 이를 통해 스크롤 위치에 따른 상단 영역을 구현해 보자. 기본적인 컴포넌트는 다음과 같다.</p>
+
+<pre><code class="language-JavaScript">&lt;script&gt;
+export default {
+  setup(props) {
+    const pageOffset = 0
+    return {
+      pageOffset
+    }
+  }
+}
+&lt;/script&gt;
+</code></pre>
+
+<p><code class="highlighter-rouge">setup</code> 함수는 첫번째 인자로 <code class="highlighter-rouge">props</code> 객체를 받고, 이 <code class="highlighter-rouge">props</code> 객체는 반응적이다. 또한 템플릿의 렌더 컨텍스트에 노출될 <code class="highlighter-rouge">pageOffset</code> 프로퍼티를 포함하는 객체를 반환한다. <code class="highlighter-rouge">pageOffset</code> 도 반응형으로 동작하지만, 그 범위는 오로지 렌더 컨텍스트로 제한된다. 템플릿 내에서 다른 프로퍼티를 사용하듯이 사용할 수 있다.</p>
+
+<p><code class="highlighter-rouge">&lt;div class="topbar" :class="{ open: pageOffset &gt; 120 }"&gt;...&lt;/div&gt;</code></p>
+
+<p>그러나 이 프로퍼티는 모든 스크롤 이벤트에 의해 변경되어야 한다. 이를 구현하기 위해서는 컴포넌트가 마운트 될때 스크롤 이벤트 리스너를 등록하고, 언마운트 될 때 이 리스너를 제거해 주어야한다. 이럴 때 사용하기 위해서 <code class="highlighter-rouge">value</code>, <code class="highlighter-rouge">onMounted</code>, <code class="highlighter-rouge">onUnmounted</code> API 함수들이 존재한다.</p>
+
+<blockquote>
+  <p>(역주) <code class="highlighter-rouge">value</code>는 현재 <code class="highlighter-rouge">ref</code>로 이름이 변경되었다.</p>
+</blockquote>
+
+<pre><code class="language-JavaScript">&lt;script&gt;
+import { value, onMounted, onUnmounted } from 'vue-function-api'
+export default {
+  setup(props) {
+    const pageOffset = value(0)
+    const update = () =&gt; {
+        pageOffset.value = window.pageYOffset
+    }
+
+    onMounted(() =&gt; window.addEventListener('scroll', update))
+    onUnmounted(() =&gt; window.removeEventListener('scroll', update))
+
+    return {
+      pageOffset
+    }
+  }
+}
+&lt;/script&gt;
+</code></pre>
+
+<p>2.x 버전의 뷰가 가진 모든 라이프사이클훅에 해당하는 onXXX 함수를 <code class="highlighter-rouge">setup()</code> 내에서 사용할 수 있다는 것을 기억해라.</p>
+
+<p>위 예제를 통해 <code class="highlighter-rouge">pageOffset</code> 변수는 <code class="highlighter-rouge">.value</code> 라는 반응형 속성을 포함하고 있다는것도 알아차렸을 것이다. 이렇게 한번 감싸진 프로퍼티를 사용하는 이유는 자바스크립트에서 숫자나 문자열같은 원시값들은 참조 <sup>reference</sup> 로 전달되지 않기때문이다. 값 래퍼는 임의의 값 유형들에 대해 변경 가능하고 반응형인 참조를 전달할 수 있는 방법을 제공한다.</p>
+
+<p><code class="highlighter-rouge">pageOffset</code> 객체가 어떻게 구성되어 있는지는 다음을 참고한다.</p>
+
+<p><img width="682" alt="스크린샷 2019-09-25 오전 9 17 21" src="https://user-images.githubusercontent.com/16642635/65559339-4bf49a80-df75-11e9-92cf-1ab433493740.png" /></p>
+
+<p>다음은 사용자의 데이터를 서버에서 가져오는 기능을 구현할 차례다. 옵션 기반의 API를 사용할 때 뿐만 아니라 함수 기반 API를 사용할 때도 계산된 속성과 와쳐를 선언할 수 있다.</p>
+
+<pre><code class="language-JavaScript">&lt;script&gt;
+import {
+    value,
+    watch,
+    computed,
+    onMounted,
+    onUnmounted
+} from 'vue-function-api'
+import { fetchUserPosts } from '@/api'
+export default {
+  setup(props) {
+    const pageOffset = value(0)
+    const isLoading = value(false)
+    const posts = value([])
+    const count = computed(() =&gt; posts.value.length)
+    const update = () =&gt; {
+      pageOffset.value = window.pageYOffset
+    }
+
+    onMounted(() =&gt; window.addEventListener('scroll', update))
+    onUnmounted(() =&gt; window.removeEventListener('scroll', update))
+
+    watch(
+      () =&gt; props.id,
+      async id =&gt; {
+        isLoading.value = true
+        posts.value = await fetchUserPosts(id)
+        isLoading.value = false
+      }
+    )
+
+    return {
+      isLoading,
+      pageOffset,
+      posts,
+      count
+    }
+  }
+}
+&lt;/script&gt;
+</code></pre>
+
+<p>계산된 속성은 2.x 에서와 동일하게 동작한다. 의존하고 있는 값을 추적하고 오로지 이 값이 변경될 때만 다시 계산된다.</p>
+
+<p><code class="highlighter-rouge">watch</code> 함수에 전달되는 첫번째 인자는 “source” 라고 하는데 다음중 하나를 넘겨줄 수 있다.</p>
+
+<ul>
+  <li>getter 함수</li>
+  <li>value wrapper</li>
+  <li>위의 두 타입을 원소로 갖는 배열</li>
+</ul>
+
+<p>두번째 인자는 getter나 value wrapper의 값이 변경되었을 때 호출될 콜백이다.</p>
+
+<p>함수 기반의 API를 사용하여 합성될 컴포넌트를 구현하였다. 다음 단계는 이 로직들은 재사용 가능하게 만드는 것이다.</p>
+
+<h2 id="분해--️">분해 🎻 ✂️</h2>
+
+<p>이 부분이 가장 흥미로운 부분인데, 논리와 관련된 코드를 재사용하기 위해 “composition function” 을 이용해 추출한 다음 반응형 상태를 반환할 수 있다.</p>
+
+<pre><code class="language-JavaScript">import {
+    value,
+    watch,
+    computed,
+    onMounted,
+    onUnmounted
+} from 'vue-function-api'
+import { fetchUserPosts } from '@/api'
+function useScroll() {
+    const pageOffset = value(0)
+    const update = () =&gt; {
+        pageOffset.value = window.pageYOffset
+    }
+    onMounted(() =&gt; window.addEventListener('scroll', update))
+    onUnmounted(() =&gt; window.removeEventListener('scroll', update))
+    return { pageOffset }
+}
+function useFetchPosts(props) {
+    const isLoading = value(false)
+    const posts = value([])
+    watch(
+        () =&gt; props.id,
+        async id =&gt; {
+            isLoading.value = true
+            posts.value = await fetchUserPosts(id)
+            isLoading.value = false
+        }
+    )
+    return { isLoading, posts }
+}
+export default {
+    props: {
+        id: Number
+    },
+    setup(props) {
+        const { isLoading, posts } = useFetchPosts(props)
+        const count = computed(() =&gt; posts.value.length)
+        return {
+            ...useScroll(),
+            isLoading,
+            posts,
+            count
+        }
+    }
+}
+</code></pre>
+
+<p>어떻게 <code class="highlighter-rouge">useFetchPosts</code> 와 <code class="highlighter-rouge">useScroll</code> 함수를 사용하여 반응형 속성을 반환하도록 하였는지 주목하라.</p>
+
+<p>이러한 함수들은 별도의 파일로 분리해낸 뒤 다른 컴포넌트에서도 사용할 수 있다. 기존의 옵션 기반의 해결책들과 비교해보면 다음과 같다.</p>
+
+<ul>
+  <li>템플릿에 노출되는 프로퍼티는 컴포지션 함수로부터 반환된 값이므로 명확한 출처를 갖는다.</li>
+  <li>컴포지션 함수로부터 반환된 값이므로 명확한 이름을 가지기 때문에 네임스페이스 충돌이 없다.</li>
+  <li>단순히 로직을 재활용하기 위해 쓸데없는 인스턴스를 생성하지 않아도 된다.</li>
+</ul>
+
+<p>공식 RFC 페이지를 참고하면 이보다 더 많은 이점들을 찾을 수 있다.
+이 아티클에서 사용된 모든 예제 코드는 <a href="https://github.com/enkot/vue-function-api-test">여기</a>서 확인할 수 있다.
+동작하는 예제는 <a href="https://enkot.github.io/vue-function-api-test/">여기</a>에서 확인할 수 있다.</p>
+
+
+<span class="post-date">
+  Written on
+  
+  August
+  23rd
+    ,
+  2019
+  by
+  
+    genie-youn
+  
+</span>
+
+<div class="post-date">Feel free to share!</div>
+  <div class="sharing-icons">
+    <a href="https://twitter.com/intent/tweet?text=[번역]Vue.js 3: Future-Oriented Programming&amp;url=/journal/%EB%B2%88%EC%97%AD-Vue.js-3-Future-Oriented-Programming.html" target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u=/journal/%EB%B2%88%EC%97%AD-Vue.js-3-Future-Oriented-Programming.html&amp;title=[번역]Vue.js 3: Future-Oriented Programming" target="_blank"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+    <a href="https://plus.google.com/share?url=/journal/%EB%B2%88%EC%97%AD-Vue.js-3-Future-Oriented-Programming.html" target="_blank"><i class="fa fa-google-plus" aria-hidden="true"></i></a>
+  </div>
+</div>
+
+
+<div class="related">
+  <h1 >You may also enjoy:</h1>
+  
+  <ul class="related-posts">
+    
+      
+        
+        
+      
+        
+          <li>
+            <h3>
+              <a href="/journal/Vue%EB%8A%94-%EC%99%9C-Filter%EB%A5%BC-%EC%82%AD%EC%A0%9C%ED%95%98%EB%A0%A4-%ED%96%88%EC%9D%84%EA%B9%8C.html">
+                Vue는 왜 filter를 삭제하려고 했을까?
+                <!--<img src="http://localhost:4000/images/">-->
+                <!--<small>June 19, 2019</small>-->
+              </a>
+            </h3>
+          </li>
+          
+        
+      
+        
+          <li>
+            <h3>
+              <a href="/journal/Vue%EC%99%80-Custom-Directive.html">
+                Vue 디렉티브와 Hook
+                <!--<img src="http://localhost:4000/images/">-->
+                <!--<small>April 26, 2019</small>-->
+              </a>
+            </h3>
+          </li>
+          
+        
+      
+    
+  </ul>
+</div>
+
+
+
+  <section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = "blog-RDzIu87BYM";
+    var disqus_identifier = "/journal/%EB%B2%88%EC%97%AD-Vue.js-3-Future-Oriented-Programming.html";
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+    </div>
+
+    <footer class="footer">
+  
+  
+  
+    <a href="https://github.com/genie-youn" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+  
+
+  
+  
+    <a href="https://www.linkedin.com/in/%EC%A7%80%EC%88%98-%EC%9C%A4-78921a11b/" target="_blank"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+  
+
+  
+  
+    <a href="mailto:yjs930915@gmail.com" target="_blank"><i class="fa fa-envelope" aria-hidden="true"></i></a>
+  
+
+  <div class="post-date"><a href="/menu/about.html">오르막길 | 잊기전에 기록하기 by genie-youn</a></div>
+</footer>
+
+  </div>
+
+</body>
+</html>
