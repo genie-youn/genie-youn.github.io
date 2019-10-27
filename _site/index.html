@@ -106,6 +106,76 @@
       
 <div class="posts">
   <h1>
+    <a href="/journal/axios%EC%99%80_retry.html">Axios와 Retry</a>
+  </h1>
+  
+  <div class="thumbnail-container">
+    <a href="/journal/axios%EC%99%80_retry.html"><img src="/assets/img/alberto-barrera-G3GL5lJygz8-unsplash.jpg"></a>
+  </div>
+  
+  <p>
+    unsplash-logoAlberto Barrera
+
+Axios와 Retry
+
+들어가며
+axios는 실패시 체인의 중간단계에서나 설정을 통한 retry를 제공하지 않는다. 사용자가 직접 구현해 주어야 하는데, 방법은 크게 다음과 같다.
+
+Interceptor 활용
+실패시 인터셉터로 잡아 재시도 하는 방법이다. axios 개발팀도 이 방법을 권하고 있다.
+
+axios.interceptors.response.use(null, (error) =&gt; {
+  if (error.config &amp;&amp; error.response &amp;&amp; error.response.status === 401) {
+    ... <a href="/journal/axios%EC%99%80_retry.html">Read more</a>
+    <span class="post-date"><i class="fa fa-calendar" aria-hidden="true"></i> 24 Oct 2019 - <i class="fa fa-clock-o" aria-hidden="true"></i> 
+  
+  
+    1 minute read
+  
+
+
+
+</span>
+  </p>
+</div>
+
+<div class="posts">
+  <h1>
+    <a href="/journal/axios%EC%99%80_global_interceptor.html">Axios와 Global Interceptor</a>
+  </h1>
+  
+  <div class="thumbnail-container">
+    <a href="/journal/axios%EC%99%80_global_interceptor.html"><img src="/assets/img/wesley-pribadi-H_VoKBY7FBs-unsplash.jpg"></a>
+  </div>
+  
+  <p>
+    unsplash-logoWesley Pribadi
+
+Axios에서 Global inherited Interceptor 구현하기
+
+Interceptor
+Axios에서 요청을 보냈을 때나, 응답을 받았을 때 그 값을 가로채 무언가 액션을 취하려면 interceptor 를 사용하면 된다.
+이 interceptor는 두 가지 방법으로 사용 가능하다.
+
+글로벌 스코프에 설정해서 쓰거나
+import axios from "axios";
+// Add a request interceptor
+axios.interceptors.request.use(function (config) {
+    // Do something before r... <a href="/journal/axios%EC%99%80_global_interceptor.html">Read more</a>
+    <span class="post-date"><i class="fa fa-calendar" aria-hidden="true"></i> 24 Oct 2019 - <i class="fa fa-clock-o" aria-hidden="true"></i> 
+  
+  
+    1 minute read
+  
+
+
+
+</span>
+  </p>
+</div>
+
+<div class="posts">
+  <h1>
     <a href="/journal/%ED%81%AC%EB%A1%AC%EC%97%90%EC%84%9C-Remote-Device%EB%A5%BC-%EB%AA%BB%EC%B0%BE%EC%9D%84%EB%95%8C.html">크롬 개발자도구에서 Remote Device를 못 찾을 때</a>
   </h1>
   
@@ -191,75 +261,6 @@
   
   
     5 minute read
-  
-
-
-
-</span>
-  </p>
-</div>
-
-<div class="posts">
-  <h1>
-    <a href="/journal/Vue%EC%99%80-Custom-Directive.html">Vue 디렉티브와 Hook</a>
-  </h1>
-  
-  <div class="thumbnail-container">
-    <a href="/journal/Vue%EC%99%80-Custom-Directive.html"><img src="/assets/img/35mm-IstXvxHGoA4-unsplash.jpg"></a>
-  </div>
-  
-  <p>
-    Photo by frank 35mm on Unsplash
-
-이번엔 커스텀하게 만든 디렉티브가 예상치 못한 버그를 만들어내서 디버깅을 찍다보니 unbind 훅을 제대로 구현해 주지 않아 디렉티브 내부의 innerHTML 이 제대로 초기화되지 않아서 발생한 이슈였다. 이 참에 Vue 와 디렉티브에 관하여 정리하려 한다.
-
-Directive?
-
-디렉티브는 v- 접두어를 가진 특별한 attribute 이다. 값으로 단일 자바스크립트 표현식을 받으며 하는 일은 이 표현식의 결과값이 변경되었을 때 ‘반응형’으로 DOM 에 side-effect 를 적용하는 것이다.
-
-가장 처음 접하는 v-if가 디렉티브중 하나인데
-
-&lt;p... <a href="/journal/Vue%EC%99%80-Custom-Directive.html">Read more</a>
-    <span class="post-date"><i class="fa fa-calendar" aria-hidden="true"></i> 26 Apr 2019 - <i class="fa fa-clock-o" aria-hidden="true"></i> 
-  
-  
-    2 minute read
-  
-
-
-
-</span>
-  </p>
-</div>
-
-<div class="posts">
-  <h1>
-    <a href="/journal/Intellij%EC%97%90%EC%84%9C-webpack-path-alias-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0.html">intellij에서 webpack path alias 적용하기</a>
-  </h1>
-  
-  <div class="thumbnail-container">
-    <a href="/journal/Intellij%EC%97%90%EC%84%9C-webpack-path-alias-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0.html"><img src="/assets/img/fotis-fotopoulos-LJ9KY8pIH3E-unsplash.jpg"></a>
-  </div>
-  
-  <p>
-    Photo by Fotis Fotopoulos on Unsplash
-
-Webpack path alias
-
-Webpack 은 다른 모듈을 불러오는걸 좀 더 간편하게 하기 위해 다음과 같은 설정을 제공한다. 예를들면
-
-webpack.config.js
-module.exports = {
-  //...
-  resolve: {
-    alias: {
-      @: path.resolve(__dirname, 'src/'),
-      @unit: path.resolve(__dirname, 'test/unit')
-      @functions: path.resolve(__dirname, 'src/commons/utils/fun... <a href="/journal/Intellij%EC%97%90%EC%84%9C-webpack-path-alias-%EC%84%A4%EC%A0%95%ED%95%98%EA%B8%B0.html">Read more</a>
-    <span class="post-date"><i class="fa fa-calendar" aria-hidden="true"></i> 11 Apr 2019 - <i class="fa fa-clock-o" aria-hidden="true"></i> 
-  
-  
-    less than 1 minute read
   
 
 
