@@ -7,6 +7,20 @@
 		<atom:link href="/rss-feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>크롬 개발자도구에서 Remote Device를 찾지 못할 때</title>
+				
+					<dc:creator>genie-youn</dc:creator>
+				
+				
+					<description>&lt;h1 id=&quot;크롬-개발자도구에서-remote-device를-못-찾을-때&quot;&gt;크롬 개발자도구에서 Remote Device를 못 찾을 때&lt;/h1&gt;
+</description>
+				
+				<pubDate>Mon, 06 Jan 2020 00:00:00 +0900</pubDate>
+				<link>http://localhost:4000/journal/chrome_devtools_remote_device.html</link>
+				<guid isPermaLink="true">http://localhost:4000/journal/chrome_devtools_remote_device.html</guid>
+			</item>
+		
+			<item>
 				<title>Axios와 Retry</title>
 				
 					<dc:creator>genie-youn</dc:creator>
