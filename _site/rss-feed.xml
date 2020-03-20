@@ -7,6 +7,21 @@
 		<atom:link href="/rss-feed.xml" rel="self" type="application/rss+xml" />
 		
 			<item>
+				<title>Unified Numberformat 맛보기</title>
+				
+					<dc:creator>genie-youn</dc:creator>
+				
+				
+					<description>&lt;h2 id=&quot;들어가며&quot;&gt;들어가며&lt;/h2&gt;
+&lt;p&gt;얼마 전 &lt;a href=&quot;https://github.com/tc39/notes/blob/master/meetings/2020-02/february-5.md#unified-number-format-for-stage-4&quot;&gt;tc39의 2월 미팅&lt;/a&gt;에서 &lt;code class=&quot;highlighter-rouge&quot;&gt;proposal-unified-intl-numberformat&lt;/code&gt;가 스테이지4로 승격되었다.&lt;/p&gt;
+</description>
+				
+				<pubDate>Fri, 20 Mar 2020 00:00:00 +0900</pubDate>
+				<link>http://localhost:4000/journal/proposal_unified_intl_numberformat_%EB%A7%9B%EB%B3%B4%EA%B8%B0.html</link>
+				<guid isPermaLink="true">http://localhost:4000/journal/proposal_unified_intl_numberformat_%EB%A7%9B%EB%B3%B4%EA%B8%B0.html</guid>
+			</item>
+		
+			<item>
 				<title>크롬 개발자도구에서 Remote Device를 찾지 못할 때</title>
 				
 					<dc:creator>genie-youn</dc:creator>
@@ -130,21 +145,6 @@
 				<pubDate>Sun, 07 Apr 2019 00:00:00 +0900</pubDate>
 				<link>http://localhost:4000/journal/Vue%EC%99%80-%EB%B0%98%EC%9D%91%ED%98%95-DATA.html</link>
 				<guid isPermaLink="true">http://localhost:4000/journal/Vue%EC%99%80-%EB%B0%98%EC%9D%91%ED%98%95-DATA.html</guid>
-			</item>
-		
-			<item>
-				<title>Cloud Native day Seoul 2018 후기</title>
-				
-					<dc:creator>genie-youn</dc:creator>
-				
-				
-					<description>&lt;p&gt;Pivotal이 한국에서 처음 &lt;code class=&quot;highlighter-rouge&quot;&gt;Cloud Native Day&lt;/code&gt;라는 이름으로 세미나를 진행하였다. Spring의 리드그룹인 Pivotal이 어떤 방향성을 갖고 있는지 궁금하기도 했고, 혹시 향후에 Spring으로 MSA를 개발할 때 도움이 될까 싶어 참여하게 됐다.
-히로쿠의 &lt;a href=&quot;https://12factor.net/ko/&quot;&gt;The Twelve-Factor app&lt;/a&gt; 같은걸 기대하고 갔다.&lt;/p&gt;
-</description>
-				
-				<pubDate>Tue, 05 Jun 2018 00:00:00 +0900</pubDate>
-				<link>http://localhost:4000/journal/Cloud-Native-day-Seoul-2018.html</link>
-				<guid isPermaLink="true">http://localhost:4000/journal/Cloud-Native-day-Seoul-2018.html</guid>
 			</item>
 		
 	</channel>

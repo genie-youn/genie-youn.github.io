@@ -41,6 +41,10 @@
 <lastmod>2020-01-06T00:00:00+09:00</lastmod>
 </url>
 <url>
+<loc>http://localhost:4000/journal/proposal_unified_intl_numberformat_%EB%A7%9B%EB%B3%B4%EA%B8%B0.html</loc>
+<lastmod>2020-03-20T00:00:00+09:00</lastmod>
+</url>
+<url>
 <loc>http://localhost:4000/menu/about.html</loc>
 </url>
 <url>
@@ -54,5 +58,8 @@
 </url>
 <url>
 <loc>http://localhost:4000/page2/</loc>
+</url>
+<url>
+<loc>http://localhost:4000/page3/</loc>
 </url>
 </urlset>

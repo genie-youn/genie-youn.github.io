@@ -1,0 +1,542 @@
+<!doctype html>
+<html>
+
+<head>
+
+  <title>
+    
+      Unified Numberformat 맛보기 | 오르막길
+    
+  </title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta property="og:image:secure_url" content="https://user-images.githubusercontent.com/16642635/63559805-66121600-c58e-11e9-989b-3eb58c2a15ef.jpeg" />
+
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/syntax.css">
+  <!-- Use Atom -->
+  <link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="오르막길" />
+  <!-- Use RSS-2.0 -->
+  <!--<link href="/rss-feed.xml" type="application/rss+xml" rel="alternate" title="오르막길 | 잊기전에 기록하기"/>
+  //-->
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700%7CPT+Sans:400">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quattrocento+Sans">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+
+  <!-- Google Analytics -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-146256933-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <!-- Use Jekyll SEO plugin -->
+  <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Unified Numberformat 맛보기 | 오르막길</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Unified Numberformat 맛보기" />
+<meta name="author" content="genie-youn" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="들어가며 얼마 전 tc39의 2월 미팅에서 proposal-unified-intl-numberformat가 스테이지4로 승격되었다." />
+<meta property="og:description" content="들어가며 얼마 전 tc39의 2월 미팅에서 proposal-unified-intl-numberformat가 스테이지4로 승격되었다." />
+<link rel="canonical" href="http://localhost:4000/journal/proposal_unified_intl_numberformat_%EB%A7%9B%EB%B3%B4%EA%B8%B0.html" />
+<meta property="og:url" content="http://localhost:4000/journal/proposal_unified_intl_numberformat_%EB%A7%9B%EB%B3%B4%EA%B8%B0.html" />
+<meta property="og:site_name" content="오르막길" />
+<meta property="og:image" content="http://localhost:4000/DSC01308.jpg" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-03-20T00:00:00+09:00" />
+<script type="application/ld+json">
+{"image":"http://localhost:4000/DSC01308.jpg","author":{"@type":"Person","name":"genie-youn"},"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/journal/proposal_unified_intl_numberformat_%EB%A7%9B%EB%B3%B4%EA%B8%B0.html"},"description":"들어가며 얼마 전 tc39의 2월 미팅에서 proposal-unified-intl-numberformat가 스테이지4로 승격되었다.","@type":"BlogPosting","url":"http://localhost:4000/journal/proposal_unified_intl_numberformat_%EB%A7%9B%EB%B3%B4%EA%B8%B0.html","headline":"Unified Numberformat 맛보기","dateModified":"2020-03-20T00:00:00+09:00","datePublished":"2020-03-20T00:00:00+09:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+</head>
+
+
+<body>
+
+  <div class="container">
+    <header class="masthead">
+  <h3 class="masthead-title">
+    <a href="/">오르막길</a>
+    <small class="masthead-subtitle">잊기전에 기록하기</small>
+    <div class="menu">
+  <nav class="menu-content">
+    
+      <a href="/menu/about.html">About</a>
+    
+      <a href="/menu/writing.html">Writing</a>
+    
+  </nav>
+  <nav class="social-icons">
+    
+  
+  
+    <a href="https://github.com/genie-youn" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+  
+
+  
+  
+    <a href="https://www.linkedin.com/in/%EC%A7%80%EC%88%98-%EC%9C%A4-78921a11b/" target="_blank"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+  
+
+  
+  
+    <a href="mailto:yjs930915@gmail.com" target="_blank"><i class="fa fa-envelope" aria-hidden="true"></i></a>
+  
+
+  </nav>
+</div>
+
+  </h3>
+</header>
+
+
+    <div class="post-container">
+      <h1>
+  Unified Numberformat 맛보기
+</h1>
+
+
+  <img src="/assets/img/DSC01308.jpg">
+
+
+<h2 id="들어가며">들어가며</h2>
+<p>얼마 전 <a href="https://github.com/tc39/notes/blob/master/meetings/2020-02/february-5.md#unified-number-format-for-stage-4">tc39의 2월 미팅</a>에서 <code class="highlighter-rouge">proposal-unified-intl-numberformat</code>가 스테이지4로 승격되었다.</p>
+
+<p><code class="highlighter-rouge">proposal-unified-intl-numberformat</code>는 <code class="highlighter-rouge">Intl.NumberFormat</code>에 측정 단위와 회계적 표현 등 숫자를 형식화 하는 기능을 제안한다.</p>
+
+<p>이 아티클에선 <code class="highlighter-rouge">Intl</code>과 제안하고 있는 <code class="highlighter-rouge">Unified Numberformat</code>에 관한 MDN을 번역하고, 한국어 예제를 간략하게 추가한다.</p>
+
+<h3 id="intl">Intl?</h3>
+<p><code class="highlighter-rouge">Intl</code> 객체는 ECMAScript의 국제화를 위한 API <a href="https://www.ecma-international.org/ecma-402/1.0/#sec-8">ECMA-402</a> 로 정의된 각 지역의 언어에 맞는 문자열 비교,숫자와 날짜 및 시간에 대한 형식화를 제공하는 객체로 다음과 같은 생성자를 포함하는 네임스페이스이다.</p>
+
+<h4 id="intlcollator">Intl.Collator</h4>
+<p>각 언어에 맞는 문자열 비교에 대한 기능을 제공하는 <code class="highlighter-rouge">Collator</code> 객체를 생성하는 생성자이다.</p>
+
+<p><code class="highlighter-rouge">Collator</code> 객체는 두개의 문자열을 비교하는 <code class="highlighter-rouge">compare()</code> 와 객체의 설정 정보를 반환하는 <code class="highlighter-rouge">resolvedOptions()</code> 두개의 메서드를 가지고 있다.</p>
+
+<p>독일어(de) 와 스웨덴어(sv) 는 동일하게 ä 를 사용하지만 독일어는 a 다음에, 스페인어에선 z 다음에 정렬된다.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">letterSort</span><span class="p">(</span><span class="nx">lang</span><span class="p">,</span> <span class="nx">letters</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">letters</span><span class="p">.</span><span class="nx">sort</span><span class="p">(</span><span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">Collator</span><span class="p">(</span><span class="nx">lang</span><span class="p">).</span><span class="nx">compare</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nx">letters</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">letterSort</span><span class="p">(</span><span class="dl">'</span><span class="s1">de</span><span class="dl">'</span><span class="p">,</span> <span class="p">[</span><span class="dl">'</span><span class="s1">a</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">z</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">ä</span><span class="dl">'</span><span class="p">]));</span>
+<span class="c1">// ["a", "ä", "z"]</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">letterSort</span><span class="p">(</span><span class="dl">'</span><span class="s1">sv</span><span class="dl">'</span><span class="p">,</span> <span class="p">[</span><span class="dl">'</span><span class="s1">a</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">z</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">ä</span><span class="dl">'</span><span class="p">]));</span>
+<span class="c1">// ["a", "z", "ä"]</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>역주: <code class="highlighter-rouge">Array.prototype.sort</code> 는 인자로 <code class="highlighter-rouge">compareFunction</code>을 따로 지정하지 않으면 각 문자의 유니코드 포인트 값에 따라 정렬한다. 따라서 한국어는 별도의 인자 없이도 정렬이 가능하다.</p>
+  <div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">([</span><span class="dl">"</span><span class="s2">오해영</span><span class="dl">"</span><span class="p">,</span><span class="dl">"</span><span class="s2">박도경</span><span class="dl">"</span><span class="p">,</span><span class="dl">"</span><span class="s2">한태진</span><span class="dl">"</span><span class="p">,</span><span class="dl">"</span><span class="s2">에릭</span><span class="dl">"</span><span class="p">,</span><span class="dl">"</span><span class="s2">서현진</span><span class="dl">"</span><span class="p">,</span><span class="dl">"</span><span class="s2">전혜빈</span><span class="dl">"</span><span class="p">].</span><span class="nx">sort</span><span class="p">());</span>
+<span class="c1">// ["박도경", "서현진", "에릭", "오해영", "전혜빈", "한태진"]</span>
+</code></pre></div>  </div>
+</blockquote>
+
+<h4 id="intldatetimeformat">Intl.DateTimeFormat</h4>
+<p>각 언어에 맞는 시간과 날짜 서식을 적용할 수 있는 객체의 생성자이다.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">date</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">(</span><span class="nb">Date</span><span class="p">.</span><span class="nx">UTC</span><span class="p">(</span><span class="mi">2012</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">));</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">DateTimeFormat</span><span class="p">(</span><span class="dl">'</span><span class="s1">en-US</span><span class="dl">'</span><span class="p">).</span><span class="nx">format</span><span class="p">(</span><span class="nx">date</span><span class="p">));</span>
+<span class="c1">// "12/20/2012"</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">DateTimeFormat</span><span class="p">(</span><span class="dl">'</span><span class="s1">en-GB</span><span class="dl">'</span><span class="p">).</span><span class="nx">format</span><span class="p">(</span><span class="nx">date</span><span class="p">));</span>
+<span class="c1">// "20/12/2012"</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">DateTimeFormat</span><span class="p">(</span><span class="dl">'</span><span class="s1">ko-KR</span><span class="dl">'</span><span class="p">).</span><span class="nx">format</span><span class="p">(</span><span class="nx">date</span><span class="p">));</span>
+<span class="c1">// "2012. 12. 20."</span>
+</code></pre></div></div>
+
+<h4 id="intllistformat">Intl.ListFormat</h4>
+<p>주어진 리스트를 각 언어에 맞게 문자열로 변경할 수 있는 객체의 생성자이다.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">vehicles</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">Motorcycle</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">Bus</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">Car</span><span class="dl">'</span><span class="p">];</span>
+
+<span class="kd">const</span> <span class="nx">formatter</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">ListFormat</span><span class="p">(</span><span class="dl">'</span><span class="s1">en</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">style</span><span class="p">:</span> <span class="dl">'</span><span class="s1">long</span><span class="dl">'</span><span class="p">,</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">conjunction</span><span class="dl">'</span> <span class="p">});</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">formatter</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="nx">vehicles</span><span class="p">));</span>
+<span class="c1">// "Motorcycle, Bus, and Car"</span>
+
+<span class="kd">const</span> <span class="nx">formatter2</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">ListFormat</span><span class="p">(</span><span class="dl">'</span><span class="s1">ko</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">style</span><span class="p">:</span> <span class="dl">'</span><span class="s1">long</span><span class="dl">'</span><span class="p">,</span> <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">conjunction</span><span class="dl">'</span> <span class="p">});</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">formatter</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="nx">vehicles</span><span class="p">));</span>
+<span class="c1">// "Motorcycle, Bus, 및 Car"</span>
+
+</code></pre></div></div>
+
+<h4 id="intlnumberformat">Intl.NumberFormat</h4>
+<p>각 언어에 맞는 숫자 서식을 적용할 수 있는 객체의 생성자이다.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">number</span> <span class="o">=</span> <span class="mf">123456.789</span><span class="p">;</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">NumberFormat</span><span class="p">(</span><span class="dl">'</span><span class="s1">de-DE</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">style</span><span class="p">:</span> <span class="dl">'</span><span class="s1">currency</span><span class="dl">'</span><span class="p">,</span> <span class="na">currency</span><span class="p">:</span> <span class="dl">'</span><span class="s1">EUR</span><span class="dl">'</span> <span class="p">}).</span><span class="nx">format</span><span class="p">(</span><span class="nx">number</span><span class="p">));</span>
+<span class="c1">// "123.456,79 €"</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">NumberFormat</span><span class="p">(</span><span class="dl">'</span><span class="s1">ja-JP</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">style</span><span class="p">:</span> <span class="dl">'</span><span class="s1">currency</span><span class="dl">'</span><span class="p">,</span> <span class="na">currency</span><span class="p">:</span> <span class="dl">'</span><span class="s1">JPY</span><span class="dl">'</span> <span class="p">}).</span><span class="nx">format</span><span class="p">(</span><span class="nx">number</span><span class="p">));</span>
+<span class="c1">// "￥123,457"</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">NumberFormat</span><span class="p">(</span><span class="dl">'</span><span class="s1">ko-KR</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">style</span><span class="p">:</span> <span class="dl">'</span><span class="s1">currency</span><span class="dl">'</span><span class="p">,</span> <span class="na">currency</span><span class="p">:</span> <span class="dl">'</span><span class="s1">KRW</span><span class="dl">'</span> <span class="p">}).</span><span class="nx">format</span><span class="p">(</span><span class="nx">number</span><span class="p">));</span>
+<span class="c1">// ₩123,457</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">NumberFormat</span><span class="p">(</span><span class="dl">'</span><span class="s1">ko-KR</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">style</span><span class="p">:</span> <span class="dl">'</span><span class="s1">percent</span><span class="dl">'</span> <span class="p">}).</span><span class="nx">format</span><span class="p">(</span><span class="mf">1.45</span><span class="p">));</span>
+<span class="c1">// 145%</span>
+
+</code></pre></div></div>
+
+<h4 id="intlrelativetimeformat">Intl.RelativeTimeFormat</h4>
+<p>각 언어에 맞는 상대 시간 서식을 적용할 수 있는 객체의 생성자이다.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">rtf1</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">RelativeTimeFormat</span><span class="p">(</span><span class="dl">'</span><span class="s1">ko</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">style</span><span class="p">:</span> <span class="dl">'</span><span class="s1">narrow</span><span class="dl">'</span> <span class="p">});</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">rtf1</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="dl">'</span><span class="s1">quarter</span><span class="dl">'</span><span class="p">));</span>
+<span class="c1">// 3분기 후</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">rtf1</span><span class="p">.</span><span class="nx">format</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="dl">'</span><span class="s1">day</span><span class="dl">'</span><span class="p">));</span>
+<span class="c1">// 1일 전</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>Intl에 관한 자세한 내용은 <a href="https://developer.mozilla.org/en-US/docs/Web/javascript/Reference/Global_Objects/Intl">레퍼런스</a>를 참고</p>
+</blockquote>
+
+<h4 id="proposal-unified-intl-numberformat">Proposal Unified Intl Numberformat</h4>
+
+<p><code class="highlighter-rouge">Unified Numberformat</code>는 위에서 소개했던 <code class="highlighter-rouge">Intl.NumberFormat</code> 에 추가적으로 m/s, m<sup>3</sup> 등 과 같은 측정 단위에 대한 표현이나 숫자에 대한 과학,공학,회계적 표현을 가능하게 하는 기능을 추가할 것을 제안한다.</p>
+
+<blockquote>
+  <p><code class="highlighter-rouge">Intl.NumberFormat</code>에 추가적인 기능을 추가하는 자세한 논의 내용은 이 <a href="https://github.com/tc39/ecma402/issues/215">스레드</a> 를 참고</p>
+</blockquote>
+
+<p><code class="highlighter-rouge">Intl</code>의 생성자에 여러 기능을 포함시켜 복잡하게 만드는 것 보단 <code class="highlighter-rouge">Intl.NumberFormat</code> 의 스펙을 변경하여 통합하는 방식으로 더 쉽게 이 추가 기능을 지원할 것을 제안한다.</p>
+
+<h4 id="units">Units</h4>
+<p>측정 단위는 다음과 같이 표현할 수 있다.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">NumberFormat</span><span class="p">(</span><span class="dl">"</span><span class="s2">en-US</span><span class="dl">"</span><span class="p">,</span>  <span class="p">{</span>
+    <span class="na">style</span><span class="p">:</span> <span class="dl">'</span><span class="s1">unit</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">unit</span><span class="p">:</span> <span class="dl">"</span><span class="s2">centimeter-per-second</span><span class="dl">"</span><span class="p">,</span>
+    <span class="na">unitDisplay</span><span class="p">:</span> <span class="dl">"</span><span class="s2">short</span><span class="dl">"</span>
+<span class="p">}).</span><span class="nx">format</span><span class="p">(</span><span class="mi">299792458</span><span class="p">));</span>
+<span class="c1">// 299,792,458 cm/s</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">NumberFormat</span><span class="p">(</span><span class="dl">"</span><span class="s2">ko-KR</span><span class="dl">"</span><span class="p">,</span>  <span class="p">{</span>
+    <span class="na">style</span><span class="p">:</span> <span class="dl">'</span><span class="s1">unit</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">unit</span><span class="p">:</span> <span class="dl">"</span><span class="s2">centimeter-per-second</span><span class="dl">"</span><span class="p">,</span>
+    <span class="na">unitDisplay</span><span class="p">:</span> <span class="dl">"</span><span class="s2">short</span><span class="dl">"</span>
+<span class="p">}).</span><span class="nx">format</span><span class="p">(</span><span class="mi">299792458</span><span class="p">));</span>
+<span class="c1">// 한국은 표기단위를 붙여서 표현</span>
+<span class="c1">// 299,792,458cm/s</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">NumberFormat</span><span class="p">(</span><span class="dl">"</span><span class="s2">ko-KR</span><span class="dl">"</span><span class="p">,</span>  <span class="p">{</span>
+    <span class="na">style</span><span class="p">:</span> <span class="dl">'</span><span class="s1">unit</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">unit</span><span class="p">:</span> <span class="dl">"</span><span class="s2">liter</span><span class="dl">"</span><span class="p">,</span>
+    <span class="na">unitDisplay</span><span class="p">:</span> <span class="dl">"</span><span class="s2">short</span><span class="dl">"</span>
+<span class="p">}).</span><span class="nx">format</span><span class="p">(</span><span class="mi">50</span><span class="p">));</span>
+<span class="c1">// 50L</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">NumberFormat</span><span class="p">(</span><span class="dl">"</span><span class="s2">ko-KR</span><span class="dl">"</span><span class="p">,</span>  <span class="p">{</span>
+    <span class="na">style</span><span class="p">:</span> <span class="dl">'</span><span class="s1">unit</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">unit</span><span class="p">:</span> <span class="dl">"</span><span class="s2">liter</span><span class="dl">"</span><span class="p">,</span>
+    <span class="na">unitDisplay</span><span class="p">:</span> <span class="dl">"</span><span class="s2">long</span><span class="dl">"</span>
+<span class="p">}).</span><span class="nx">format</span><span class="p">(</span><span class="mi">50</span><span class="p">));</span>
+<span class="c1">// 50리터</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">NumberFormat</span><span class="p">(</span><span class="dl">"</span><span class="s2">ko-KR</span><span class="dl">"</span><span class="p">,</span>  <span class="p">{</span>
+    <span class="na">style</span><span class="p">:</span> <span class="dl">'</span><span class="s1">unit</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">unit</span><span class="p">:</span> <span class="dl">"</span><span class="s2">centimeter-per-second</span><span class="dl">"</span><span class="p">,</span>
+    <span class="na">unitDisplay</span><span class="p">:</span> <span class="dl">"</span><span class="s2">short</span><span class="dl">"</span>
+<span class="p">}).</span><span class="nx">format</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+<span class="c1">// 5cm/s</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">NumberFormat</span><span class="p">(</span><span class="dl">"</span><span class="s2">ko-KR</span><span class="dl">"</span><span class="p">,</span>  <span class="p">{</span>
+    <span class="na">style</span><span class="p">:</span> <span class="dl">'</span><span class="s1">unit</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">unit</span><span class="p">:</span> <span class="dl">"</span><span class="s2">centimeter-per-second</span><span class="dl">"</span><span class="p">,</span>
+    <span class="na">unitDisplay</span><span class="p">:</span> <span class="dl">"</span><span class="s2">long</span><span class="dl">"</span>
+<span class="p">}).</span><span class="nx">format</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+<span class="c1">// 초속 5센티미터</span>
+</code></pre></div></div>
+
+<h4 id="scientific-and-compact-notation">Scientific and Compact Notation</h4>
+<p>과학, 공학적 표현이나 간결하게 표현하기 위해서는 새로 추가된 옵션인 <code class="highlighter-rouge">notation</code> 을 추가하면 된다.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">NumberFormat</span><span class="p">(</span><span class="dl">'</span><span class="s1">ko-KR</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">notation</span><span class="p">:</span> <span class="dl">"</span><span class="s2">scientific</span><span class="dl">"</span> <span class="p">}).</span><span class="nx">format</span><span class="p">(</span><span class="mi">987654321</span><span class="p">));</span>
+<span class="c1">// 9.877E8</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">NumberFormat</span><span class="p">(</span><span class="dl">'</span><span class="s1">ko-KR</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">notation</span><span class="p">:</span> <span class="dl">"</span><span class="s2">engineering</span><span class="dl">"</span> <span class="p">}).</span><span class="nx">format</span><span class="p">(</span><span class="mi">987654321</span><span class="p">));</span>
+<span class="c1">// 987.654E6</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">NumberFormat</span><span class="p">(</span><span class="dl">'</span><span class="s1">ko-KR</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">notation</span><span class="p">:</span> <span class="dl">"</span><span class="s2">compact</span><span class="dl">"</span> <span class="p">}).</span><span class="nx">format</span><span class="p">(</span><span class="mi">987654321</span><span class="p">));</span>
+<span class="c1">// 9.9억</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">NumberFormat</span><span class="p">(</span><span class="dl">'</span><span class="s1">ko-KR</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span> <span class="na">notation</span><span class="p">:</span> <span class="dl">"</span><span class="s2">compact</span><span class="dl">"</span> <span class="p">}).</span><span class="nx">format</span><span class="p">(</span><span class="mi">9876543</span><span class="p">));</span>
+<span class="c1">// 998만</span>
+</code></pre></div></div>
+
+<ul>
+  <li><code class="highlighter-rouge">notation</code> 은 다음중 하나의 값을 받을 수 있다. “standard” (기본값), “scientific”, “engineering”, “compact”</li>
+  <li><code class="highlighter-rouge">compactDisplay</code> 은 <code class="highlighter-rouge">notation</code> 이 “compact” 일 경우에 사용할 수 있으며 “short” (기본값) 또는 “long” 을 받을 수 있다.</li>
+</ul>
+
+<p>반올림 관련 설정 (최소/최대 정수/소수 자릿수) 는 선택한 표기법에 따라 숫자를 변환 한 후에 적용이 된다.</p>
+
+<p><code class="highlighter-rouge">notation</code> 이 “compact” 이고 별도의 반올림 옵션이 주어지지 않으면, 정수에 가장 근접하게 반올림하되, 두개의 유효한 숫자를 유지하는 특수한 반올림 전략이 사용된다.</p>
+
+<p>예를들어 123.4K는 123K로 반올림되고, 1.234K는 1.2K로 반올림 된다.</p>
+
+<p>만약 <code class="highlighter-rouge">notation</code>이 “compact” 이고 별도의 반올림 설정이 없다면 이 반올림 전략이 사용되고 있는지 <code class="highlighter-rouge">resolvedOptions</code> 을 통해 확인 할 수 있다.</p>
+
+<p>또한 <code class="highlighter-rouge">notation</code> 은 다음과 같이 다른 옵션과 조합되어 사용될 수 있다.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="k">new</span> <span class="nx">Intl</span><span class="p">.</span><span class="nx">NumberFormat</span><span class="p">(</span><span class="dl">"</span><span class="s2">ko-KR</span><span class="dl">"</span><span class="p">,</span>  <span class="p">{</span>
+    <span class="na">notation</span><span class="p">:</span> <span class="dl">"</span><span class="s2">scientific</span><span class="dl">"</span><span class="p">,</span>
+    <span class="na">minimumFractionDigits</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="na">maximumFractionDigits</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="na">style</span><span class="p">:</span> <span class="dl">'</span><span class="s1">unit</span><span class="dl">'</span><span class="p">,</span>
+    <span class="na">unit</span><span class="p">:</span> <span class="dl">"</span><span class="s2">centimeter-per-second</span><span class="dl">"</span><span class="p">,</span>
+    <span class="na">unitDisplay</span><span class="p">:</span> <span class="dl">"</span><span class="s2">short</span><span class="dl">"</span>
+<span class="p">}).</span><span class="nx">format</span><span class="p">(</span><span class="mi">299792458</span><span class="p">));</span>
+<span class="c1">// 3.00E8cm/s</span>
+</code></pre></div></div>
+
+<h4 id="sign-display">Sign Display</h4>
+
+<p>부호는 양수에 대해 표현될 수 있다.</p>
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="mi">55</span><span class="p">).</span><span class="nx">toLocaleString</span><span class="p">(</span><span class="dl">"</span><span class="s2">en-US</span><span class="dl">"</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">signDisplay</span><span class="p">:</span> <span class="dl">"</span><span class="s2">always</span><span class="dl">"</span>
+<span class="p">});</span>
+<span class="c1">// ==&gt; +55</span>
+</code></pre></div></div>
+
+<p>통화 회계 부호 표시도 새로운 옵션을 통해 지원된다. 많은 지역에서 마이너스 부호를 붙이는 대신에 괄호로 숫자를 감싸는 방법으로 음수의 통화 회계 숫자를 표현한다.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="o">-</span><span class="mi">100</span><span class="p">).</span><span class="nx">toLocaleString</span><span class="p">(</span><span class="dl">"</span><span class="s2">bn</span><span class="dl">"</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">style</span><span class="p">:</span> <span class="dl">"</span><span class="s2">currency</span><span class="dl">"</span><span class="p">,</span>
+    <span class="na">currency</span><span class="p">:</span> <span class="dl">"</span><span class="s2">EUR</span><span class="dl">"</span><span class="p">,</span>
+    <span class="na">currencySign</span><span class="p">:</span> <span class="dl">"</span><span class="s2">accounting</span><span class="dl">"</span>
+<span class="p">});</span>
+<span class="c1">// ==&gt; (১০০.০০€)</span>
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">signDisplay</code>: “auto” (기본값), “always”, “never”, “exceptZero”
+<code class="highlighter-rouge">currencySign</code>: “standard” (기본값), “accounting”</p>
+
+<p>“accounting” 은 통화를 나타내는 값에 회계적 표현을 가능하게 한다. 자세한 내용을 아래 예제를 참고.</p>
+
+<p><code class="highlighter-rouge">signDisplay</code></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>signDisplay</th>
+      <th>-1</th>
+      <th>-0</th>
+      <th>0</th>
+      <th>1</th>
+      <th>NaN</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>auto</td>
+      <td>-1</td>
+      <td>-0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <td>always</td>
+      <td>-1</td>
+      <td>-0</td>
+      <td>+0</td>
+      <td>+1</td>
+      <td>+NaN</td>
+    </tr>
+    <tr>
+      <td>never</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <td>exceptZero</td>
+      <td>-1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>+1</td>
+      <td>NaN</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><code class="highlighter-rouge">currencySign</code></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>signDisplay</th>
+      <th>-1</th>
+      <th>-0</th>
+      <th>0</th>
+      <th>1</th>
+      <th>NaN</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>auto</td>
+      <td>($1.00)</td>
+      <td>($0.00)</td>
+      <td>$0.00</td>
+      <td>$1.00</td>
+      <td>$NaN</td>
+    </tr>
+    <tr>
+      <td>always</td>
+      <td>($1.00)</td>
+      <td>($0.00)</td>
+      <td>+$0.00</td>
+      <td>+$1.00</td>
+      <td>+$NaN</td>
+    </tr>
+    <tr>
+      <td>never</td>
+      <td>$1.00</td>
+      <td>$0.00</td>
+      <td>$0.00</td>
+      <td>$1.00</td>
+      <td>$NaN</td>
+    </tr>
+    <tr>
+      <td>exceptZero</td>
+      <td>($1.00)</td>
+      <td>$0.00</td>
+      <td>$0.00</td>
+      <td>+$1.00</td>
+      <td>$NaN</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>물론 다른 옵션과 함께 사용할 수 있다.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">(</span><span class="mf">0.55</span><span class="p">).</span><span class="nx">toLocaleString</span><span class="p">(</span><span class="dl">"</span><span class="s2">en-US</span><span class="dl">"</span><span class="p">,</span> <span class="p">{</span>
+    <span class="na">style</span><span class="p">:</span> <span class="dl">"</span><span class="s2">percent</span><span class="dl">"</span><span class="p">,</span>
+    <span class="na">signDisplay</span><span class="p">:</span> <span class="dl">"</span><span class="s2">exceptZero</span><span class="dl">"</span>
+<span class="p">});</span>
+<span class="c1">// ==&gt; +55%</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>이외 제안의 자세한 내용은 <a href="https://github.com/tc39/proposal-unified-intl-numberformat">다음</a>을 참고.</p>
+</blockquote>
+
+<h3 id="마치며">마치며</h3>
+<p>stage4에 합류하여 곧 표준 스펙으로 만나보게 될 <code class="highlighter-rouge">Unified Numberformat</code>에 대해 알아보았다.</p>
+
+<p>사실 이 제안을 보고 <code class="highlighter-rouge">Intl</code>을 처음 알게 되었고, 글로벌 서비스를 위해 로케일 데이터에 대한 지원이 필요한 서비스라면 요긴하게 사용될 스펙일 것 같다.</p>
+
+<p><code class="highlighter-rouge">Intl</code>은 각 피쳐별로 다르긴 하지만 대부분의 모던 브라우저에서 사용 가능하며, <code class="highlighter-rouge">Unified Numberformat</code>의 경우 해당 제안을 낸게 구글이라 그런지.. 크롬에서는 77버전에 구현되었고 나머지 브라우저에선 다음 <a href="https://www.npmjs.com/package/@formatjs/intl-unified-numberformat">폴리필</a>을 추가하면 사용가능하다.</p>
+
+
+<span class="post-date">
+  Written on
+  
+  March
+  20th,
+  2020
+  by
+  
+    genie-youn
+  
+</span>
+
+<div class="post-date">Feel free to share!</div>
+  <div class="sharing-icons">
+    <a href="https://twitter.com/intent/tweet?text=Unified Numberformat 맛보기&amp;url=/journal/proposal_unified_intl_numberformat_%EB%A7%9B%EB%B3%B4%EA%B8%B0.html" target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u=/journal/proposal_unified_intl_numberformat_%EB%A7%9B%EB%B3%B4%EA%B8%B0.html&amp;title=Unified Numberformat 맛보기" target="_blank"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+    <a href="https://plus.google.com/share?url=/journal/proposal_unified_intl_numberformat_%EB%A7%9B%EB%B3%B4%EA%B8%B0.html" target="_blank"><i class="fa fa-google-plus" aria-hidden="true"></i></a>
+  </div>
+</div>
+
+
+<div class="related">
+  <h1 >You may also enjoy:</h1>
+  
+  <ul class="related-posts">
+    
+      
+        
+        
+      
+    
+      
+        
+        
+      
+    
+  </ul>
+</div>
+
+
+
+  <section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = "blog-RDzIu87BYM";
+    var disqus_identifier = "/journal/proposal_unified_intl_numberformat_%EB%A7%9B%EB%B3%B4%EA%B8%B0.html";
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+    </div>
+
+    <footer class="footer">
+  
+  
+  
+    <a href="https://github.com/genie-youn" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+  
+
+  
+  
+    <a href="https://www.linkedin.com/in/%EC%A7%80%EC%88%98-%EC%9C%A4-78921a11b/" target="_blank"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+  
+
+  
+  
+    <a href="mailto:yjs930915@gmail.com" target="_blank"><i class="fa fa-envelope" aria-hidden="true"></i></a>
+  
+
+  <div class="post-date"><a href="/menu/about.html">오르막길 | 잊기전에 기록하기 by genie-youn</a></div>
+</footer>
+
+  </div>
+
+</body>
+</html>
