@@ -1,0 +1,390 @@
+<!doctype html>
+<html>
+
+<head>
+
+  <title>
+    
+      자바스크립트에서 AbortController 를 활용하여 비동기 작업 중단하기 | 오르막길
+    
+  </title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta property="og:image:secure_url" content="https://user-images.githubusercontent.com/16642635/63559805-66121600-c58e-11e9-989b-3eb58c2a15ef.jpeg" />
+  <link rel="canonical" href="https://ckeditor.com/blog/Aborting-a-signal-how-to-cancel-an-asynchronous-task-in-JavaScript/" />
+
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/syntax.css">
+  <!-- Use Atom -->
+  <link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="오르막길" />
+  <!-- Use RSS-2.0 -->
+  <!--<link href="/rss-feed.xml" type="application/rss+xml" rel="alternate" title="오르막길 | 잊기전에 기록하기"/>
+  //-->
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700%7CPT+Sans:400">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quattrocento+Sans">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+
+  <!-- Google Analytics -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-146256933-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <!-- Use Jekyll SEO plugin -->
+  <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>자바스크립트에서 AbortController 를 활용하여 비동기 작업 중단하기 | 오르막길</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="자바스크립트에서 AbortController 를 활용하여 비동기 작업 중단하기" />
+<meta name="author" content="genie-youn" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="들어가며 자바스크립트에서 Fetch 요청을 중단시킬 수 있는 AbortController 에 대해 소개하고, 이를 응용하여 비동기 테스크를 중단시키는 방법을 기술한 Aborting a signal: How to cancel an asynchronous task in JavaScript 를 저자의 허락을 얻어 번역한다." />
+<meta property="og:description" content="들어가며 자바스크립트에서 Fetch 요청을 중단시킬 수 있는 AbortController 에 대해 소개하고, 이를 응용하여 비동기 테스크를 중단시키는 방법을 기술한 Aborting a signal: How to cancel an asynchronous task in JavaScript 를 저자의 허락을 얻어 번역한다." />
+<link rel="canonical" href="http://localhost:4000/journal/%EC%9E%90%EB%B0%94%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8%EC%97%90%EC%84%9C_AbortController%EB%A5%BC_%ED%99%9C%EC%9A%A9%ED%95%98%EC%97%AC_%EB%B9%84%EB%8F%99%EA%B8%B0_%EC%9E%91%EC%97%85_%EC%A4%91%EB%8B%A8%ED%95%98%EA%B8%B0.html" />
+<meta property="og:url" content="http://localhost:4000/journal/%EC%9E%90%EB%B0%94%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8%EC%97%90%EC%84%9C_AbortController%EB%A5%BC_%ED%99%9C%EC%9A%A9%ED%95%98%EC%97%AC_%EB%B9%84%EB%8F%99%EA%B8%B0_%EC%9E%91%EC%97%85_%EC%A4%91%EB%8B%A8%ED%95%98%EA%B8%B0.html" />
+<meta property="og:site_name" content="오르막길" />
+<meta property="og:image" content="http://localhost:4000/DSC04273.jpg" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-04-15T00:00:00+09:00" />
+<script type="application/ld+json">
+{"image":"http://localhost:4000/DSC04273.jpg","author":{"@type":"Person","name":"genie-youn"},"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/journal/%EC%9E%90%EB%B0%94%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8%EC%97%90%EC%84%9C_AbortController%EB%A5%BC_%ED%99%9C%EC%9A%A9%ED%95%98%EC%97%AC_%EB%B9%84%EB%8F%99%EA%B8%B0_%EC%9E%91%EC%97%85_%EC%A4%91%EB%8B%A8%ED%95%98%EA%B8%B0.html"},"description":"들어가며 자바스크립트에서 Fetch 요청을 중단시킬 수 있는 AbortController 에 대해 소개하고, 이를 응용하여 비동기 테스크를 중단시키는 방법을 기술한 Aborting a signal: How to cancel an asynchronous task in JavaScript 를 저자의 허락을 얻어 번역한다.","@type":"BlogPosting","url":"http://localhost:4000/journal/%EC%9E%90%EB%B0%94%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8%EC%97%90%EC%84%9C_AbortController%EB%A5%BC_%ED%99%9C%EC%9A%A9%ED%95%98%EC%97%AC_%EB%B9%84%EB%8F%99%EA%B8%B0_%EC%9E%91%EC%97%85_%EC%A4%91%EB%8B%A8%ED%95%98%EA%B8%B0.html","headline":"자바스크립트에서 AbortController 를 활용하여 비동기 작업 중단하기","dateModified":"2020-04-15T00:00:00+09:00","datePublished":"2020-04-15T00:00:00+09:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+</head>
+
+
+<body>
+
+  <div class="container">
+    <header class="masthead">
+  <h3 class="masthead-title">
+    <a href="/">오르막길</a>
+    <small class="masthead-subtitle">잊기전에 기록하기</small>
+    <div class="menu">
+  <nav class="menu-content">
+    
+      <a href="/menu/about.html">About</a>
+    
+      <a href="/menu/writing.html">Writing</a>
+    
+  </nav>
+  <nav class="social-icons">
+    
+  
+  
+    <a href="https://github.com/genie-youn" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+  
+
+  
+  
+    <a href="https://www.linkedin.com/in/%EC%A7%80%EC%88%98-%EC%9C%A4-78921a11b/" target="_blank"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+  
+
+  
+  
+    <a href="mailto:yjs930915@gmail.com" target="_blank"><i class="fa fa-envelope" aria-hidden="true"></i></a>
+  
+
+  </nav>
+</div>
+
+  </h3>
+</header>
+
+
+    <div class="post-container">
+      <h1>
+  자바스크립트에서 AbortController 를 활용하여 비동기 작업 중단하기
+</h1>
+
+
+  <img src="/assets/img/DSC04273.jpg">
+
+
+<h2 id="들어가며">들어가며</h2>
+<p>자바스크립트에서 Fetch 요청을 중단시킬 수 있는 AbortController 에 대해 소개하고, 이를 응용하여 비동기 테스크를 중단시키는 방법을 기술한 <a href="https://ckeditor.com/blog/Aborting-a-signal-how-to-cancel-an-asynchronous-task-in-JavaScript/">Aborting a signal: How to cancel an asynchronous task in JavaScript</a> 를 저자의 허락을 얻어 번역한다.</p>
+
+<h2 id="전문">전문</h2>
+<p>비동기 작업은 다루기 까다롭다. 실수로 시작되거나 더 이상 필요 없는 비동기 작업에 대하여 중단할 방법을 제공하지 않는 몇몇 프로그래밍 언어에서는 더욱이 까다롭게 느껴진다. 다행히도, 자바스크립트에서는 비동기 작업을 손쉽게 중단할 수 있는 방법을 제공한다.</p>
+
+<h3 id="abort-signal">Abort signal</h3>
+<p><code class="highlighter-rouge">Promise</code> 가 ES2015를 통해 표준 스펙에 포함되고 몇몇 Web API 들이 이 새로운 비동기 해결책을 지원하기 시작하자 중간에 <a href="https://github.com/whatwg/fetch/issues/27">비동기 작업을 취소해야 하는 필요성</a>이 대두되었다. 이 문제를 해결하기 위한 첫 번째 시도는 추후 <a href="https://github.com/tc39/proposal-cancellation">ECMAScript의 표준 스펙으로 포함될 수 있는 범용적인 해결책</a>을 만드는 데 초점을 두었다. 하지만 얼마가지 못해 문제를 해결하지 못한 채 논의가 중단되었다.</p>
+
+<p>그 후 WHATWG는 독자적으로 <a href="https://dom.spec.whatwg.org/#aborting-ongoing-activities"><code class="highlighter-rouge">AbortController</code> 를 DOM에 도입</a>한다. 이 <code class="highlighter-rouge">AbortController</code> 는 Node.js 환경에선 사용할 수 없기 때문에 명백한 단점을 가지고 있다고 할 수 있다.</p>
+
+<p>DOM 스펙문서에서 확인할 수 있듯, <code class="highlighter-rouge">AbortController</code> 는 범용적으로 설계되어 있다. 그렇게 때문에 어떤 비동기 API에도, 심지어 아직 존재하지 않는 API 일지라도 사용가능하다. (현재는 <code class="highlighter-rouge">Fetch API</code> 만이 공식적으로 지원한다.)</p>
+
+<p>그럼 <code class="highlighter-rouge">AbortController</code> 가 어떻게 동작하는지 잠시 살펴보도록 하자.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">abortController</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AbortController</span><span class="p">();</span> <span class="c1">// 1</span>
+<span class="kd">const</span> <span class="nx">abortSignal</span> <span class="o">=</span> <span class="nx">abortController</span><span class="p">.</span><span class="nx">signal</span><span class="p">;</span> <span class="c1">// 2</span>
+
+<span class="nx">fetch</span><span class="p">(</span> <span class="dl">'</span><span class="s1">http://example.com</span><span class="dl">'</span><span class="p">,</span> <span class="p">{</span>
+  <span class="na">signal</span><span class="p">:</span> <span class="nx">abortSignal</span> <span class="c1">// 3</span>
+<span class="p">}</span> <span class="p">).</span><span class="k">catch</span><span class="p">(</span> <span class="p">(</span> <span class="p">{</span> <span class="nx">message</span> <span class="p">}</span> <span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="c1">// 5</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">message</span> <span class="p">);</span>
+<span class="p">}</span> <span class="p">);</span>
+
+<span class="nx">abortController</span><span class="p">.</span><span class="nx">abort</span><span class="p">();</span> <span class="c1">// 4</span>
+</code></pre></div></div>
+
+<p>위의 코드를 보면, 우선 <code class="highlighter-rouge">AbortController</code> DOM 인터페이스의 새로운 인스턴스를 만든 후 (1), 인스턴스의 <code class="highlighter-rouge">signal</code> 프로퍼티를 (2) <code class="highlighter-rouge">fetch</code> 의 <code class="highlighter-rouge">signal</code> 옵션에 할당하는 것을 볼 수 있다. (3)</p>
+
+<p>패칭을 중단하기 위해서는 단순히 <code class="highlighter-rouge">abortController.abort()</code> 를 호출하기만 하면 된다. (4) <code class="highlighter-rouge">abort</code> 를 호출하게 되면 <code class="highlighter-rouge">fetch</code> 의 Promise 는 자동으로 <code class="highlighter-rouge">reject</code> 되게 되고 제어는 <code class="highlighter-rouge">catch()</code> 블럭으로 진입하게 된다. (5)</p>
+
+<p>이 흥미로운 <code class="highlighter-rouge">signal</code> 프로퍼티가 가장 중요한 부분이다. 이 프로퍼티는 사용자가 이미 <code class="highlighter-rouge">abortController.abort()</code> 메소드를 호출했는지 여부에 대한 정보를 나타내는 <code class="highlighter-rouge">aborted</code> 프로퍼티를 가진  <a href="https://dom.spec.whatwg.org/#interface-AbortSignal">AbortSignal DOM interface</a> 의 인스턴스이다. 또한 <code class="highlighter-rouge">abortController.abort()</code> 가 호출될때 발생하는 <code class="highlighter-rouge">abort</code> 이벤트에 리스너를 등록할 수 있다. 즉, <code class="highlighter-rouge">AbortController</code> 는 단지 <code class="highlighter-rouge">AbortSignal</code> 의 퍼블릭 인터페이스일 뿐이다.</p>
+
+<p><code class="highlighter-rouge">AbortController</code> 를 공식적으로 지원하는 <code class="highlighter-rouge">Fetch API</code> 외에도, 일반적으로 우리가 작성하는 비동기 작업을 다루는 코드에서도 사용할 수 있다.</p>
+
+<h3 id="abortable-function">Abortable function</h3>
+<p>매우 복잡한 연산을 하는 비동기 함수(예를들어 굉장히 큰 배열을 비동기적으로 처리하는 함수) 가 있다고 상상해보자. 예제를 간단하게 하기 위해 5초동안 복잡한 연산을 하고 가정하고, 5초 뒤에 결과를 반환하는 함수로 대체한다.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">calculate</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span> <span class="p">(</span> <span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span> <span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">setTimeout</span><span class="p">(</span> <span class="p">()</span><span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">resolve</span><span class="p">(</span> <span class="mi">1</span> <span class="p">);</span>
+    <span class="p">},</span> <span class="mi">5000</span> <span class="p">);</span>
+  <span class="p">}</span> <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nx">calculate</span><span class="p">().</span><span class="nx">then</span><span class="p">(</span> <span class="p">(</span> <span class="nx">result</span> <span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span> <span class="nx">result</span> <span class="p">);</span>
+<span class="p">}</span> <span class="p">);</span>
+</code></pre></div></div>
+
+<p>그리고 이 비용이 큰 연산을 중간에 취소하고 싶은 사용자들을 위해 연산을 시작하고, 중단할 수 있는 버튼을 추가하자.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;button</span> <span class="na">id=</span><span class="s">"calculate"</span><span class="nt">&gt;</span>Calculate<span class="nt">&lt;/button&gt;</span>
+
+<span class="nt">&lt;script </span><span class="na">type=</span><span class="s">"module"</span><span class="nt">&gt;</span>
+  <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span> <span class="dl">'</span><span class="s1">#calculate</span><span class="dl">'</span> <span class="p">).</span><span class="nx">addEventListener</span><span class="p">(</span> <span class="dl">'</span><span class="s1">click</span><span class="dl">'</span><span class="p">,</span> <span class="k">async</span> <span class="p">(</span> <span class="p">{</span> <span class="nx">target</span> <span class="p">}</span> <span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="c1">// 1</span>
+    <span class="nx">target</span><span class="p">.</span><span class="nx">innerText</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">Stop calculation</span><span class="dl">'</span><span class="p">;</span>
+
+    <span class="kd">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">calculate</span><span class="p">();</span> <span class="c1">// 2</span>
+
+    <span class="nx">alert</span><span class="p">(</span> <span class="nx">result</span> <span class="p">);</span> <span class="c1">// 3</span>
+
+    <span class="nx">target</span><span class="p">.</span><span class="nx">innerText</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">Calculate</span><span class="dl">'</span><span class="p">;</span>
+  <span class="p">}</span> <span class="p">);</span>
+
+  <span class="kd">function</span> <span class="nx">calculate</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span> <span class="p">(</span> <span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span> <span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">setTimeout</span><span class="p">(</span> <span class="p">()</span><span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">resolve</span><span class="p">(</span> <span class="mi">1</span> <span class="p">);</span>
+      <span class="p">},</span> <span class="mi">5000</span> <span class="p">);</span>
+    <span class="p">}</span> <span class="p">);</span>
+  <span class="p">}</span>
+<span class="nt">&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<p>위의 코드를 보면 우선, 버튼의 <code class="highlighter-rouge">click</code> 이벤트에 비동기로 동작하는 함수를 리스너 등록한다. (1) 이 리스너는 <code class="highlighter-rouge">calculate()</code> 를 호출하게 된다. (2) 5초가 지난 후 결과를 표시하는 알럿이 노출되게 된다. (3)</p>
+
+<p>이제 이 비동기작업을 취소하는 기능을 추가해보자.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="p">{</span> <span class="c1">// 1</span>
+  <span class="kd">let</span> <span class="nx">abortController</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span> <span class="c1">// 2</span>
+
+  <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span> <span class="dl">'</span><span class="s1">#calculate</span><span class="dl">'</span> <span class="p">).</span><span class="nx">addEventListener</span><span class="p">(</span> <span class="dl">'</span><span class="s1">click</span><span class="dl">'</span><span class="p">,</span> <span class="k">async</span> <span class="p">(</span> <span class="p">{</span> <span class="nx">target</span> <span class="p">}</span> <span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span> <span class="nx">abortController</span> <span class="p">)</span> <span class="p">{</span>
+      <span class="nx">abortController</span><span class="p">.</span><span class="nx">abort</span><span class="p">();</span> <span class="c1">// 5</span>
+
+      <span class="nx">abortController</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+      <span class="nx">target</span><span class="p">.</span><span class="nx">innerText</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">Calculate</span><span class="dl">'</span><span class="p">;</span>
+
+      <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+
+    <span class="nx">abortController</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AbortController</span><span class="p">();</span> <span class="c1">// 3</span>
+    <span class="nx">target</span><span class="p">.</span><span class="nx">innerText</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">Stop calculation</span><span class="dl">'</span><span class="p">;</span>
+
+    <span class="k">try</span> <span class="p">{</span>
+      <span class="kd">const</span> <span class="nx">result</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">calculate</span><span class="p">(</span> <span class="nx">abortController</span><span class="p">.</span><span class="nx">signal</span> <span class="p">);</span> <span class="c1">// 4</span>
+
+      <span class="nx">alert</span><span class="p">(</span> <span class="nx">result</span> <span class="p">);</span>
+    <span class="p">}</span> <span class="k">catch</span> <span class="p">{</span>
+      <span class="nx">alert</span><span class="p">(</span> <span class="dl">'</span><span class="s1">WHY DID YOU DO THAT?!</span><span class="dl">'</span> <span class="p">);</span> <span class="c1">// 9</span>
+    <span class="p">}</span> <span class="k">finally</span> <span class="p">{</span> <span class="c1">// 10</span>
+      <span class="nx">abortController</span> <span class="o">=</span> <span class="kc">null</span><span class="p">;</span>
+      <span class="nx">target</span><span class="p">.</span><span class="nx">innerText</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">Calculate</span><span class="dl">'</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span> <span class="p">);</span>
+
+  <span class="kd">function</span> <span class="nx">calculate</span><span class="p">(</span> <span class="nx">abortSignal</span> <span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span> <span class="p">(</span> <span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span> <span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="kd">const</span> <span class="nx">timeout</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(</span> <span class="p">()</span><span class="o">=&gt;</span> <span class="p">{</span>
+        <span class="nx">resolve</span><span class="p">(</span> <span class="mi">1</span> <span class="p">);</span>
+      <span class="p">},</span> <span class="mi">5000</span> <span class="p">);</span>
+
+      <span class="nx">abortSignal</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span> <span class="dl">'</span><span class="s1">abort</span><span class="dl">'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span> <span class="c1">// 6</span>
+        <span class="kd">const</span> <span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DOMException</span><span class="p">(</span> <span class="dl">'</span><span class="s1">Calculation aborted by the user</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">AbortError</span><span class="dl">'</span> <span class="p">);</span>
+
+        <span class="nx">clearTimeout</span><span class="p">(</span> <span class="nx">timeout</span> <span class="p">);</span> <span class="c1">// 7</span>
+        <span class="nx">reject</span><span class="p">(</span> <span class="nx">error</span> <span class="p">);</span> <span class="c1">// 8</span>
+      <span class="p">}</span> <span class="p">);</span>
+    <span class="p">}</span> <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>코드가 훨씬 더 길어졌지만, 당황하지 말고 천천히 들여다 보도록 하자. 아마 쉽게 이해할 수 있을 것이다.</p>
+
+<p>모든 코드는 블럭으로 감싸져 있고 (1) 이는 마치 <a href="https://exploringjs.com/es6/ch_core-features.html#sec_from-iifes-to-blocks">IIFE (즉시 실행 함수)</a> 와 같은 효과를 갖는다. 이 덕분에 <code class="highlighter-rouge">abortController</code> 변수를 전역 스코프로 불필요하게 노출하지 않을 수 있다. (2)</p>
+
+<p>우선 이 값을 <code class="highlighter-rouge">null</code> 로 초기화한다. 이 값은 버튼을 마우스로 클릭하면 <code class="highlighter-rouge">AbortController</code> 의 새로운 인스턴스로 바뀌게 된다. (3) 이후 인스턴스의 <code class="highlighter-rouge">signal</code> 프로퍼티를 <code class="highlighter-rouge">calculate()</code> 함수에 인자로 전달하게 된다. (4)</p>
+
+<p>사용자가 5초가 지나기 전에 버튼을 다시 클릭하면, <code class="highlighter-rouge">abortController.abort()</code> 를 호출하게 된다. (5)  이것은 다시 <code class="highlighter-rouge">calculate()</code> 에 인자로 전달했던 <code class="highlighter-rouge">AbortSignal</code> 인스턴스의 <code class="highlighter-rouge">abort</code> 이벤트를 발생시키게 된다. (6)</p>
+
+<p><code class="highlighter-rouge">abort</code> 이벤트의 리스너 내부에선 동작하고 있던 타이머를 중단시키고 (7) 적절한 에러와 함께 프로미스를 <code class="highlighter-rouge">reject</code> 한다. (8; <a href="https://dom.spec.whatwg.org/#abortcontroller-api-integration">스펙에 의하면</a> 이 에러는 <code class="highlighter-rouge">AbortError</code> 타입의 <code class="highlighter-rouge">DOMException</code> 이어야만 한다.) 이 에러는 제어를 <code class="highlighter-rouge">catch</code> 와 <code class="highlighter-rouge">finally</code> 블럭으로 넘기게 된다. (10)</p>
+
+<p>추가적으로 다음과 같은 상황을 대비할 코드도 작성해야 한다.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">abortController</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AbortController</span><span class="p">();</span>
+
+<span class="nx">abortController</span><span class="p">.</span><span class="nx">abort</span><span class="p">();</span>
+<span class="nx">calculate</span><span class="p">(</span> <span class="nx">abortController</span><span class="p">.</span><span class="nx">signal</span> <span class="p">);</span>
+</code></pre></div></div>
+
+<p>위와 같은 경우에, <code class="highlighter-rouge">abort</code> 이벤트가 <code class="highlighter-rouge">signal</code> 프로퍼티가 <code class="highlighter-rouge">calculate()</code> 함수에 전달되기 전에 발생했기 때문에 이벤트 리스너가 동작하지 않게 된다. 이러한 경우에도 정상적으로 동작할 수 있도록 조금 리팩토링 해보자.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">function</span> <span class="nx">calculate</span><span class="p">(</span> <span class="nx">abortSignal</span> <span class="p">)</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">(</span> <span class="p">(</span> <span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span> <span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">error</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">DOMException</span><span class="p">(</span> <span class="dl">'</span><span class="s1">Calculation aborted by the user</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">AbortError</span><span class="dl">'</span> <span class="p">);</span> <span class="c1">// 1</span>
+
+    <span class="k">if</span> <span class="p">(</span> <span class="nx">abortSignal</span><span class="p">.</span><span class="nx">aborted</span> <span class="p">)</span> <span class="p">{</span> <span class="c1">// 2</span>
+      <span class="k">return</span> <span class="nx">reject</span><span class="p">(</span> <span class="nx">error</span> <span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="kd">const</span> <span class="nx">timeout</span> <span class="o">=</span> <span class="nx">setTimeout</span><span class="p">(</span> <span class="p">()</span><span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">resolve</span><span class="p">(</span> <span class="mi">1</span> <span class="p">);</span>
+    <span class="p">},</span> <span class="mi">5000</span> <span class="p">);</span>
+
+    <span class="nx">abortSignal</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span> <span class="dl">'</span><span class="s1">abort</span><span class="dl">'</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+      <span class="nx">clearTimeout</span><span class="p">(</span> <span class="nx">timeout</span> <span class="p">);</span>
+      <span class="nx">reject</span><span class="p">(</span> <span class="nx">error</span> <span class="p">);</span>
+    <span class="p">}</span> <span class="p">);</span>
+  <span class="p">}</span> <span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>에러를 우선 제일 위로 옮긴다. (1) 이 덕분에 두 부분의 코드를 재활용할 수 있게 되었다. 그리고 이미 요청이 취소되었는지를 확인하는 <code class="highlighter-rouge">abortSignal.aborted</code> 에 대한 가드를 추가한다. (2)</p>
+
+<p>이 가드가 <code class="highlighter-rouge">true</code> 로 평가된다면 <code class="highlighter-rouge">calculate()</code> 함수는 더이상의 처리 없이 Promise 를 에러와 함께 거절한다.</p>
+
+<h3 id="마치며">마치며</h3>
+<p>자바스크립트에서 <code class="highlighter-rouge">fetch</code> 를 비롯한 비동기 작업을 중단할 수 있는 <code class="highlighter-rouge">AbortController</code> 에 대하여 알아보았다.</p>
+
+<p>실제 동작하는 예제는 <a href="https://blog.comandeer.pl/assets/i-ciecie/">https://blog.comandeer.pl/assets/i-ciecie/</a> 에서 확인할 수 있으며,</p>
+
+<p>아티클 원문은 <a href="https://ckeditor.com/blog/Aborting-a-signal-how-to-cancel-an-asynchronous-task-in-JavaScript/">https://ckeditor.com/blog/Aborting-a-signal-how-to-cancel-an-asynchronous-task-in-JavaScript/</a> 에서 확인할 수 있다.</p>
+
+
+<span class="post-date">
+  Written on
+  
+  April
+  15th,
+  2020
+  by
+  
+    genie-youn
+  
+</span>
+
+<div class="post-date">Feel free to share!</div>
+  <div class="sharing-icons">
+    <a href="https://twitter.com/intent/tweet?text=자바스크립트에서 AbortController 를 활용하여 비동기 작업 중단하기&amp;url=/journal/%EC%9E%90%EB%B0%94%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8%EC%97%90%EC%84%9C_AbortController%EB%A5%BC_%ED%99%9C%EC%9A%A9%ED%95%98%EC%97%AC_%EB%B9%84%EB%8F%99%EA%B8%B0_%EC%9E%91%EC%97%85_%EC%A4%91%EB%8B%A8%ED%95%98%EA%B8%B0.html" target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u=/journal/%EC%9E%90%EB%B0%94%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8%EC%97%90%EC%84%9C_AbortController%EB%A5%BC_%ED%99%9C%EC%9A%A9%ED%95%98%EC%97%AC_%EB%B9%84%EB%8F%99%EA%B8%B0_%EC%9E%91%EC%97%85_%EC%A4%91%EB%8B%A8%ED%95%98%EA%B8%B0.html&amp;title=자바스크립트에서 AbortController 를 활용하여 비동기 작업 중단하기" target="_blank"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+    <a href="https://plus.google.com/share?url=/journal/%EC%9E%90%EB%B0%94%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8%EC%97%90%EC%84%9C_AbortController%EB%A5%BC_%ED%99%9C%EC%9A%A9%ED%95%98%EC%97%AC_%EB%B9%84%EB%8F%99%EA%B8%B0_%EC%9E%91%EC%97%85_%EC%A4%91%EB%8B%A8%ED%95%98%EA%B8%B0.html" target="_blank"><i class="fa fa-google-plus" aria-hidden="true"></i></a>
+  </div>
+</div>
+
+
+<div class="related">
+  <h1 >You may also enjoy:</h1>
+  
+  <ul class="related-posts">
+    
+      
+        
+        
+      
+        
+          <li>
+            <h3>
+              <a href="/journal/proposal_unified_intl_numberformat_%EB%A7%9B%EB%B3%B4%EA%B8%B0.html">
+                Unified Numberformat 맛보기
+                <!--<img src="http://localhost:4000/images/">-->
+                <!--<small>March 20, 2020</small>-->
+              </a>
+            </h3>
+          </li>
+          
+        
+      
+    
+      
+        
+        
+      
+    
+  </ul>
+</div>
+
+
+
+  <section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = "blog-RDzIu87BYM";
+    var disqus_identifier = "/journal/%EC%9E%90%EB%B0%94%EC%8A%A4%ED%81%AC%EB%A6%BD%ED%8A%B8%EC%97%90%EC%84%9C_AbortController%EB%A5%BC_%ED%99%9C%EC%9A%A9%ED%95%98%EC%97%AC_%EB%B9%84%EB%8F%99%EA%B8%B0_%EC%9E%91%EC%97%85_%EC%A4%91%EB%8B%A8%ED%95%98%EA%B8%B0.html";
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+    </div>
+
+    <footer class="footer">
+  
+  
+  
+    <a href="https://github.com/genie-youn" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+  
+
+  
+  
+    <a href="https://www.linkedin.com/in/%EC%A7%80%EC%88%98-%EC%9C%A4-78921a11b/" target="_blank"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+  
+
+  
+  
+    <a href="mailto:yjs930915@gmail.com" target="_blank"><i class="fa fa-envelope" aria-hidden="true"></i></a>
+  
+
+  <div class="post-date"><a href="/menu/about.html">오르막길 | 잊기전에 기록하기 by genie-youn</a></div>
+</footer>
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,293 @@
+<!doctype html>
+<html>
+
+<head>
+
+  <title>
+    
+      Vue-Cli의 index.html 에서 javascript 변수를 사용하고 싶다면? | 오르막길
+    
+  </title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta property="og:image:secure_url" content="https://user-images.githubusercontent.com/16642635/63559805-66121600-c58e-11e9-989b-3eb58c2a15ef.jpeg" />
+
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <link rel="stylesheet" href="/assets/css/syntax.css">
+  <!-- Use Atom -->
+  <link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="오르막길" />
+  <!-- Use RSS-2.0 -->
+  <!--<link href="/rss-feed.xml" type="application/rss+xml" rel="alternate" title="오르막길 | 잊기전에 기록하기"/>
+  //-->
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Serif:400,400italic,700%7CPT+Sans:400">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Quattrocento+Sans">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <script type="text/javascript" async
+    src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+
+  <!-- Google Analytics -->
+  <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-146256933-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <!-- Use Jekyll SEO plugin -->
+  <!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>Vue-Cli의 index.html 에서 javascript 변수를 사용하고 싶다면? | 오르막길</title>
+<meta name="generator" content="Jekyll v4.0.0" />
+<meta property="og:title" content="Vue-Cli의 index.html 에서 javascript 변수를 사용하고 싶다면?" />
+<meta name="author" content="genie-youn" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="들어가며 개발을 하다보면 사용자에게 서빙하는 index.html 에도 자바스크립트 변수를 사용해야 하는 상황이 생기기 마련이다." />
+<meta property="og:description" content="들어가며 개발을 하다보면 사용자에게 서빙하는 index.html 에도 자바스크립트 변수를 사용해야 하는 상황이 생기기 마련이다." />
+<link rel="canonical" href="http://localhost:4000/journal/Vue_Cli%EC%9D%98_index.html_%EC%97%90%EC%84%9C_javascript_%EB%B3%80%EC%88%98%EB%A5%BC_%EC%82%AC%EC%9A%A9%ED%95%98%EA%B3%A0_%EC%8B%B6%EB%8B%A4%EB%A9%B4.html" />
+<meta property="og:url" content="http://localhost:4000/journal/Vue_Cli%EC%9D%98_index.html_%EC%97%90%EC%84%9C_javascript_%EB%B3%80%EC%88%98%EB%A5%BC_%EC%82%AC%EC%9A%A9%ED%95%98%EA%B3%A0_%EC%8B%B6%EB%8B%A4%EB%A9%B4.html" />
+<meta property="og:site_name" content="오르막길" />
+<meta property="og:image" content="http://localhost:4000/P20180704_190121929_C97BBD63-DEBA-4E4D-B781-86CCCC586EC7.jpg" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-03-23T00:00:00+09:00" />
+<script type="application/ld+json">
+{"image":"http://localhost:4000/P20180704_190121929_C97BBD63-DEBA-4E4D-B781-86CCCC586EC7.jpg","author":{"@type":"Person","name":"genie-youn"},"mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/journal/Vue_Cli%EC%9D%98_index.html_%EC%97%90%EC%84%9C_javascript_%EB%B3%80%EC%88%98%EB%A5%BC_%EC%82%AC%EC%9A%A9%ED%95%98%EA%B3%A0_%EC%8B%B6%EB%8B%A4%EB%A9%B4.html"},"description":"들어가며 개발을 하다보면 사용자에게 서빙하는 index.html 에도 자바스크립트 변수를 사용해야 하는 상황이 생기기 마련이다.","@type":"BlogPosting","url":"http://localhost:4000/journal/Vue_Cli%EC%9D%98_index.html_%EC%97%90%EC%84%9C_javascript_%EB%B3%80%EC%88%98%EB%A5%BC_%EC%82%AC%EC%9A%A9%ED%95%98%EA%B3%A0_%EC%8B%B6%EB%8B%A4%EB%A9%B4.html","headline":"Vue-Cli의 index.html 에서 javascript 변수를 사용하고 싶다면?","dateModified":"2020-03-23T00:00:00+09:00","datePublished":"2020-03-23T00:00:00+09:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+</head>
+
+
+<body>
+
+  <div class="container">
+    <header class="masthead">
+  <h3 class="masthead-title">
+    <a href="/">오르막길</a>
+    <small class="masthead-subtitle">잊기전에 기록하기</small>
+    <div class="menu">
+  <nav class="menu-content">
+    
+      <a href="/menu/about.html">About</a>
+    
+      <a href="/menu/writing.html">Writing</a>
+    
+  </nav>
+  <nav class="social-icons">
+    
+  
+  
+    <a href="https://github.com/genie-youn" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+  
+
+  
+  
+    <a href="https://www.linkedin.com/in/%EC%A7%80%EC%88%98-%EC%9C%A4-78921a11b/" target="_blank"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+  
+
+  
+  
+    <a href="mailto:yjs930915@gmail.com" target="_blank"><i class="fa fa-envelope" aria-hidden="true"></i></a>
+  
+
+  </nav>
+</div>
+
+  </h3>
+</header>
+
+
+    <div class="post-container">
+      <h1>
+  Vue-Cli의 index.html 에서 javascript 변수를 사용하고 싶다면?
+</h1>
+
+
+  <img src="/assets/img/P20180704_190121929_C97BBD63-DEBA-4E4D-B781-86CCCC586EC7.jpg">
+
+
+<h2 id="들어가며">들어가며</h2>
+<p>개발을 하다보면 사용자에게 서빙하는 <code class="highlighter-rouge">index.html</code> 에도 자바스크립트 변수를 사용해야 하는 상황이 생기기 마련이다.</p>
+
+<p>이 경우 <code class="highlighter-rouge">vue-cli</code>를 통하여 프로젝트를 구성했다면, <code class="highlighter-rouge">index.html</code>에 <a href="https://lodash.com/docs/4.17.15#template">lodash 의 template</a> 형식을 통해 값을 index.html에 끼워넣을 수 있다.</p>
+
+<p>예제를 통해 확인해 보자.</p>
+
+<h2 id="예제">예제</h2>
+<p>예를들면 CDN 으로 제공하는 사내 다른 라이브러리의 캐시 퍼징을 위해 suffix로 빌드시점의 날짜를 받게 되어있다고 가정해보자.</p>
+
+<p>아마 다음과 같은 모습일 것이다.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">&lt;!DOCTYPE html&gt;</span>
+<span class="nt">&lt;html</span> <span class="na">lang=</span><span class="s">"en"</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;head&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">charset=</span><span class="s">"utf-8"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">http-equiv=</span><span class="s">"X-UA-Compatible"</span> <span class="na">content=</span><span class="s">"IE=edge"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">"viewport"</span> <span class="na">content=</span><span class="s">"width=device-width,initial-scale=1.0"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;link</span> <span class="na">rel=</span><span class="s">"icon"</span> <span class="na">href=</span><span class="s">"&lt;%= BASE_URL %&gt;favicon.ico"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;title&gt;&lt;</span><span class="err">%=</span> <span class="na">htmlWebpackPlugin</span><span class="err">.</span><span class="na">options</span><span class="err">.</span><span class="na">title</span> <span class="err">%</span><span class="nt">&gt;&lt;/title&gt;</span>
+  <span class="nt">&lt;/head&gt;</span>
+  <span class="nt">&lt;body&gt;</span>
+    <span class="nt">&lt;noscript&gt;</span>
+      <span class="nt">&lt;strong&gt;</span>We're sorry but <span class="nt">&lt;</span><span class="err">%=</span> <span class="na">htmlWebpackPlugin</span><span class="err">.</span><span class="na">options</span><span class="err">.</span><span class="na">title</span> <span class="err">%</span><span class="nt">&gt;</span> doesn't work properly without JavaScript enabled. Please enable it to continue.<span class="nt">&lt;/strong&gt;</span>
+    <span class="nt">&lt;/noscript&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">"app"</span><span class="nt">&gt;&lt;/div&gt;</span>
+    <span class="c">&lt;!-- built files will be auto injected --&gt;</span>
+    <span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"https://test.library.url?v=20200322"</span><span class="nt">&gt;&lt;/script&gt;</span> <span class="c">&lt;!-- 이부분 --&gt;</span>
+  <span class="nt">&lt;/body&gt;</span>
+<span class="nt">&lt;/html&gt;</span>
+</code></pre></div></div>
+
+<p><code class="highlighter-rouge">20200322</code> 이 값을 빌드하는 날짜에 맞춰서 변경해주고 싶을텐데. 빌드할때 마다 값을 바꿔줄 수 도 없는 노릇이다.</p>
+
+<p>이때 vue-cli 를 통해 개발환경을 구성했다면, <code class="highlighter-rouge">favicon</code>의 URL을 지정해 주었듯, 자바스크립트 변수를 <code class="highlighter-rouge">&lt;%= =%&gt;</code>로 감싸서 사용할 수 있다.</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">"https://test.library.url?v=&lt;%= new Date().toISOString().slice(0,10).replace(/-/g,'') %&gt;"</span><span class="nt">&gt;&lt;/script&gt;</span>
+</code></pre></div></div>
+
+<p>lodash의 template는 이 외에도 몇가지 보간법을 사용할 수 있다.</p>
+
+<div class="language-javascript highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">// &lt;%- -%&gt;는 감싸진 값을 HTML escape 시킨다.</span>
+<span class="kd">var</span> <span class="nx">compiled</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="dl">'</span><span class="s1">&lt;b&gt;&lt;%- value %&gt;&lt;/b&gt;</span><span class="dl">'</span><span class="p">);</span>
+<span class="nx">compiled</span><span class="p">({</span> <span class="dl">'</span><span class="s1">value</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">&lt;script&gt;</span><span class="dl">'</span> <span class="p">});</span>
+<span class="c1">// =&gt; '&lt;b&gt;&amp;lt;script&amp;gt;&lt;/b&gt;'</span>
+
+<span class="c1">// &lt;% %&gt; 는 내부의 자바스크립트 표현식을 평가한다.</span>
+<span class="kd">var</span> <span class="nx">compiled</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="dl">'</span><span class="s1">&lt;% _.forEach(users, function(user) { %&gt;&lt;li&gt;&lt;%- user %&gt;&lt;/li&gt;&lt;% }); %&gt;</span><span class="dl">'</span><span class="p">);</span>
+<span class="nx">compiled</span><span class="p">({</span> <span class="dl">'</span><span class="s1">users</span><span class="dl">'</span><span class="p">:</span> <span class="p">[</span><span class="dl">'</span><span class="s1">fred</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">barney</span><span class="dl">'</span><span class="p">]</span> <span class="p">});</span>
+<span class="c1">// =&gt; '&lt;li&gt;fred&lt;/li&gt;&lt;li&gt;barney&lt;/li&gt;'</span>
+
+<span class="c1">// ES6의 template literal 형식도 사용 가능하다.</span>
+<span class="kd">var</span> <span class="nx">compiled</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="dl">'</span><span class="s1">hello ${ user }!</span><span class="dl">'</span><span class="p">);</span>
+<span class="nx">compiled</span><span class="p">({</span> <span class="dl">'</span><span class="s1">user</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">pebbles</span><span class="dl">'</span> <span class="p">});</span>
+<span class="c1">// =&gt; 'hello pebbles!'</span>
+
+<span class="c1">// 문자열 내에서 escape 하려면 백슬래쉬를 사용하면 된다.</span>
+<span class="kd">var</span> <span class="nx">compiled</span> <span class="o">=</span> <span class="nx">_</span><span class="p">.</span><span class="nx">template</span><span class="p">(</span><span class="dl">'</span><span class="s1">&lt;%= "</span><span class="se">\\</span><span class="s1">&lt;%- value %</span><span class="se">\\</span><span class="s1">&gt;" %&gt;</span><span class="dl">'</span><span class="p">);</span>
+<span class="nx">compiled</span><span class="p">({</span> <span class="dl">'</span><span class="s1">value</span><span class="dl">'</span><span class="p">:</span> <span class="dl">'</span><span class="s1">ignored</span><span class="dl">'</span> <span class="p">});</span>
+<span class="c1">// =&gt; '&lt;%- value %&gt;'</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>자세한 내용은 <a href="https://cli.vuejs.org/guide/html-and-static-assets.html">레퍼런스</a>를 참고</p>
+</blockquote>
+
+
+<span class="post-date">
+  Written on
+  
+  March
+  23rd
+    ,
+  2020
+  by
+  
+    genie-youn
+  
+</span>
+
+<div class="post-date">Feel free to share!</div>
+  <div class="sharing-icons">
+    <a href="https://twitter.com/intent/tweet?text=Vue-Cli의 index.html 에서 javascript 변수를 사용하고 싶다면?&amp;url=/journal/Vue_Cli%EC%9D%98_index.html_%EC%97%90%EC%84%9C_javascript_%EB%B3%80%EC%88%98%EB%A5%BC_%EC%82%AC%EC%9A%A9%ED%95%98%EA%B3%A0_%EC%8B%B6%EB%8B%A4%EB%A9%B4.html" target="_blank"><i class="fa fa-twitter" aria-hidden="true"></i></a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u=/journal/Vue_Cli%EC%9D%98_index.html_%EC%97%90%EC%84%9C_javascript_%EB%B3%80%EC%88%98%EB%A5%BC_%EC%82%AC%EC%9A%A9%ED%95%98%EA%B3%A0_%EC%8B%B6%EB%8B%A4%EB%A9%B4.html&amp;title=Vue-Cli의 index.html 에서 javascript 변수를 사용하고 싶다면?" target="_blank"><i class="fa fa-facebook" aria-hidden="true"></i></a>
+    <a href="https://plus.google.com/share?url=/journal/Vue_Cli%EC%9D%98_index.html_%EC%97%90%EC%84%9C_javascript_%EB%B3%80%EC%88%98%EB%A5%BC_%EC%82%AC%EC%9A%A9%ED%95%98%EA%B3%A0_%EC%8B%B6%EB%8B%A4%EB%A9%B4.html" target="_blank"><i class="fa fa-google-plus" aria-hidden="true"></i></a>
+  </div>
+</div>
+
+
+<div class="related">
+  <h1 >You may also enjoy:</h1>
+  
+  <ul class="related-posts">
+    
+      
+        
+        
+      
+        
+          <li>
+            <h3>
+              <a href="/journal/%EB%B2%88%EC%97%AD-Vue.js-3-Future-Oriented-Programming.html">
+                [번역]Vue.js 3: Future-Oriented Programming
+                <!--<img src="http://localhost:4000/images/">-->
+                <!--<small>August 23, 2019</small>-->
+              </a>
+            </h3>
+          </li>
+          
+        
+      
+        
+          <li>
+            <h3>
+              <a href="/journal/Vue%EB%8A%94-%EC%99%9C-Filter%EB%A5%BC-%EC%82%AD%EC%A0%9C%ED%95%98%EB%A0%A4-%ED%96%88%EC%9D%84%EA%B9%8C.html">
+                Vue는 왜 filter를 삭제하려고 했을까?
+                <!--<img src="http://localhost:4000/images/">-->
+                <!--<small>June 19, 2019</small>-->
+              </a>
+            </h3>
+          </li>
+          
+        
+      
+    
+      
+        
+        
+      
+    
+  </ul>
+</div>
+
+
+
+  <section class="disqus">
+  <div id="disqus_thread"></div>
+  <script type="text/javascript">
+    var disqus_shortname = "blog-RDzIu87BYM";
+    var disqus_identifier = "/journal/Vue_Cli%EC%9D%98_index.html_%EC%97%90%EC%84%9C_javascript_%EB%B3%80%EC%88%98%EB%A5%BC_%EC%82%AC%EC%9A%A9%ED%95%98%EA%B3%A0_%EC%8B%B6%EB%8B%A4%EB%A9%B4.html";
+    (function() {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+  </script>
+  <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+  <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+
+    </div>
+
+    <footer class="footer">
+  
+  
+  
+    <a href="https://github.com/genie-youn" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+  
+
+  
+  
+    <a href="https://www.linkedin.com/in/%EC%A7%80%EC%88%98-%EC%9C%A4-78921a11b/" target="_blank"><i class="fa fa-linkedin" aria-hidden="true"></i></a>
+  
+
+  
+  
+    <a href="mailto:yjs930915@gmail.com" target="_blank"><i class="fa fa-envelope" aria-hidden="true"></i></a>
+  
+
+  <div class="post-date"><a href="/menu/about.html">오르막길 | 잊기전에 기록하기 by genie-youn</a></div>
+</footer>
+
+  </div>
+
+</body>
+</html>
