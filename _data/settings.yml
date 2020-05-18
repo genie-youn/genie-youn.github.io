@@ -22,8 +22,8 @@ social:
 
 # Customize site text
 pagination:
-  next_page: 'Newer'
-  previous_page: 'Older'
+  next_page: '다음글'
+  previous_page: '이전글'
 
 sharing_button_prompt: 'Feel free to share!'
 
