@@ -1,3 +1,5 @@
+@import url(http://fonts.googleapis.com/earlyaccess/nanumgothic.css);
+
 /*
   Contents:
     Base
@@ -18,15 +20,15 @@
 */
 
 body {
-  font-family: "PT Serif", Georgia, "Times New Roman", serif;
-  font-size: 18px;
+  font-family: "Nanum Gothic", "PT Serif", Georgia, "Times New Roman", serif;
+  font-size: 21px;
   color: #515151;
-  line-height: 1.75rem;
+  line-height: 2rem;
 }
 
 @media (max-width: 30em) {
   body {
-    font-size: 14px;
+    font-size: 18px;
     line-height: 1.5rem;
   }
   body h1 {
@@ -43,7 +45,7 @@ h1 a {
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: "Quattrocento Sans", sans-serif;
+  font-family: "Nanum Gothic", sans-serif;
   color: #333;
 }
 
@@ -82,7 +84,7 @@ hr {
 .container {
   margin-left: auto;
   margin-right: auto;
-  width: 615px;
+  width: 720px;
 }
 
 /*48em*/
