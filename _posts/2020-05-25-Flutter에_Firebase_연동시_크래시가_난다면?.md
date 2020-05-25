@@ -3,7 +3,7 @@ layout: post
 title: "Flutter에 Firebase 연동시 크래시가 난다면?"
 author: "genie-youn"
 categories: journal
-tags: [Flutter, Firebase, NSException raise:format]
+tags: [Flutter, Firebase, NSException raise]
 image: IMG_0772.jpg
 ---
 
