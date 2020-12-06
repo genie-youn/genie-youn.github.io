@@ -4,7 +4,7 @@ title: "vue-cli에서 speed-measure-webpack-plugin 사용하기"
 author: "genie-youn"
 categories: journal
 tags: [webpack, vue-cli, speed-measure-webpack-plugin]
-image: IMG_2127.JPG
+image: IMG2127.JPG
 ---
 
 ## 들어가며
