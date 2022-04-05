@@ -65,25 +65,54 @@ export default {
 
 정리하면 기반 기술의 구체적인 구현체, 특히 구현을 제어할 수 없는 외부 라이브러리라면 추상화된 인터페이스를 정의하고 상위계층에선 이 인터페이스를 의존하게 해라.
 
-DateTime.ts
-```javascript
-import MomentAdapter from "./moment/MomentAdapter";
+우선 해당 기반 기술을 추상화하여 인터페이스를 정의하고
 
-function isSameDay(dateLeft, dateRight) {
-  return MomentAdapter.isSameDay(dateLeft, dateRight);
-}
-
-function addDays(date, amount) {
-  return MomentAdapter.addDays(date, amount);
-}
-
-//.. 생략
-
-export default {
-  isSameDay,
-  addDays,
+/date-time/DateTime.ts
+```typescript
+export default interface DateTime {
+  isSameDay(dateLeft: Date, dateRight: Date): boolean;
+  addDays(date: Date, amount: number): Date;
 }
 ```
+
+구체적인 구현체를 이 인터페이스에 맞게 조정한다.
+
+이때 `Adapter` 패턴을 활용할 수 있다.
+
+/date-time/MomentAdapter.ts
+```TypeScript
+import moment from "moment";
+import type DateTime from "./DateTime";
+
+export default class MomentAdapter implements DateTime {
+  addDays(date: Date, amount: number): Date {
+    return moment(date).add(amount, "days").toDate();
+  }
+  isSameDay(dateLeft: Date, dateRight: Date): boolean {
+    return moment(dateLeft).isSame(dateRight, "days");
+  }
+}
+```
+
+모듈 외부에선 굳이 이러한 구체적인 내용을 알 필요가 없다.
+`index.js` 는 여러모로 실패한 디자인이라고 많이 이야기하지만 개인적으로는 이럴때 요긴하게 쓰고있다.
+
+/date-time/index.ts
+```TypeScript
+import type DateTime from "./DateTime";
+import Adapter from "./MomentAdapter";
+
+const instance: DateTime = new Adapter();
+
+export function isSameDay(dateLeft: Date, dateRight: Date): boolean {
+  return instance.isSameDay(dateLeft, dateRight);
+}
+export function addDays(date: Date, amount: number): Date {
+  return instance.addDays(date, amount);
+}
+```
+
+모듈 외부에서 접근하는 엔트리포인트라고 할 수 있는 `index.ts` 에 구체적으로 어떤 구현체를 사용할지에 대한 책임을 부여한다.
 
 그 중 서버와 HTTP를 통해 메세지를 주고 받는 책임을 갖는  HTTP Client의 경우에 특별히 더 신경을 써줄 부분이 있다.
 
