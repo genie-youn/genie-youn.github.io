@@ -59,7 +59,7 @@ Vue 애플리케이션 본질적인 역할은 상태에 따른 UI를 렌더링�
 
 ---- 기본적으로 Layered Architecture 를 채용해 계층별로 큰 틀의 책임을 부여하였다. UI, Application, Domain & API Client, Infra 네개의 계층으로 구성된다.
 
-> 왜 Layered Architecture 인가? 라고 묻는다면 사실 큰 이유는 없다. 필자가 그나마 가장 잘 이해하고 있는 애플리케이션 아키텍처이고 아마 동료들도 비슷할것이라 생각했다. 서비스를 혼자 개발하는 것이 아닌 개발조직의 규모가 어느정도 꽤 있는편이었기 때문에 모두가 잘 알고있는 아키텍처를 채택하는편이 좋다고 판단했다. ... 길라잡이 역할을 해야한다는 내용도 넣으면 좋겠다..
+> 왜 Layered Architecture 인가? 라고 묻는다면 사실 큰 이유는 없다. 필자가 그나마 가장 잘 이해하고 있는 애플리케이션 아키텍처이고 아마 동료들도 비슷할것이라 생각했다. 서비스를 혼자 개발하는 것이 아닌 개발조직의 규모가 어느정도 꽤 있는편이었기 때문에 모두가 잘 알고있는 아키텍처를 채택해야 조직원 모두가 동일한 관점으로 전체 시스템을 바라보는 시각을 공유할 수 있을것이라 판단했다.
 
 가장 하위 계층인 Infra 계층부터 살펴보도록 하자.
 
@@ -72,23 +72,18 @@ Vue 애플리케이션 본질적인 역할은 상태에 따른 UI를 렌더링�
 ### 기반 기술의 구체적인 구현체는 "반드시" 변경해야 하는 순간이 온다.
 이 계층의 모듈들은 그 특성상 애플리케이션 전반에서 광범위하게 의존하게 된다. 예를들어 서버와 메세지를 주고 받는 기술의 구현체로 `axios` 를 사용중이라고 하자. 이 `axios` 라는 구체적인 구현체를 별다른 격리 없이 다음과 같이 사용하였다.
 
---- 예제다시
 AwesomeComponent.vue
 ```vue
-<template>
-  <button @click="action">액션!</button>
-</template>
-<script>
+<script setup lang="ts">
 import axios from "axios";
 
-export default {
-  methods: {
-    action() {
-      axios.post("/my-awesome-action");
-    },
-  }
-}
+const action = () => {
+  return axios.get("/apis/v1/my-awesome-action");
+};
 </script>
+<template>
+  <button @click="action">action!</button>
+</template>
 ```
 
 그러던 어느 날 세상에 없던 멋진 HTTP Client 라이브러리가 짜잔하고 등장하였다.
