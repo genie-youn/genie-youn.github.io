@@ -118,6 +118,8 @@ export default interface DateTime {
 
 이때 `Adapter` 패턴을 활용할 수 있다.
 
+> https://ko.wikipedia.org/wiki/%EC%96%B4%EB%8C%91%ED%84%B0_%ED%8C%A8%ED%84%B4
+
 /date-time/MomentAdapter.ts
 ```TypeScript
 import moment from "moment";
@@ -155,6 +157,7 @@ export function addDays(date: Date, amount: number): Date {
 
 사용하는쪽에서는 기존에 사용하던 다른 모듈들을 사용할때와 동일하게 사용한다.
 
+AwesomeComponent.vue
 ```TypeScript
 import { isSameDay } from "@/libs/date-time";
 
@@ -165,7 +168,66 @@ const isEditable = isSameDay(new Date(), article.createdDate);
 
 우선 동일하게 HTTP 요청/응답에 대한 인터페이스 `HTTPClient` 를 정의한다.
 
-개발팀 내부에서 정의한 응답 포맷이 있을테고 기본적으로 이 포맷에 맞춰 응답을 벗겨낸 후 반환하게 될테지만, 간혹 외부 서비스의 API를 요청하는 경우도 종종 있으므로 사용하는쪽에서 이 전략을 선택할 수 있는 여지를 주면 좋다.
+```TypeScript
+export default interface HTTPClient {
+  get(url: string): Promise<unknown>;
+}
+
+export type Filter = (body: Record<string, unknown>) => Record<string, unknown>;
+
+export interface HTTPClientBuilder {
+  setBaseUrl(url: string): HTTPClientBuilder;
+  setSuccessFilter(filter: Filter): HTTPClientBuilder;
+  setFailFilter(filter: Filter): HTTPClientBuilder;
+  build(): HTTPClient;
+}
+```
+
+> 예제의 단순화를 위해 `get` 메서드만 구현하였다.
+
+개발팀 내부에서 정의한 응답 포맷이 있을테고 기본적으로 이 포맷에 맞춰 응답을 벗겨낸 후 반환하게 될테지만, 간혹 외부 서비스의 API를 요청하는 경우도 종종 있다.
+
+이러한 상황을 대비해 사용하는쪽에서 이 전략을 선택할 수 있는 여지를 주면 좋다.
+
+위 예제에서 `setSuccessFilter` 와 `setFailFilter` 가 그러한 역할을 수행한다.
+
+예를들어 네이버 회원 프로필 조회 Open API의 경우 다음과 같은 응답포맷을 갖는다.
+
+```json
+{
+  "resultcode": "00",
+  "message": "success",
+  "response": {
+    "email": "openapi@naver.com",
+    "nickname": "OpenAPI",
+    "profile_image": "https://ssl.pstatic.net/static/pwe/address/nodata_33x33.gif",
+    "age": "40-49",
+    "gender": "F",
+    "id": "32742776",
+    "name": "오픈 API",
+    "birthday": "10-01",
+    "birthyear": "1900",
+    "mobile": "010-0000-0000"
+  }
+}
+```
+
+> https://developers.naver.com/docs/login/profile/profile.md
+
+네이버 회원 프로필 API 클라이언트는 다음과 같이 HTTPClient 를 생성한다.
+
+NaverUserAPIClient.ts
+```TypeScript
+import {createHttpClient} from "@/libs/http-client";
+
+const instance = createHttpClient()
+    .setBaseUrl("https://네이버-OPEN-API")
+    .setSuccessFilter((body: Record<string, unknown>) => body.response)
+    .setFailFilter((body: Record<string, unknown>) => body.message)
+    .build();
+```
+
+응답인터페이스.. 위에 응답구조를 노출하지 말라고 추가하자..
 
 표현력을 높이기 위해 객체 생성을 위한 별도의 `Builder` 를 제공하는 방향으로 구현하였다.
 
