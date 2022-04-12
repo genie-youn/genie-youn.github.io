@@ -57,7 +57,7 @@ Vue 애플리케이션 본질적인 역할은 상태에 따른 UI를 렌더링�
 
 우선 "UI와 관련된 책임들과 그렇지 않은 것들을 명확하게 분리해내야겠다." 라는 생각이 들었다.
 
----- 기본적으로 Layered Architecture 를 채용해 계층별로 큰 틀의 책임을 부여하였다. UI, Application, Domain & API Client, Infra 네개의 계층으로 구성된다.
+---- 기본적으로 Layered Architecture 를 채용해 계층별로 큰 틀의 책임을 부여하였다. UI, Application, API Client & Domain, Infra 네개의 계층으로 구성된다.
 
 > 왜 Layered Architecture 인가? 라고 묻는다면 사실 큰 이유는 없다. 필자가 그나마 가장 잘 이해하고 있는 애플리케이션 아키텍처이고 아마 동료들도 비슷할것이라 생각했다. 서비스를 혼자 개발하는 것이 아닌 개발조직의 규모가 어느정도 꽤 있는편이었기 때문에 모두가 잘 알고있는 아키텍처를 채택해야 조직원 모두가 동일한 관점으로 전체 시스템을 바라보는 시각을 공유할 수 있을것이라 판단했다.
 
@@ -106,7 +106,7 @@ const action = () => {
 
 우선 해당 기반 기술을 추상화하여 인터페이스를 정의한다.
 
-/date-time/DateTime.ts
+/libs/date-time/DateTime.ts
 ```typescript
 export default interface DateTime {
   isSameDay(dateLeft: Date, dateRight: Date): boolean;
@@ -120,7 +120,7 @@ export default interface DateTime {
 
 > https://ko.wikipedia.org/wiki/%EC%96%B4%EB%8C%91%ED%84%B0_%ED%8C%A8%ED%84%B4
 
-/date-time/MomentAdapter.ts
+/libs/date-time/MomentAdapter.ts
 ```TypeScript
 import moment from "moment";
 import type DateTime from "./DateTime";
@@ -138,7 +138,7 @@ export default class MomentAdapter implements DateTime {
 모듈 외부에선 굳이 이러한 구체적인 내용을 알 필요가 없다.
 `index.js` 는 여러모로 실패한 디자인이라고 많이 이야기하지만 개인적으로는 이럴때 요긴하게 쓰고있다.
 
-/date-time/index.ts
+/libs/date-time/index.ts
 ```TypeScript
 import type DateTime from "./DateTime";
 import Adapter from "./MomentAdapter";
@@ -168,6 +168,7 @@ const isEditable = isSameDay(new Date(), article.createdDate);
 
 우선 동일하게 HTTP 요청/응답에 대한 인터페이스 `HTTPClient` 를 정의한다.
 
+/libs/http-client/HTTPClient.ts
 ```TypeScript
 export default interface HTTPClient {
   get(url: string): Promise<unknown>;
@@ -189,9 +190,205 @@ export interface HTTPClientBuilder {
 
 이러한 상황을 대비해 사용하는쪽에서 이 전략을 선택할 수 있는 여지를 주면 좋다.
 
-위 예제에서 `setSuccessFilter` 와 `setFailFilter` 가 그러한 역할을 수행한다.
+위 예제에서 `setSuccessFilter` 와 `setFailFilter` 가 그러한 역할을 수행하는데 자세한 내용은 이후 설명하겠다.
+
+HTTP 요청을 주고 받는 구체적인 구현체로 `fecth` 를 사용한다면 마찬가지로 다음과 같이 Adapter 를 구현할 수 있다.
+
+
+/libs/http-client/FetchClient.ts
+```TypeScript
+import type HTTPClient from "./HTTPClient";
+import type { HTTPClientBuilder, Filter } from "./HTTPClient";
+
+const identifier: Filter = (_) => _;
+
+export default class FetchClient implements HTTPClient {
+  private _baseUrl = "";
+  private _successFilter = identifier;
+  private _failFilter = identifier;
+
+  set baseUrl(url: string) {
+    this._baseUrl = url;
+  }
+  set failFilter(filter: Filter) {
+    this._failFilter = filter;
+  }
+  set successFilter(filter: Filter) {
+    this._successFilter = filter;
+  }
+
+  get(url: string): Promise<unknown> {
+    return fetch(`${this._baseUrl}${url}`, {
+      method: "GET",
+      credentials: "include",
+    }).then((res) => {
+      return res.status !== 200
+        ? res.json().then((body) => this._failFilter(body))
+        : res.json().then((body) => this._successFilter(body));
+    });
+  }
+}
+
+export class FetchClientBuilder implements HTTPClientBuilder {
+  private readonly instance: FetchClient;
+
+  constructor() {
+    this.instance = new FetchClient();
+  }
+
+  setBaseUrl(url: string): HTTPClientBuilder {
+    this.instance.baseUrl = url;
+    return this;
+  }
+
+  setFailFilter(filter: Filter): HTTPClientBuilder {
+    this.instance.failFilter = filter;
+    return this;
+  }
+
+  setSuccessFilter(filter: Filter): HTTPClientBuilder {
+    this.instance.successFilter = filter;
+    return this;
+  }
+
+  build(): HTTPClient {
+    return this.instance;
+  }
+}
+```
+
+> 마찬가지로 예제의 단순화를 위해 query 나 여타 옵션들에 대한 구현은 생략하였다.
+
+그리고 구체적으로 어떤 구현체를 사용할지에 대한 책임은 `/libs/http-client/index.ts` 에 부여한다.
+
+```TypeScript
+import type { HTTPClientBuilder } from "./HTTPClient";
+import { FetchClientBuilder } from "./FetchClient";
+
+export function createHttpClient(): HTTPClientBuilder {
+  const builder: HTTPClientBuilder = new FetchClientBuilder();
+
+  return builder
+    .setSuccessFilter((body: any) => body.result)
+    .setFailFilter((body: any) => Promise.reject(body.error));
+}
+```
+
+만약 개발팀 내부에서 API 응답 포맷을 정상응답일 경우는 다음과 같이 정의하고,
+
+```json
+{
+  "result": {
+    // 응답
+  }
+}
+```
+
+실패의 경우
+
+```json
+{
+  "error": {
+    "errorCode": "에러코드",
+    "message": "에러메세지",
+    "appendedInfo": {
+      // 예외 관련 응답
+    }
+  }
+}
+```
+
+으로 정의했다면 `body => body.result` 와 `body => Promise.reject(body.error)` 를 기본 `Filter` 로 부여하여 약속대로 응답을 벗겨내도록 한다.
+
+간혹 다음과 같이 서버 API 응답 구조를 비즈니스 로직에 까지 노출하는 경우가 있는데,
+
+wow.js
+```javascript
+// axios의 응답 스키마 (response.data) 와 팀 내부에서 정의한 API 응답 포맷 (result) 전부 비즈니스 로직까지 노출되었다.
+const user = (await axios.get("/users")).data.result;
+
+try {
+  await axios.post("/update-users", user);
+} catch (error) {
+  // axios의 에러 응답 스키마 (error.response.data) 와 팀 내부에서 정의한 API 에러 응답 포맷 (error) 그리고 API의 에러코드 (1234) 가 모두 비즈니스 로직까지 노출되었다.
+  if (error.response.data.error.errorCode === "1234"); // Do Something..
+  if (error.response.data.error.errorCode === "1235"); // Do Another..
+}
+```
+
+이렇게 될 경우 구태어 기반 기술의 구체적인 내용을 캡슐화해둔 의미가 사라진다.
+
+HTTP Client 를 다른 라이브러리로 변경하거나, 서버 API 응답 포맷이나 에러코드가 변경된 경우 의존하는 모든 부분을 찾아 바꿔주어야 할 것이다.
+
+기술과 관련된 구체적인 사항들은 숨기고, 사용하는 쪽에서 관심있는 응답이 나타내는 개념만을 상위계층으로 노출시키도록 하자.
+
+AwesomeComponent.vue
+```vue
+<script setup lang="ts">
+import { createHttpClient } from "@/libs/http-client";
+
+const action = async () => {
+  const instance = createHttpClient()
+    .setBaseUrl("https://my-awesome-api")
+    .build();
+
+  // 기술과 관련된 구체적인 사항들은 숨기고, 사용하는 쪽에서 관심있는 "user" 를 바로 반환한다.
+  const user = await instance.get("/v1/users");
+  // ...
+};
+</script>
+<template>
+  <button @click="action">action!</button>
+</template>
+```
+
+하지만 위 예제처럼 HTTP Client 를 생성하고 특정 API를 호출해하는 일련의 과정들도 UI와는 전혀 상관없는 부분들이다.
+
+이러한 관심은 이후 설명할 `Domain & API CLIENT` 계층에서 처리하도록 위임한다.
+
+### 정리
+
+정리하면, 기반 기술의 구체적인 구현체는 언제든지 변경될 수 있다. 특히 그 대상이 내가 제어할 수 없는 영역이라면 별도의 계층으로 분리하여 격리시켜라.
+
+이 대상으로는 오픈소스 라이브러리나, 사내 다른 부서에서 제공하는 sdk 들이 있다.
+
+기반 기술에 대한 인터페이스를 자체적으로 정의하고 이 인터페이스와 사용하려는 구체적인 구현체 사이의 `Adapter` 를 구현해라.
+
+인터페이스를 자체적으로 정의하기 어렵다면 사용하려는 구체적인 구현체의 인터페이스가 충분히 보편적인지, 우리의 문제를 해결할 수 있는지 확인하고 이를 사용하는것도 좋은 방법이다.
+
+구체적으로 어떤 구현체를 사용할지에 대한 책임은 모듈의 `index.js` 에 부여하고 모듈 외부와 상위 계층에선 이 인터페이스에 의존하도록 해라.
+
+이렇게 낮춘 결합도는 추후 갑자기 사용중인 라이브러리가 유지보수 단계에 돌입하거나, 협업 부서에서 새로운 sdk 를 도입할테니 변경에 협조해달라는 메일을 받았을 때 안도의 한숨을 내쉴수 있게 할 것이다.
+
+# API Client & Domain
+
+기반 기술들에 대한 책임을 갖는 Infra 계층 위로 서버와 API를 통해 메세지를 주고 받는 API Client 와 UI가 변경되더라도 변경되지 않는 서비스의 정책이나 업무 규칙을 처리하는 책임을 갖는 Domain 이 동일한 계층에 함께 위치한다.
+
+> 클라이언트 애플리케이션에서 이 둘은 뗄려고 해도 뗄 수 없는 관계이다. 그래서 한 계층에 속하도록 하였다.
+
+## API Client
+
+왜 서버와 API를 통해 메세지를 주고 받는 책임을 갖는 API Client 를 별도의 계층으로 정의하고 격리해야할까?
+
+### UI 컴포넌트와 API의 강한 결합은 복잡도를 증가시킨다.
+
+
+
+이제 이 `HTTPClient` 를 사용하여 실제로 서버 API 에 요청을 보내는 책임을 갖는 삐삐를 구현한다.
+
+이때 유의할점은 서버의 응답을 그대로 다른 계층에 노출하지 않아야 한다는 것이다.
+
+서버의 응답을 서버의 응답을 그대로 상위계층에 노출할 경우 다음과 같은 문제가 발생한다.
+
+서버 응답 변경에 영향을 받음..
+
+동일한 개념을 나타내는 두개의 API.. 레거시일 확률이 높은.. 이거 맞춰주다보면 이러한 로직이 비즈니스 로직과 섞여서 복잡합을 야기한다..
+
+이 책임을 해당 계층으로 격리하고 외부에선 이를 모르게 해라.. 프론트엔드 애플리케이션에서 정의한 도메인 모델 객체를 생성하여 반환하게 하고 상위 계층에서 이를 반환할거라고 기대할 수 있게 해라..
 
 예를들어 네이버 회원 프로필 조회 Open API의 경우 다음과 같은 응답포맷을 갖는다.
+
+이 부분은 뒤로 쭉 빼자
 
 ```json
 {
@@ -226,42 +423,6 @@ const instance = createHttpClient()
     .setFailFilter((body: Record<string, unknown>) => body.message)
     .build();
 ```
-
-응답인터페이스.. 위에 응답구조를 노출하지 말라고 추가하자..
-
-표현력을 높이기 위해 객체 생성을 위한 별도의 `Builder` 를 제공하는 방향으로 구현하였다.
-
-서버와 약속된 프로토콜 (서버에서 요청시 포함시켜달라고 요청한 헤더나 응답코드/예외코드에 대한 처리 규칙등)을 캡슐화하여 외부에서는 이 내용에 대해서 신경쓰지 않아도 되도록 한다.
-
-마찬가지로 해당 인터페이스와 사용하려는 구체적인 구현체의 인터페이스를 맞춰주는 `Adapter` 를 구현한다. 또한 이때 구체적인 구현체의 응답 인터페이스가 상위 계층으로 그대로 노출되지 않도록 한다.
-
---- 예제추가
-
-이러한 기반 기술들에 대한 책임을 갖는 Infra 계층 위로 서버와 API를 통해 메세지를 주고 받는 API Client 와 UI가 변경되더라도 변경되지 않는 서비스의 정책이나 업무 규칙을 처리하는 책임을 갖는 Domain 이 동일한 계층에 함께 위치한다.
-
-> 클라이언트 애플리케이션에서 이 둘은 뗄려고 해도 뗄 수 없는 관계이다. 그래서 한 계층에 속하도록 하였다.
-
-# API Client & Domain
-
-## API Client
-
-왜 서버와 API를 통해 메세지를 주고 받는 책임을 갖는 API Client 를 별도의 계층으로 정의하고 격리해야할까?
-
-### UI 컴포넌트와 API의 강한 결합은 복잡도를 증가시킨다.
-
-
-
-이제 이 `HTTPClient` 를 사용하여 실제로 서버 API 에 요청을 보내는 책임을 갖는 삐삐를 구현한다.
-
-이때 유의할점은 서버의 응답을 그대로 다른 계층에 노출하지 않아야 한다는 것이다.
-
-서버의 응답을 서버의 응답을 그대로 상위계층에 노출할 경우 다음과 같은 문제가 발생한다.
-
-서버 응답 변경에 영향을 받음..
-
-동일한 개념을 나타내는 두개의 API.. 레거시일 확률이 높은.. 이거 맞춰주다보면 이러한 로직이 비즈니스 로직과 섞여서 복잡합을 야기한다..
-
-이 책임을 해당 계층으로 격리하고 외부에선 이를 모르게 해라.. 프론트엔드 애플리케이션에서 정의한 도메인 모델 객체를 생성하여 반환하게 하고 상위 계층에서 이를 반환할거라고 기대할 수 있게 해라..
 
 ## Domain
 서비스의 정책이나 업무 규칙에 해당하는 비즈니스 로직을 해당 계층으로 격리한다. 대부분의 개념은 DDD 에서 채용하였으며 각 요소를 간단히 소개하면 다음과 같다..
