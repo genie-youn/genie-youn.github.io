@@ -384,6 +384,83 @@ const action = async () => {
 
 이러한 구체적인 사항들을 별도의 계층으로 격리하고 계층 외부에서는 단순히 메세지만 전달하면 되도록 구성해보자.
 
+우선 API Client 계층에 해당하는 `apis` 디렉토리를 생성한뒤 필요에 따라 모듈의 경계를 나눈다.
+
+> 이 글에서는 서버가 MSA (Micro Service Architecture) 구조로 설계되어 있다고 가정하고 서버의 서비스별로 모듈을 구현하였다. 예제를 단순화하기 위해 `index.js` 에 바로 구현하였지만 하나의 API 서비스가 제공하는 API가 많다면 필요에 따라 관심별로 모듈을 나누고 `index.js` 에서 모아서 모듈 외부로 노출하도록 구현한다.
+
+/apis/a-service/index.ts
+```TypeScript
+import {createHttpClient} from "@/libs/http-client";
+import User from "@/domain/user/User";
+import {ExpiredSessionError, UnknownError} from "@/errors";
+
+const instance = createHttpClient()
+    .setBaseUrl("https://my-awesome-api/a-service")
+    .build();
+
+type ErrorResponse = {
+    code: string;
+    message: string;
+    extensions: unknown;
+}
+
+type UserApiResponse = {
+    id: number;
+    profilePictureUrl: string;
+    username: string;
+    email: string;
+}
+
+/**
+ * @throws ExpiredSessionError
+ * @throws UnknownError
+ */
+export function getUsers() {
+    return instance.get("/v1/users")
+        .then((res: UserApiResponse) => mapUser(res))
+        .catch((error: ErrorResponse) => dispatchError(error));
+}
+
+function dispatchError(error: ErrorResponse) {
+    switch (error?.code) {
+        case "1234":
+            throw new ExpiredSessionError();
+        // another..
+        default:
+            throw new UnknownError();
+    }
+}
+
+function mapUser(res: UserApiResponse): User {
+    return new User({
+        id: res.id,
+        userName: res.username,
+        email: res.email,
+        profilePictureUrl: res.profilePictureUrl,
+    });
+}
+```
+
+API Client 계층의 모듈들이 갖는 관심은 다음과 같다.
+
+1 우선 사용할 HTTP Client 를 생성한다. 이때 API 의 BaseUrl 과 성공/실패시 응답구조를 벗겨낼 전략을 주입한다. 개발팀 내부에서 합의한 응답구조를 벗겨내는 전략은 기본적으로 포함되어 있으므로 위 예제에선 별다른 전략을 주입하지 않았다.
+
+2 구체적인 API Endpoint 를 명시한다.
+
+3 서버에서 사용중인 모델의 구조를 그대로 노출하는 것이 아닌 Vue 애플리케이션에서 정의한 도메인 모델 객체로 번역하여 반환한다.
+
+4 서버의 예외코드는 해당 모듈 내부로 캡슐화하고 외부로는 정의한 에러를 던진다.
+
+> 도메인 모델 객체에 대해서는 이후에 자세히 설명하겠다.
+
+1과 2는 부가적인 설명이 필요없을 것 같지만, 3과 4는 설명이 필요할 것 같다.
+
+### 서버에서 사용중인 모델의 구조를 그대로 노출하지 않는다.
+
+위에 axios 예제 빼먹었다.
+
+레이어드 아키텍처랑 스캐폴딩이랑 함께 보여주면 좋을것 같다.
+
 이제 이 `HTTPClient` 를 사용하여 실제로 서버 API 에 요청을 보내는 책임을 갖는 삐삐를 구현한다.
 
 이때 유의할점은 서버의 응답을 그대로 다른 계층에 노출하지 않아야 한다는 것이다.
