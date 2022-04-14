@@ -74,7 +74,7 @@ Vue 애플리케이션 본질적인 역할은 상태에 따른 UI를 렌더링�
 
 AwesomeComponent.vue
 ```vue
-<script setup lang="ts">
+<script setup>
 import axios from "axios";
 
 const action = () => {
@@ -158,7 +158,7 @@ export function addDays(date: Date, amount: number): Date {
 사용하는쪽에서는 기존에 사용하던 다른 모듈들을 사용할때와 동일하게 사용한다.
 
 AwesomeComponent.vue
-```TypeScript
+```javascript
 import { isSameDay } from "@/libs/date-time";
 
 const isEditable = isSameDay(new Date(), article.createdDate);
@@ -326,7 +326,7 @@ HTTP Client 를 다른 라이브러리로 변경하거나, 서버 API 응답 포
 
 AwesomeComponent.vue
 ```vue
-<script setup lang="ts">
+<script setup>
 import { createHttpClient } from "@/libs/http-client";
 
 const action = async () => {
@@ -405,7 +405,7 @@ type ErrorResponse = {
 }
 
 type UserApiResponse = {
-    id: number;
+    id: string;
     profilePictureUrl: string;
     username: string;
     email: string;
@@ -415,8 +415,8 @@ type UserApiResponse = {
  * @throws ExpiredSessionError
  * @throws UnknownError
  */
-export function getUsers() {
-    return instance.get("/v1/users")
+export function getUserById(id: string): Promise<User> {
+    return instance.get(`/v1/users${id}`)
         .then((res: UserApiResponse) => mapUser(res))
         .catch((error: ErrorResponse) => dispatchError(error));
 }
@@ -457,9 +457,96 @@ API Client 계층의 모듈들이 갖는 관심은 다음과 같다.
 
 ### 서버에서 사용중인 모델의 구조를 그대로 노출하지 않는다.
 
+왜 서버에서 사용중인 모델의 구조를 상위 계층으로 그대로 노출하면 안될까?
+
+다음과 같은 게시글 정보를 조회하는 API가 있고 여기엔 글을 쓴 유저의 정보가 포함되어 있다고 가정하자.
+
+```json
+{
+  id: "twewghe-jtjejh-qweqwe",
+  subject: "정말 멋진 게시글",
+  writer: {
+    id: "bkdow-gjdkf-sdhbo",
+    userName: "genie",
+    email: "test@test.com",
+    profilePictureUrl: "https://my-awesome-cdn/pictures/awesome-iamge.jpeg"
+  },
+  likeCount: 25123,
+  createdDate: 1649940257643
+}
+```
+
+API Client는 이 구조를 상위 계층에 그대로 노출하였고
+
+```TypeScript
+type User = {
+    id: string;
+    profilePictureUrl: string;
+    username: string;
+    email: string;
+}
+
+type Article = {
+    id: string,
+    subject: string,
+    writer: User,
+    likeCount: number,
+    createdDate: Date,
+}
+
+export function fetchArticleById(id: string): Promise<Article> {
+    return instance.get(`/v1/articles/${id}`)
+}
+```
+
+게시글 페이지에선 이 API를 호출하여 이를 그대로 사용하였다.
+
+```vue
+<script setup>
+import {reactive} from "vue";
+import UserInfo from "@/components/UserInfo.vue";
+import {useRoute} from "vue-router";
+import {fetchArticleById} from "@/apis/article-service";
+
+const route = useRoute();
+const state = reactive({
+  article: {
+    id: "",
+    subject: "",
+    writer: {
+      id: "",
+      userName: "",
+      email: "",
+      profilePictureUrl: ""
+    },
+    likeCount: 0,
+    createdDate: new Date(),
+  }
+});
+
+fetchArticleById(route.params.articleId)
+  .then(res => {
+    state.article = res;
+  })
+</script>
+
+<template>
+  <div>
+    <UserInfo :user="state.article.writer"/>
+    // 생략
+  </div>
+</template>
+```
+
 위에 axios 예제 빼먹었다.
 
 레이어드 아키텍처랑 스캐폴딩이랑 함께 보여주면 좋을것 같다.
+
+굳이 domain 계층에 안두고 application 에 둬도 된다.
+
+vue component에 다 때려박으려 하지 말아봐라
+
+요즘 클라에도 처리할 도메인 로직이 많다
 
 이제 이 `HTTPClient` 를 사용하여 실제로 서버 API 에 요청을 보내는 책임을 갖는 삐삐를 구현한다.
 
