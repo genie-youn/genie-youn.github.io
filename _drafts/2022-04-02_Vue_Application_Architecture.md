@@ -15,16 +15,16 @@ image: DSC04956.jpg
 
 # 복잡함을 해결해야하는 이유
 
-개발하고 있는 프론트엔드 애플리케이션의 복잡함에 압도당해본적이 있는가?
+개발하고 있는 프론트엔드 애플리케이션의 복잡함에 압도당해본 적이 있는가?
 
 ```
-새로운 기능을 추가하거나, 기존 기능에 대한 개선을 요청받아서 관련된 코드를 열었는데 갑자기 숨이 턱 막힌다거나..
+새로운 기능을 추가하거나, 기존 기능에 대한 개선을 요청받아서 관련된 코드를 열었는데 갑자기 숨이 턱 막힌다거나...
 
-천라인이 넘어가는 `if` 로 점칠된 컴포넌트를 만났다거나..
+천라인이 넘어가는 `if` 로 점철된 컴포넌트를 만났다거나...
 
-분명 5분전에 배포한건 서버 API인데 내 애플리케이션이 동작하지 않게 되었다거나..
+분명 5분 전에 배포한 건 서버 API인데 내 애플리케이션이 동작하지 않게 되었다거나..
 
-브라우저의 네트워크탭에 찍힌 응답값은 분명 멀쩡한데 애플리케이션 내에서 돌고 돌아 갑자기 값이 뒤바뀌었다거나..
+브라우저의 네트워크 탭에 찍힌 응답 값은 분명 멀쩡한데 애플리케이션 내에서 돌고 돌아 갑자기 값이 뒤바뀌었다거나...
 
 갑자기 옆 동료가 Git Blame 을 열더니 나를 째려보고 있다거나..
 ```
@@ -35,42 +35,44 @@ image: DSC04956.jpg
 
 하지만 복잡해진 애플리케이션은 이러한 시장의 요구사항에 기민하게 반응할 수 없다.
 
-기획자나 디자이너에게 "그건 좀 어렵겠는데요." 라고 얘기하거나 "이건 공수가 꽤 필요하겠는데요." 라고 이야기 하는 빈도가 잦아진다.
+기획자나 디자이너에게 "그건 좀 어렵겠는데요."라고 얘기하거나 "이건 공수가 꽤 필요하겠는데요."라고 이야기 하는 빈도가 잦아진다.
 
-변화에 뒤쳐진 애플리케이션은 더 이상 사용자에게 유쾌한 경험을 주지 못하게 되고 서비스의 매력을 잃게 만들어 결국 시장에서 도태되게 만든다.
+변화에 뒤처진 애플리케이션은 더 이상 사용자에게 유쾌한 경험을 주지 못하게 되고 서비스의 매력을 잃게 만들어 결국 시장에서 도태되게 만든다.
 
 따라서, 개발자는 시장의 요구사항을 빠르게 수용할 수 있도록 애플리케이션의 **복잡함**을 관리해야만 한다.
 
-> 만약 위와 같은 문제를 느낀적이 없다면, 굳이 이 글을 더 이상 읽을 필요가 없다. 설계는 문제를 해결하기 위한 의사결정이고 반드시 트레이드오프가 따르게 된다. 현재 구조로도 충분히 새로운 기능을 추가하기 쉽고 기존 기능을 변경하는게 수월하다면 그게 내가 만들고자 하는 애플리케이션에 최적화된 설계일것이다.
+> 만약 위와 같은 문제를 느낀 적이 없다면, 굳이 이 글을 더 이상 읽을 필요가 없다. 설계는 문제를 해결하기 위한 의사결정이고 반드시 트레이드오프가 따르게 된다. 현재 구조로도 충분히 새로운 기능을 추가하기 쉽고 기존 기능을 변경하는 게 수월하다면 그게 내가 만들고자 하는 애플리케이션에 최적화된 설계일 것이다.
 
 # 내가 만든 애플리케이션이 복잡한 이유
 
-복잡함이 왜 문제인지는 충분히 얘기를 한 것 같으니, 그럼 내가 만든 애플리케이션이 **왜** 복잡해졌는지를 이야기 해볼까 한다.
+복잡함이 왜 문제인지는 충분히 얘기한 것 같으니, 그럼 내가 만든 애플리케이션이 **왜** 복잡해졌는지를 이야기해볼까 한다.
 
-애플리케이션이 복잡해지는덴 여러 이유가 있겠으나 나의 경우는 결국 **책임**이 문제였다.
+애플리케이션이 복잡해지는 데는 여러 이유가 있겠으나 나의 경우는 결국 **책임**이 문제였다.
 
-Vue 애플리케이션 본질적인 역할은 상태에 따른 UI를 렌더링하고 UI와 사용자의 인터렉션을 처리하며 이 인터렉션에 따라 상태를 업데이트하고 업데이트된 상태에 맞게 UI를 다시 렌더링하는 것이다.
+Vue 애플리케이션 본질적인 역할은 상태에 따른 UI를 렌더링하고 UI와 사용자 간의 인터렉션을 처리하며 이 인터렉션에 따라 상태를 업데이트하고 업데이트된 상태에 맞게 UI를 다시 렌더링하는 것이다.
 
-요즘 서비스들은 사용자들에게 편리한 UI/UX를 제공하기 위해 끊임없이 고민하고 새로운 접근방식을 시도하기 때문에 위와 같은 메커니즘은 그 자체만으로도 많은 복잡성을 가지게 되고 변경주기도 짧다.
+요즘 서비스들은 사용자들에게 편리한 UI/UX를 제공하기 위해 끊임없이 고민하고 새로운 접근방식을 시도하기 때문에 위와 같은 메커니즘은 그 자체만으로도 많은 복잡성을 가지게 되고 변경 주기도 짧다.
 
-문제는 그 자체만으로도 복잡한 이 메커니즘에 API를 통해 서버와 메세지를 주고 받고, 클라이언트에서 처리해야 하는 서비스정책이나 업무규칙까지 끌어안아 괴물이 되어버린 것이다.
+문제는 그 자체만으로도 복잡한 이 메커니즘에 API를 통해 서버와 메시지를 주고받고, 클라이언트에서 처리해야 하는 서비스의 정책이나 업무 규칙까지 끌어안아 괴물이 되어버린 것이다.
 
-우선 "UI와 관련된 책임들과 그렇지 않은 것들을 명확하게 분리해내야겠다." 라는 생각이 들었다.
+우선 "UI와 관련된 책임들과 그렇지 않은 것들을 명확하게 분리해내야겠다."라는 생각이 들었다.
 
----- 기본적으로 Layered Architecture 를 채용해 계층별로 큰 틀의 책임을 부여하였다. UI, Application, API Client & Domain, Infra 네개의 계층으로 구성된다.
+기본적으로 Layered Architecture를 채용해 계층별로 큰 틀의 책임을 부여하였다. UI, Application, API Client & Domain, Infra 네 개의 계층으로 구성된다.
 
-> 왜 Layered Architecture 인가? 라고 묻는다면 사실 큰 이유는 없다. 필자가 그나마 가장 잘 이해하고 있는 애플리케이션 아키텍처이고 아마 동료들도 비슷할것이라 생각했다. 서비스를 혼자 개발하는 것이 아닌 개발조직의 규모가 어느정도 꽤 있는편이었기 때문에 모두가 잘 알고있는 아키텍처를 채택해야 조직원 모두가 동일한 관점으로 전체 시스템을 바라보는 시각을 공유할 수 있을것이라 판단했다.
+계층 다이어그램 넣어주기
+
+> 왜 Layered Architecture인가? 라고 묻는다면 사실 큰 이유는 없다. 필자가 그나마 가장 잘 이해하고 있는 애플리케이션 아키텍처이고 아마 동료들도 비슷할 것이라 생각했다. 서비스를 혼자 개발하는 것이 아닌 개발조직의 규모가 어느정도 꽤 있는 편이었기 때문에 모두가 잘 알고 있는 아키텍처를 채택해야 조직원 모두가 동일한 관점으로 전체 시스템을 바라보는 시각을 공유할 수 있을 것이라 판단했다.
 
 가장 하위 계층인 Infra 계층부터 살펴보도록 하자.
 
-## Infra
+# Infra
 
-애플리케이션이 동작하기 위한 기반 기술을 제공하는 계층이다. 클라이언트 애플리케이션에서 서버와 메세지를 주고 받는 책임을 갖는 모듈이나 로컬스토리지, 세션스토리지와 같은 저장소에 접근하여 데이터를 영속화하는 책임을 갖는 모듈들이 이 계층에 속한다.
+애플리케이션이 동작하기 위한 기반 기술을 제공하는 계층이다. 클라이언트 애플리케이션에서 HTTP 요청과 응답에 관한 책임을 갖는 모듈이나 로컬스토리지, 세션 스토리지와 같은 저장소에 접근하여 데이터를 영속화하는 책임을 갖는 모듈들이 이 계층에 속한다.
 
-왜 이러한 모듈들을 별도 계층으로 격리해야 하는걸까?
+왜 이러한 모듈들을 별도 계층으로 격리해야 하는 걸까?
 
-### 기반 기술의 구체적인 구현체는 "반드시" 변경해야 하는 순간이 온다.
-이 계층의 모듈들은 그 특성상 애플리케이션 전반에서 광범위하게 의존하게 된다. 예를들어 서버와 메세지를 주고 받는 기술의 구현체로 `axios` 를 사용중이라고 하자. 이 `axios` 라는 구체적인 구현체를 별다른 격리 없이 다음과 같이 사용하였다.
+## 기반 기술의 구체적인 구현체는 "반드시" 변경해야 하는 순간이 온다.
+이 계층의 모듈들은 그 특성상 애플리케이션 전반에서 광범위하게 의존하게 된다. 예를 들어 HTTP 요청과 응답에 관한 기반 기술의 구현체로 `axios`를 사용 중이라고 하자. 이 `axios`라는 구체적인 구현체를 별다른 격리 없이 다음과 같이 사용하였다.
 
 AwesomeComponent.vue
 ```vue
@@ -86,23 +88,25 @@ const action = () => {
 </template>
 ```
 
-그러던 어느 날 세상에 없던 멋진 HTTP Client 라이브러리가 짜잔하고 등장하였다.
+그러던 어느 날 세상에 없던 멋진 HTTP Client 라이브러리가 짜잔 하고 등장하였다.
 
-합리적인 알고리즘으로 요청과 응답을 멋지게 캐시해주고 그 결과 요청의 수도 획기적으로 줄일 수 있고 응답속도 또한 빨라진다고 한다.
+합리적인 알고리즘으로 요청과 응답을 멋지게 캐시 해주고 그 결과 요청의 수도 획기적으로 줄일 수 있고 응답속도 또한 빨라진다고 한다.
 
-프로젝트에 당장 적용하고 싶어졌다. `axios` 를 걷어내고 이 멋진 라이브러리로 대체하리라.
+프로젝트에 당장 적용하고 싶어졌다.
 
-헌데 위와 같이 `axios` 에 직접 메세지를 전달하는 컴포넌트가 수백개쯤 된다면?
+`axios`를 걷어내고 이 멋진 라이브러리로 대체하리라.
 
-아마 저 멋진 라이브러리는 아직 스타도 몇개 없고 안정성도 검증되지 않았다며 신포도라고 여겼을 것이다.
+한데 위와 같이 `axios`에 직접 메시지를 전달하는 컴포넌트가 수백개쯤 된다면?
 
-필자가 개발하고 있는 서비스는 날짜/시간대 관련된 처리를 `moment.js` 에 위임하고 있었다.
+아마 저 멋진 라이브러리는 아직 스타도 몇 개 없고 안정성도 검증되지 않았다며 신 포도라고 여겼을 것이다.
 
-하지만 굴지의 `moment.js` 는 더 이상 신규 개발없이 유지보수만 하는 레거시 프로젝트로 전환하였고 이에 따라 새로운 라이브러리로 교체해야만 했다.
+필자가 개발하고 있는 서비스는 날짜/시간대 관련된 처리를 `moment.js`에 위임하고 있었다.
+
+하지만 굴지의 `moment.js`는 더 이상 신규 개발 없이 유지보수만 하는 레거시 프로젝트로 전환하였고 이에 따라 새로운 라이브러리로 교체해야만 했다.
 
 만약 이 `moment.js` 에 직접 의존하게 설계했다면 모든 사용처를 찾아 새로운 라이브러리에 맞게 변경해주었어야 했을 것이다.
 
-정리하면 기반 기술의 구체적인 구현체, 특히 구현을 제어할 수 없는 외부 라이브러리라면 추상화된 인터페이스를 정의하고 상위계층에선 이 인터페이스를 의존하게 해라.
+구현을 제어할 수 없는 외부 라이브러리라면, 추상화된 인터페이스를 정의하고 상위계층에선 이 인터페이스를 의존하게 하여 변경시의 영향도를 최소화 할 수 있다.
 
 우선 해당 기반 기술을 추상화하여 인터페이스를 정의한다.
 
@@ -111,35 +115,37 @@ const action = () => {
 export default interface DateTime {
   isSameDay(dateLeft: Date, dateRight: Date): boolean;
   addDays(date: Date, amount: number): Date;
+  // 기타 등등..
 }
 ```
 
 그리고 구체적인 구현체를 이 인터페이스에 맞게 조정한다.
 
-이때 `Adapter` 패턴을 활용할 수 있다.
+이때 `Adapter`패턴을 활용할 수 있다.
 
 > https://ko.wikipedia.org/wiki/%EC%96%B4%EB%8C%91%ED%84%B0_%ED%8C%A8%ED%84%B4
 
 /libs/date-time/MomentAdapter.ts
-```TypeScript
+```typescript
 import moment from "moment";
 import type DateTime from "./DateTime";
 
 export default class MomentAdapter implements DateTime {
-  addDays(date: Date, amount: number): Date {
-    return moment(date).add(amount, "days").toDate();
-  }
   isSameDay(dateLeft: Date, dateRight: Date): boolean {
     return moment(dateLeft).isSame(dateRight, "days");
   }
+  addDays(date: Date, amount: number): Date {
+    return moment(date).add(amount, "days").toDate();
+  }
+  // 기타 등등..
 }
 ```
 
 모듈 외부에선 굳이 이러한 구체적인 내용을 알 필요가 없다.
-`index.js` 는 여러모로 실패한 디자인이라고 많이 이야기하지만 개인적으로는 이럴때 요긴하게 쓰고있다.
+`index.js`는 여러모로 실패한 디자인이라고 많이 이야기하지만 개인적으로는 이럴 때 요긴하게 쓰고 있다.
 
 /libs/date-time/index.ts
-```TypeScript
+```typescript
 import type DateTime from "./DateTime";
 import Adapter from "./MomentAdapter";
 
@@ -151,25 +157,26 @@ export function isSameDay(dateLeft: Date, dateRight: Date): boolean {
 export function addDays(date: Date, amount: number): Date {
   return instance.addDays(date, amount);
 }
+// 기타 등등..
 ```
 
-모듈 외부에서 접근하는 엔트리포인트라고 할 수 있는 `index.ts` 에 구체적으로 어떤 구현체를 사용할지에 대한 책임을 부여한다.
+모듈 외부에서 접근하는 엔트리포인트라고 할 수 있는 `index.ts`에 구체적으로 어떤 구현체를 사용할지에 대한 책임을 부여한다.
 
-사용하는쪽에서는 기존에 사용하던 다른 모듈들을 사용할때와 동일하게 사용한다.
+사용하는 쪽에서는 기존에 사용하던 다른 모듈들을 사용할 때와 동일하게 사용한다.
 
 AwesomeComponent.vue
 ```javascript
-import { isSameDay } from "@/libs/date-time";
+import {isSameDay} from "@/libs/date-time";
 
 const isEditable = isSameDay(new Date(), article.createdDate);
 ```
 
-기반 기술중 서버와 HTTP를 통해 메세지를 주고 받는 책임을 갖는 HTTP Client의 경우에 특별히 더 신경을 써줄 부분이 있다.
+기반 기술 중 서버와 HTTP를 통해 메시지를 주고받는 책임을 갖는 HTTP Client의 경우에 특별히 더 신경을 써줄 부분이 있다.
 
-우선 동일하게 HTTP 요청/응답에 대한 인터페이스 `HTTPClient` 를 정의한다.
+우선 동일하게 HTTP 요청/응답에 대한 인터페이스 `HTTPClient`를 정의한다.
 
 /libs/http-client/HTTPClient.ts
-```TypeScript
+```typescript
 export default interface HTTPClient {
   get(url: string): Promise<unknown>;
 }
@@ -184,21 +191,20 @@ export interface HTTPClientBuilder {
 }
 ```
 
-> 예제의 단순화를 위해 `get` 메서드만 구현하였다. `Builder`의 경우 이외에도 헤더를 설정하거나 재시도 전략을 주입하는 등 다양한 팩터리 메서드들을 제공할 수 있을 것이다.
+> 예제의 단순화를 위해 `get`메소드만 구현하였다. `Builder`의 경우 이외에도 헤더를 설정하거나 재시도 전략을 주입하는 등 다양한 팩터리 메소드들을 제공할 수 있을 것이다.
 
-개발팀 내부에서 정의한 응답 포맷이 있을테고 기본적으로 이 포맷에 맞춰 응답을 벗겨낸 후 반환하게 될테지만, 간혹 외부 서비스의 API를 요청하는 경우도 종종 있다.
+개발팀 내부에서 정의한 응답 포맷이 있을 테고 기본적으로 이 포맷에 맞춰 응답을 벗겨낸 후 반환하게 될 테지만, 간혹 외부 서비스의 API를 요청하는 경우도 종종 있다.
 
-이러한 상황을 대비해 사용하는쪽에서 이 전략을 선택할 수 있는 여지를 주면 좋다.
+이러한 상황을 대비해 사용하는 쪽에서 이 전략을 선택할 수 있는 여지를 주면 좋다.
 
-위 예제에서 `setSuccessFilter` 와 `setFailFilter` 가 그러한 역할을 수행하는데 자세한 내용은 이후 설명하겠다.
+위 예제에서 `setSuccessFilter`와 `setFailFilter`가 그러한 역할을 수행하는데 자세한 내용은 이후 설명하겠다.
 
-HTTP 요청을 주고 받는 구체적인 구현체로 `fecth` 를 사용한다면 마찬가지로 다음과 같이 Adapter 를 구현할 수 있다.
-
+HTTP 요청을 주고받는 구체적인 구현체로 `fecth`를 사용한다면 마찬가지로 다음과 같이 Adapter를 구현할 수 있다.
 
 /libs/http-client/FetchClient.ts
-```TypeScript
+```typescript
 import type HTTPClient from "./HTTPClient";
-import type { HTTPClientBuilder, Filter } from "./HTTPClient";
+import type {HTTPClientBuilder, Filter} from "./HTTPClient";
 
 const identifier: Filter = (_) => _;
 
@@ -257,22 +263,9 @@ export class FetchClientBuilder implements HTTPClientBuilder {
 }
 ```
 
-> 마찬가지로 예제의 단순화를 위해 query 나 여타 옵션들에 대한 구현은 생략하였다.
+> 마찬가지로 예제의 단순화를 위해 query나 여타 옵션들에 대한 구현은 생략하였다.
 
-그리고 구체적으로 어떤 구현체를 사용할지에 대한 책임은 `/libs/http-client/index.ts` 에 부여한다.
-
-```TypeScript
-import type { HTTPClientBuilder } from "./HTTPClient";
-import { FetchClientBuilder } from "./FetchClient";
-
-export function createHttpClient(): HTTPClientBuilder {
-  const builder: HTTPClientBuilder = new FetchClientBuilder();
-
-  return builder
-    .setSuccessFilter((body: any) => body.result)
-    .setFailFilter((body: any) => Promise.reject(body.error));
-}
-```
+구체적으로 어떤 구현체를 사용할지에 대한 책임은 모듈의 `index.ts`에 부여한다.
 
 만약 개발팀 내부에서 API 응답 포맷을 정상응답일 경우는 다음과 같이 정의하고,
 
@@ -298,13 +291,33 @@ export function createHttpClient(): HTTPClientBuilder {
 }
 ```
 
-으로 정의했다면 `body => body.result` 와 `body => Promise.reject(body.error)` 를 기본 `Filter` 로 부여하여 약속대로 응답을 벗겨내도록 한다.
+으로 정의했다면 `body => body.result`와 `body => Promise.reject(body.error)`를 기본 `Filter` 로 부여하여 약속대로 응답을 벗겨내도록 한다.
 
-간혹 다음과 같이 서버 API 응답 구조를 비즈니스 로직에 까지 노출하는 경우가 있는데,
+/libs/http-client/index.ts
+```typescript
+import type {HTTPClientBuilder} from "./HTTPClient";
+import {FetchClientBuilder} from "./FetchClient";
+
+export function createHttpClient(): HTTPClientBuilder {
+  const builder: HTTPClientBuilder = new FetchClientBuilder();
+
+  return builder
+    .setSuccessFilter((body: any) => body.result)
+    .setFailFilter((body: any) => Promise.reject(body.error));
+}
+```
+
+> 동일한 맥락으로 서버와 서로 주고받기로 약속된 헤더들을 미리 설정해준다거나 할 수 있을 것이다.
+
+만약 어느 날 세상에 없던 멋진 HTTP Client 라이브러리가 짜잔 하고 등장한다면 `HTTPClient`의 인터페이스를 만족하는 Adapter를 구현한 뒤, `index.ts`에서 이를 사용하게 하면 된다.
+
+모듈 외부의 별다른 변경 없이 새로운 문명의 이기를 누리리라.
+
+간혹 다음과 같이 서버 API 응답 구조를 비즈니스 로직에까지 노출하는 경우가 있는데,
 
 wow.js
 ```javascript
-// axios의 응답 스키마 (response.data) 와 팀 내부에서 정의한 API 응답 포맷 (result) 전부 비즈니스 로직까지 노출되었다.
+// axios의 응답 스키마 (response.data)와 팀 내부에서 정의한 API 응답 포맷 (result) 전부 비즈니스 로직까지 노출되었다.
 const user = (await axios.get("/users")).data.result;
 
 try {
@@ -316,24 +329,24 @@ try {
 }
 ```
 
-이렇게 될 경우 구태어 기반 기술의 구체적인 내용을 캡슐화해둔 의미가 사라진다.
+> fetch보다 axios의 응답 인터페이스가 더욱 극단적인 효과가 있는 것 같아 뜬금없는 느낌이 들지만 axios로 예를 들었다. (fetch의 응답 구조는 어쨌든 표준이니까..)
 
-HTTP Client 를 다른 라이브러리로 변경하거나, 서버 API 응답 포맷이나 에러코드가 변경된 경우 의존하는 모든 부분을 찾아 바꿔주어야 할 것이다.
+이렇게 될 경우 구태여 기반 기술의 구체적인 내용을 캡슐화해둔 의미가 사라진다.
 
-> 동일한 맥락으로 서버와 서로 주고 받기로 약속된 헤더들을 미리 설정해준다거나 할 수 있을 것이다.
+`HTTPClient`를 다른 라이브러리로 변경하거나, 서버 API 응답 포맷이나 에러코드가 변경된 경우 의존하는 모든 부분을 찾아 바꿔주어야 할 것이다.
 
-기술과 관련된 구체적인 사항들은 숨기고, 사용하는 쪽에서 관심있는 응답이 나타내는 개념만을 상위계층으로 노출시키도록 하자.
+기술과 관련된 구체적인 사항들은 숨기고, 사용하는 쪽에서 관심 있는 응답이 나타내는 개념만을 상위계층으로 노출하도록 하자.
 
 AwesomeComponent.vue
 ```vue
 <script setup>
-import { createHttpClient } from "@/libs/http-client";
+import {createHttpClient} from "@/libs/http-client";
+
+const instance = createHttpClient()
+  .setBaseUrl("https://my-awesome-api")
+  .build();
 
 const action = async () => {
-  const instance = createHttpClient()
-    .setBaseUrl("https://my-awesome-api")
-    .build();
-
   // 기술과 관련된 구체적인 사항들은 숨기고, 사용하는 쪽에서 관심있는 "user" 를 바로 반환한다.
   const user = await instance.get("/v1/users");
   // ...
@@ -344,25 +357,27 @@ const action = async () => {
 </template>
 ```
 
-하지만 위 예제처럼 HTTP Client 를 생성하고 특정 API를 호출해하는 일련의 과정들도 UI와는 전혀 상관없는 부분들이다.
+하지만 위 예제처럼 HTTP Client를 생성하고 특정 API를 호출해하는 일련의 과정들도 UI와는 전혀 상관없는 부분들이다.
 
 이러한 관심은 이후 설명할 `Domain & API CLIENT` 계층에서 처리하도록 위임한다.
 
-### 정리
+## 정리
 
-정리하면, 기반 기술의 구체적인 구현체는 언제든지 변경될 수 있다. 특히 그 대상이 내가 제어할 수 없는 영역이라면 별도의 계층으로 분리하여 격리시켜라.
+정리하면, 기반 기술의 구체적인 구현체는 언제든지 변경될 수 있다.
 
-이 대상으로는 오픈소스 라이브러리나, 사내 다른 부서에서 제공하는 sdk 들이 있다.
+특히 그 대상이 내가 제어할 수 없는 영역이라면 별도의 계층으로 분리하여 격리한다.
 
-기반 기술에 대한 인터페이스를 자체적으로 정의하고 이 인터페이스와 사용하려는 구체적인 구현체 사이의 `Adapter` 를 구현해라.
+이 대상으로는 오픈소스 라이브러리나, 사내 다른 부서에서 제공하는 SDK들이 있다.
 
-인터페이스를 자체적으로 정의하기 어렵다면 사용하려는 구체적인 구현체의 인터페이스가 충분히 보편적인지, 우리의 문제를 해결할 수 있는지 확인하고 이를 사용하는것도 좋은 방법이다.
+기반 기술에 대한 인터페이스를 자체적으로 정의하고 이 인터페이스와 사용하려는 구체적인 구현체 사이의 `Adapter`를 구현한다.
 
-구체적으로 어떤 구현체를 사용할지에 대한 책임은 모듈의 `index.js` 에 부여하고 모듈 외부와 상위 계층에선 이 인터페이스에 의존하도록 해라.
+인터페이스를 자체적으로 정의하기 어렵다면 사용하려는 구체적인 구현체의 인터페이스가 충분히 보편적인지, 우리의 문제를 해결할 수 있는지 확인하고 이를 사용하는 것도 좋은 방법이다.
 
-이렇게 낮춘 결합도는 추후 갑자기 사용중인 라이브러리가 유지보수 단계에 돌입하거나, 협업 부서에서 새로운 sdk 를 도입할테니 변경에 협조해달라는 메일을 받았을 때 안도의 한숨을 내쉴수 있게 할 것이다.
+구체적으로 어떤 구현체를 사용할지에 대한 책임은 모듈의 `index.js` 에 부여하고 모듈 외부와 상위 계층에선 이 인터페이스에 의존하도록 한다.
 
-# API Client & Domain
+이렇게 낮춘 결합도는 추후 갑자기 사용 중인 라이브러리가 유지보수 단계에 돌입하거나, 협업 부서에서 새로운 SDK를 도입할 테니 변경에 협조해달라는 메일을 받았을 때 안도의 한숨을 내쉴 수 있게 할 것이다.
+
+# API Client & Domain -- 여기서부터
 
 기반 기술들에 대한 책임을 갖는 Infra 계층 위로 서버와 API를 통해 메세지를 주고 받는 API Client 와 UI가 변경되더라도 변경되지 않는 서비스의 정책이나 업무 규칙을 처리하는 책임을 갖는 Domain 이 동일한 계층에 함께 위치한다.
 
@@ -680,7 +695,7 @@ fetchAllFollows().then((res) => {
 
 만약 API의 응답 모델이 변경된다면 어떻게 될까? API가 변경되었을 뿐인데 이를 의존하는 UI의 Component를 모두 찾아 변경해주어야 할 것이다.
 
-이처럼 API와 관련된 요소들은 UI가 알고싶은 관심사가 아니다. 
+이처럼 API와 관련된 요소들은 UI가 알고싶은 관심사가 아니다.
 
 API Client 계층은 이러한 책임들을 격리하고 상위 계층에선 구체적인 부분에 대해 알 필요 없이 API가 내부적으로 약속한 도메인 모델 객체와 에러를 반환할것이란 확신을 가질 수 있도록 한다.
 
@@ -824,7 +839,7 @@ Store는 각 도메인 모델 객체의 라이프사이클에만 관심을 갖�
 
 Vue 애플리케이션은 부모 컴포넌트로부터 주입받은 `props` 와 자신의 상태인 `data` 에 반응형으로 UI를 렌더링하는 `component` 들을 조합하여 전체 UI를 구성한다.
 
-이 컴포넌트들은 재사용성을 확보하고, 요구사항이 변경되었을 때 기능을 확장하고 변경하기 쉽도록 책임에 따라 최소한의 단위로 작게 나누어진다. 
+이 컴포넌트들은 재사용성을 확보하고, 요구사항이 변경되었을 때 기능을 확장하고 변경하기 쉽도록 책임에 따라 최소한의 단위로 작게 나누어진다.
 
 때로는 하나의 컴포넌트가 여러 자식 컴포넌트를 갖기도 하고, 그 자식 컴포넌트가 또 다시 여러 자식컴포넌트를 갖기도 한다.
 
@@ -833,15 +848,15 @@ Vue 애플리케이션은 부모 컴포넌트로부터 주입받은 `props` 와 
 이러한 상황에서 선택할 수 있는 컴포넌트들의 협력을 설계하는 몇가지 방법을 소개한다.
 
 ### Basic
-가장 기본적인 설계로 각 컴포넌트들은 자신이 필요한 상태를 직접 관리한다. 
+가장 기본적인 설계로 각 컴포넌트들은 자신이 필요한 상태를 직접 관리한다.
 
 컴포넌트가 생성될때 API를 통해 정보를 요청하고 이를 자신의 state 로 관리한다.
 
 동일한 계층에 존재하는 컴포넌트들이 동일한 정보를 필요로 하다면, 이를 부모 컴포넌트에 위임하고 `props` 로 전달받도록 한다.
 
-pros: 
+pros:
 - 간단하다.
-cons: 
+cons:
 - 상태에 관련된 로직이 복잡할 경우, 컴포넌트에 상태에 관련된 로직과 이를 가지고 UI를 렌더링하는 로직, 사용자와의 상호작용을 처리하는 로직과 섞여 복잡도가 높은 컴포넌트를 만든다.
 
 ### Presentational and Container Components
@@ -862,7 +877,7 @@ PageAContainer
   ㄴ ComponentCA
 ```
 
-`PageA`에 필요한 상태를 관리하는 책임을 `PageAContainer`에게 부여한다. 
+`PageA`에 필요한 상태를 관리하는 책임을 `PageAContainer`에게 부여한다.
 `PageAContainer`는 API를 통해 `PageA`에 필요한 정보 `StateA`를 fetch한 뒤 이를 각 컴포넌트에 `props`로 전달할것이다.
 
 이 과정에서 컴포넌트 트리 가장 마지막 계층에 있는 `ComponentABA`가 `StateA`의 `B`라는 상태를 필요로 한다면 `ComponentA`에게 `StateA.B`를 `props`로 주입하고,
@@ -1113,5 +1128,3 @@ const instance = createHttpClient()
     .setFailFilter((body: Record<string, unknown>) => body.message)
     .build();
 ```
-
-
