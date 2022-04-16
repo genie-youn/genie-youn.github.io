@@ -463,12 +463,12 @@ API Client 계층의 모듈들이 갖는 관심은 다음과 같다.
 
 ```json
 {
-  id: "twewghe-jtjejh-qweqwe",
-  subject: "정말 멋진 게시글",
-  writer: {
-    id: "bkdow-gjdkf-sdhbo",
-    userName: "genie",
-    email: "test@test.com",
+  "id": "twewghe-jtjejh-qweqwe",
+  "subject": "정말 멋진 게시글",
+  "writer": {
+    "id": "bkdow-gjdkf-sdhbo",
+    "userName": "genie",
+    "email: "test@test.com",
     profilePictureUrl: "https://my-awesome-cdn/pictures/awesome-iamge.jpeg"
   },
   likeCount: 25123,
@@ -476,8 +476,9 @@ API Client 계층의 모듈들이 갖는 관심은 다음과 같다.
 }
 ```
 
-API Client는 이 구조를 상위 계층에 그대로 노출하였고
+API Client는 이 모델을 상위 계층에 그대로 노출하였고
 
+/apis/article-service/index.ts
 ```TypeScript
 type User = {
     id: string;
@@ -537,6 +538,147 @@ fetchArticleById(route.params.articleId)
   </div>
 </template>
 ```
+
+게시글 페이지 상단에는 글 작성자에 대한 정보를 나타내는 `UserInfo` 라는 컴포넌트가 존재한다.
+
+```vue
+<script setup>
+defineProps({
+  user: {
+    type: Object,
+    default() {
+      return {
+        id: "",
+        userName: "",
+        email: "",
+        profilePictureUrl: ""
+      }
+    },
+  },
+})
+</script>
+<template>
+  <div>
+    <img :src="user.profilePictureUrl"  alt="프로필 이미지"/>
+    <h1>
+      {{ user.userName }}
+    </h1>
+    contract: {{ user.email }}
+  </div>
+</template>
+```
+
+`User` 에 대한 정보를 받아서 이를 렌더링 하는 간단한 순수한 컴포넌트이다.
+
+이후 내가 구독하고 있는 사용자들의 목록을 보여주는 페이지가 추가되었다고 하자. 목록에는 구독중인 사용자의 정보를 노출해야 하고 게시글 페이지와 동일한 UI를 갖기 때문에 `UserInfo` 컴포넌트를 재사용하기로 했다.
+
+API 명세는 다음과 같다.
+
+```json
+{
+  "follows": [
+    "follow": {
+      "id": "ebdsn-ehsdf-qwezd",
+      "user": {
+        "id": "bkdow-gjdkf-sdhbo",
+        "name": "genie",
+        "email": "genie@test.com",
+        "thumbnailImageUrl": "https://my-awesome-cdn/pictures/awesome-iamge.jpeg"
+      },
+      "startDate": 1649940257643
+    },
+    "follow": {
+      "id": "xgddh-eryjs-qwtdg",
+      "user": {
+        "id": "ehgbd-afghe-ehhrc",
+        "name": "youn",
+        "email": "youn@test.com",
+        "thumbnailImageUrl": "https://my-awesome-cdn/pictures/wow-iamge.jpeg"
+      },
+      "startDate": 1649940769347
+    }
+  ]
+}
+```
+
+API Client는 역시나 위 응답모델을 그대로 사용하였다.
+
+/apis/follow-service/index.ts
+```TypeScript
+type User = {
+  id: string;
+  thumbnailImageUrl: string;
+  name: string;
+  email: string;
+};
+
+type Follow = {
+  id: string;
+  user: User;
+  startDate: Date;
+};
+
+export function fetchAllFollows(id: string): Promise<Array<Follow>> {
+  return instance.get(`/v1/follows`);
+}
+```
+
+문제는 여기서 발생한다. 기존에 존재하던 `article.writer`의 모델과 `follow.user`의 모델이 상이한것이다.
+
+누군가는 이를 맞춰줄 책임을 수행해야 한다.
+
+API를 호출해온 Container가 수행하게 하면 다음과 같은 그림이 될 것이고,
+
+```typescript
+<script setup>
+import { reactive } from "vue";
+import UserInfo from "@/components/UserInfo.vue";
+import { fetchAllFollows } from "@/apis/follow-service";
+
+const state = reactive({
+  follows: [],
+});
+
+fetchAllFollows().then((res) => {
+  state.follows = res.follows.map(follow => ({
+    id: follow.id,
+    user: {
+      id: follow.user.id,
+      userName: follow.user.name,
+      email: follow.user.email,
+      profilePictureUrl: follow.user.thumbnailImageUrl,
+    },
+    createdDate: follow.createdDate,
+  }));
+});
+</script>
+
+<template>
+  <div>
+    <div :id="follow.id" v-for="follow in state.follows">
+      <UserInfo :user="follow.user" />
+    </div>
+  </div>
+</template>
+```
+
+이걸 `UserInfo` 에서 맞춘다고 하면 더 답도 없는 그림이 된다.
+
+```vue
+<template>
+  <div>
+    <img :src="user.profilePictureUrl || user.profilePictureUrl"  alt="프로필 이미지"/>
+    <h1>
+      {{ user.userName || user.name }}
+    </h1>
+    contract: {{ user.email }}
+  </div>
+</template>
+```
+
+이러한 상황에서 API의 응답 모델이 변경된다면 어떻게 될까? API가 변경되었을 뿐인데 이를 의존하는 UI의 Component를 모두 찾아 변경해주어야 할 것이다.
+
+
 
 위에 axios 예제 빼먹었다.
 
