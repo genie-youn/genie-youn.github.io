@@ -75,13 +75,12 @@ Vue 애플리케이션 본질적인 역할은 상태에 따른 UI를 렌더링�
 
 이 계층의 모듈들은 그 특성상 애플리케이션 전반에서 광범위하게 의존하게 된다. 예를 들어 HTTP 요청과 응답에 관한 기반 기술의 구현체로 `axios`를 사용 중이라고 하자. 이 `axios`라는 구체적인 구현체를 별다른 격리 없이 다음과 같이 사용하였다.
 
-AwesomeComponent.vue
 ```vue
 <script setup>
 import axios from "axios";
 
 const action = () => {
-  return axios.get("/apis/v1/my-awesome-action");
+  return axios.get("@/api/v1/my-awesome-action");
 };
 </script>
 <template>
@@ -111,12 +110,12 @@ const action = () => {
 
 우선 infra 계층에 해당하는 `libs` 디렉토리를 만들고 해당 기반 기술을 추상화하여 인터페이스를 정의한다.
 
-/libs/date-time/DateTime.ts
 ```typescript
+/* @/lib/date-time/DateTime.ts */
 export default interface DateTime {
   isSameDay(dateLeft: Date, dateRight: Date): boolean;
   addDays(date: Date, amount: number): Date;
-  // 기타 등등..
+  // more..
 }
 ```
 
@@ -126,8 +125,8 @@ export default interface DateTime {
 
 > https://ko.wikipedia.org/wiki/%EC%96%B4%EB%8C%91%ED%84%B0_%ED%8C%A8%ED%84%B4
 
-/libs/date-time/MomentAdapter.ts
 ```typescript
+/* @/lib/date-time/MomentAdapter.ts */
 import moment from "moment";
 import type DateTime from "./DateTime";
 
@@ -145,8 +144,8 @@ export default class MomentAdapter implements DateTime {
 모듈 외부에선 굳이 이러한 구체적인 내용을 알 필요가 없다.
 `index.js`는 여러모로 실패한 디자인이라고 많이 이야기하지만 개인적으로는 이럴 때 요긴하게 쓰고 있다.
 
-/libs/date-time/index.ts
 ```typescript
+/* @/lib/date-time/index.ts */
 import type DateTime from "./DateTime";
 import Adapter from "./MomentAdapter";
 
@@ -165,9 +164,8 @@ export function addDays(date: Date, amount: number): Date {
 
 사용하는 쪽에서는 기존에 사용하던 다른 모듈들을 사용할 때와 동일하게 사용한다.
 
-AwesomeComponent.vue
 ```javascript
-import {isSameDay} from "@/libs/date-time";
+import {isSameDay} from "@/lib/date-time";
 
 const isEditable = isSameDay(new Date(), article.createdDate);
 ```
@@ -176,8 +174,8 @@ const isEditable = isSameDay(new Date(), article.createdDate);
 
 우선 동일하게 HTTP 요청/응답에 대한 인터페이스 `HTTPClient`를 정의한다.
 
-/libs/http-client/HTTPClient.ts
 ```typescript
+/* @/lib/http-client/HTTPClient.ts */
 export default interface HTTPClient {
   get(url: string): Promise<unknown>;
 }
@@ -202,8 +200,8 @@ export interface HTTPClientBuilder {
 
 HTTP 요청을 주고받는 구체적인 구현체로 `fecth`를 사용한다면 마찬가지로 다음과 같이 Adapter를 구현할 수 있다.
 
-/libs/http-client/FetchClient.ts
 ```typescript
+/* @/lib/http-client/FetchClient.ts */
 import type HTTPClient from "./HTTPClient";
 import type {HTTPClientBuilder, Filter} from "./HTTPClient";
 
@@ -294,8 +292,8 @@ export class FetchClientBuilder implements HTTPClientBuilder {
 
 으로 정의했다면 `body => body.result`와 `body => Promise.reject(body.error)`를 기본 `Filter` 로 부여하여 약속대로 응답을 벗겨내도록 한다.
 
-/libs/http-client/index.ts
 ```typescript
+/* @/lib/http-client/index.ts */
 import type {HTTPClientBuilder} from "./HTTPClient";
 import {FetchClientBuilder} from "./FetchClient";
 
@@ -338,10 +336,9 @@ try {
 
 기술과 관련된 구체적인 사항들은 숨기고, 사용하는 쪽에서 관심 있는 응답이 나타내는 개념만을 상위계층으로 노출하도록 하자.
 
-AwesomeComponent.vue
 ```vue
 <script setup>
-import {createHttpClient} from "@/libs/http-client";
+import {createHttpClient} from "@/lib/http-client";
 
 const instance = createHttpClient()
   .setBaseUrl("https://my-awesome-api")
@@ -404,9 +401,9 @@ const action = async () => {
 
 > 이 글에서는 서버가 MSA (Micro Service Architecture) 구조로 설계되어 있다고 가정하고 서버의 서비스별로 모듈을 구현하였다. 예제를 단순화하기 위해 `index.js` 에 바로 구현하였지만 하나의 API 서비스가 제공하는 API가 많다면 필요에 따라 관심별로 모듈을 나누고 `index.js` 에서 모아서 모듈 외부로 노출하도록 구현한다.
 
-/apis/a-service/index.ts
 ```TypeScript
-import {createHttpClient} from "@/libs/http-client";
+/* @/api/a-service/index.ts */
+import {createHttpClient} from "@/lib/http-client";
 import User from "@/domain/user/User";
 import {ExpiredSessionError, UnknownError} from "@/errors";
 
@@ -494,8 +491,8 @@ API Client 계층의 모듈들이 갖는 관심은 다음과 같다.
 
 API Client는 이 모델을 상위 계층에 그대로 노출하였고
 
-/apis/article-service/index.ts
 ```typescript
+/* @/api/article-service/index.ts */
 type User = {
     id: string;
     profilePictureUrl: string;
@@ -619,8 +616,8 @@ API 명세는 다음과 같다.
 
 API Client는 역시나 위 응답모델을 그대로 사용하였다.
 
-/apis/follow-service/index.ts
 ```typescript
+/* @/api/follow-service/index.ts */
 type User = {
   id: string;
   thumbnailImageUrl: string;
@@ -706,9 +703,9 @@ API Client 계층은 이러한 책임들을 격리하고 상위 계층에선 구
 
 `User`, `Article`, `Follow`를 Domain 계층에 정의하고 서버의 응답 모델을 이 모델에 맞춰 번역한 뒤 반환하도록 변경하였다.
 
-/apis/article-service/index.ts
 ```typescript
-import {createHttpClient} from "@/libs/http-client";
+/* @/api/article-service/index.ts */
+import {createHttpClient} from "@/lib/http-client";
 import User from "@/domain/user/User";
 import Article from "@/domain/Article";
 
@@ -747,9 +744,9 @@ export function fetchArticleById(id: string): Promise<Article> {
 }
 ```
 
-/apis/follow-service/index.ts
 ```typescript
-import {createHttpClient} from "@/libs/http-client";
+/* @/api/follow-service/index.ts */
+import {createHttpClient} from "@/lib/http-client";
 import Follow from "@/domain/follow/Follow";
 import User from "@/domain/user/User";
 
@@ -848,9 +845,9 @@ function dispatchError(error: ErrorResponse) {
 
 API Client는 다음과 같이 `HTTPClient`를 생성한다.
 
-/apis/external/another-service/index.ts
 ```typescript
-import {createHttpClient} from "@/libs/http-client";
+/* @/api/external/another-service/index.ts */
+import {createHttpClient} from "@/lib/http-client";
 
 const instance = createHttpClient()
     .setBaseUrl("https://너네서비스-게이트웨이")
@@ -934,12 +931,12 @@ UI에서 처리하고 있는 로직 중 UI가 변경되어도 변경되지 않�
 
 또한 `Room`에 포함되는 연관관계를 맺는 수많은 개념들이 있으므로 AGGREGATE의 루트 ENTITY라고 할 수 있겠다.
 
-이 `Room`을 루트 ENTITY로 갖는 AGGREGATE의 디렉토리 /domain/room을 만든 뒤 `Room.ts`를 추가한다.
+이 `Room`을 루트 ENTITY로 갖는 AGGREGATE의 디렉토리 @/domain/room을 만든 뒤 `Room.ts`를 추가한다.
 
 모듈이 가리키는 개념을 default로 export한다. 당연히도 이 경우는 `Room` class가 해당된다.
 
-/domain/room/Room.ts
 ```typescript
+/* @/domain/room/Room.ts */
 export default class Room {
     id: number;
     name: string;
@@ -999,8 +996,8 @@ const selectCheckIn = (checkInDate) => {
 
 마찬가지로 모듈이 가르키는 개념을 default로 export한다.
 
-/domain/room/Amenity.ts
 ```typescript
+/* @/domain/room/Amenity.ts */
 export default class Amenity {
     hasOceanView: boolean;
     hasWifi: boolean;
@@ -1019,9 +1016,9 @@ export default class Amenity {
 
 이 경우 예약가능일자에 대한 연산들을 SERVICE로 정의한다.
 
-/domain/reservation/ReservationService.ts
 ```typescript
-import {isBefore, addDays} from "@/libs/date-time";
+/* @/domain/reservation/ReservationService.ts */
+import {isBefore, addDays} from "@/lib/date-time";
 
 interface ReservationService {
     findReservationableDatesFromCheckInDate(room: Room, checkInDate: Date);
