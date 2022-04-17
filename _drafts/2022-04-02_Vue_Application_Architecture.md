@@ -919,25 +919,150 @@ UI에서 처리하고 있는 로직 중 UI가 변경되어도 변경되지 않�
 
 도메인 모델링의 산출물이 이 디렉토리에 위치하게 되며, 기본적으로는 루트 ENTITY 단위로 모듈을 구성한다.
 
-각 모듈은 루트 ENTITY와 AGGREGATE를 이루는 ENTITY, VALUE OBJECT 그리고 이들과 관련된 SERVICE, FACTORY, REPOSITORY가 위치하며 AGGREGATE에 해당하는 유비쿼터스 랭귀지를 정의해 README.md 로 관리한다.
+각 모듈은 루트 ENTITY와 AGGREGATE를 이루는 ENTITY, VALUE OBJECT 그리고 이들과 관련된 SERVICE, FACTORY, REPOSITORY가 위치하며 AGGREGATE에 해당하는 UBIQUITOUSE LANGUAGE를 정의해 README.md 로 관리한다.
 
 각 모듈은 상위 계층인 UI, Application 계층에게 메시지를 받아 서비스의 정책이나 업무 규칙에 관련된 문제를 해결하며 이 과정에서 API Client 계층에 메시지를 전달할 수 있다.
 
 예를들어, REPOSITORY는 라이프사이클 중간 단계의 도메인 모델 객체를 획득하기 위해 API Client에게 메시지를 전달하고 서버에 영속화되어 있는 객체를 획득할 수 있다. (아마 이후 이를 Store에 저장해 애플리케이션 전역에서 접근할 수 있도록 할 것이다.)
 
 ## ENTITY
-식별성과 연속성으로 정의되는 객체이다.
+식별성과 연속성으로 정의되는 객체이다. 필자가 애정하는 서비스 airbnb를 예를 들면 `Room`같은 객체가 이에 해당한다.
 
-## VO
+각 개별 숙소는 식별성 자체가 본질을 정의하는 요소이다.
 
-## Service
+같은 이름을 갖는 숙소일지라도 동일한 숙소가 아닌것처럼 말이다.
 
-## Repository
+또한 `Room`에 포함되는 연관관계를 맺는 수많은 개념들이 있으므로 AGGREGATE의 루트 ENTITY라고 할 수 있겠다.
 
+이 `Room`을 루트 ENTITY로 갖는 AGGREGATE의 디렉토리 /domain/room을 만든 뒤 `Room.ts`를 추가한다.
+
+모듈이 가리키는 개념을 default로 export한다. 당연히도 이 경우는 `Room` class가 해당된다.
+
+/domain/room/Room.ts
+```typescript
+export default class Room {
+    id: number;
+    name: string;
+    location: Location;
+    reservationableDates: Date[];
+
+    get price() {
+        //...
+    }
+
+    findReservationableDatesFromCheckInDate(checkInDate: Date) {
+        //...
+    }
+}
+```
+
+숙소의 최소 예약 가능일수를 고려해 체크인 날짜를 기준으로 가능한 체크아웃 날짜가 언제인지,
+
+선택한 기간동안 고객의 등급이나 할인율을 고려한 최종 가격을 얼마인지 등등의 정보는 UI와는 전혀 상관없는 서비스의 정책에 의해 결정되는 부분이다.
+
+(필요하다면 API Client에게 메시지를 보내 선택한 날짜에 해당하는 가격을 서버에서 받아올 수도 있을것이다.)
+
+이러한 로직들은 UI에서 분리해내 도메인 계층에 위임하고 구체적인 내용은 캡슐화한다.
+
+체크인/체크아웃 날짜를 선택하는 UI Component에선 최소 예약 가능일 수와 같은 정책에 대한 관심 없이 `Room`에게 메시지를 보내 반환받은 날짜만 선택 가능하도록 처리한다.
+
+
+```vue
+<script setup>
+import {reactive} from "vue";
+defineProps({
+  room: {
+    type: Room,
+    required: true,
+  },
+})
+const reservationalbeDates = reactive([]);
+
+const selectCheckIn = (checkInDate) => {
+  // 직접 계산하지 않고 Room에게 위임한다.
+  reservationalbeDates = room.findReservationableDatesFromCheckInDate(checkInDate);
+};
+</script>
+<template>
+  <!-- 단순히 반환 받은 날짜 외의 영역을 disabled 하기만 하고 체크인 날짜를 선택 시 새로 계산한다.  -->
+  <Calendar :available-dates="reservationalbeDates" @select-check-in="selectCheckIn" />
+</template>
+
+```
+
+## VALUE OBJECT
+개념적 식별성 없이 사물의 어떤 특징을 나타내기 위한 객체이다.
+
+각 숙소가 갖추고 있는 편의시설 정보는 식별성이 중요한게 아닌 특징을 나타내기 위한 값 객체이다.
+
+숙소가 존재하지 않으면 존재하지 않는 `Room`에 포함되는 개념이므로 room 디렉토리 하위에 위치시킨다.
+
+마찬가지로 모듈이 가르키는 개념을 default로 export한다.
+
+/domain/room/Amenity.ts
+```typescript
+export default class Amenity {
+    hasOceanView: boolean;
+    hasWifi: boolean;
+    hasTv: boolean;
+    //..
+}
+
+```
+
+## SERVICE
+서비스의 정책이나 업무 규칙에 해당되지만 개념적으로 어떠한 객체에도 속하지 않는 연산들이 존재한다.
+
+이를 억지로 특정 객체에 책임을 부여하려 하기보다는 SERVICE로 정의할 수 있다.
+
+위의 예제에서 숙소에서 체크인 날짜를 기준으로 체크아웃 가능한 날짜를 계산하는 연산이 `Room`의 본질적인 속성이 아니라고 생각될 수 있다.
+
+이 경우 예약가능일자에 대한 연산들을 SERVICE로 정의한다.
+
+/domain/reservation/ReservationService.ts
+```typescript
+import {isBefore, addDays} from "@/libs/date-time";
+
+interface ReservationService {
+    findReservationableDatesFromCheckInDate(room: Room, checkInDate: Date);
+}
+
+function findReservationableDatesFromCheckInDate(room: Room, checkInDate: Date) {
+    return room.reservationableDates
+        .filter(date => isBefore(date, addDays(checkInDate, room.minReservationableDays)))
+        .filter(date => //...)
+}
+
+// ..기타 등등
+
+export default {
+    findReservationableDatesFromCheckInDate,
+    //.. 기타 등등
+} as ReservationService;
+
+```
+
+이 외에도 도메인 모델 객체를 생성하는 책임을 갖는 FACTORY나 라이프 사이클 중간 단계에 있는 도메인 모델 객체를 생성하기 위한 REPOSITORY와 같은 요소들을 활용해 Domain 계층을 구성할 수 있다.
+
+특히 REPOSITORY의 경우 라이프 사이클 중간 단계의 도메인 객체는 보통 서버에 영속화되어 있어 있기 때문에 API Client에 메시지를 전달해 이를 반환하는식으로 구현될 것이다.
+
+```typescript
+import {fetchRooms} from "@/apis/room-service";
+
+interface RoomRepository {
+    findByCheckInDateAndCheckOutDate(checkInDate: Date, checkOutDate: Date): Room[]
+}
+
+function findByCheckInDateAndCheckOutDate(checkInDate: Date, checkOutDate: Date): Room[] {
+    return fetchRooms(checkInDate, checkOutDate);
+}
+
+export default {
+    findByCheckInDateAndCheckOutDate
+} as RoomRepository
+```
 
 위에 인프라계층이랑 관계 다이어그램 한번 더
-
-위에 axios 예제 빼먹었다.
 
 레이어드 아키텍처랑 스캐폴딩이랑 함께 보여주면 좋을것 같다.
 
@@ -1034,7 +1159,7 @@ Component를 순수하게 유지할수록 테스트하기 쉽고, 재사용하�
 
 Container는 Context의 단위이다. 하나의 Container에 포함된 Component들은 동일한 Context를 갖는다.
 
-클라이언트 애플리케이션에서 가장 기본적인 Context의 단위는 하나의 페이지라고 할 수 있다. 
+클라이언트 애플리케이션에서 가장 기본적인 Context의 단위는 하나의 페이지라고 할 수 있다.
 
 따라서 Container의 기본 단위 또한 라우팅의 대상이 되는 페이지 전체의 Container이며 페이지의 Layout과 포함된 Component의 관계를 설정하는 책임을 갖는다.
 
@@ -1083,7 +1208,7 @@ Dan Abramov은 이제는 해당 역할을 hooks가 더 잘 수행해낼 수 있�
 
 상태관련 복잡한 로직을 Container가 아닌 hooks (vue에는 동일한 개념의 composition api가 있다) 로 분리하더라도 Container에겐 "코드 베이스에 표현되는 Context의 단위"라는 의미있는 역할이 있다.
 
-클라이언트 애플리케이션에서 사람이 인지하는 기본적인 단위는 "페이지"이기 때문에 이를 Container의 기본적인 단위로 삼는다. 
+클라이언트 애플리케이션에서 사람이 인지하는 기본적인 단위는 "페이지"이기 때문에 이를 Container의 기본적인 단위로 삼는다.
 
 예를들어, 아래 페이지는 "이전에 방문했던 숙소"라는 하나의 Context를 가지며 이 정보는 이 페이지에서만 유효하고 페이지와 그 라이프 사이클을 함께한다.
 
@@ -1209,7 +1334,7 @@ cons:
 
 
 
-### 
+###
 컴포넌트-컨테이너 구조에서 prop drilling과 컨테이너의 복잡함을 해결하기 위해 페이지의 상태를 관리하는 책임을 페이지 스토어를 정의하고 이에 위임한다.
 
 컨테이너는 더 이상 상태관리의 책임을 지지 않으며, 생성시 스토어에게 메세지를 전달하고 레이아웃을 구성하고, 자식 컴포넌트들의 관계를 설정하며 이들이 참여하는 flow 로직을 처리하는 책임을 갖는다.
