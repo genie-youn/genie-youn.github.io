@@ -21,23 +21,54 @@
 
 body {
   font-family: "Nanum Gothic", "PT Serif", Georgia, "Times New Roman", serif;
-  font-size: 21px;
-  color: #515151;
-  line-height: 2rem;
+  font-size: 16px;
+  color: rgb(55, 53, 47);
+  line-height: 1.5;
+}
+
+p {
+  margin-block-end: 1.5em;
 }
 
 @media (max-width: 30em) {
   body {
-    font-size: 18px;
-    line-height: 1.5rem;
+    font-size: 17px;
+    line-height: 1.5;
   }
-  body h1 {
-    font-size: 1.5rem;
+
+  h1{
+    font-size: 1.5em;
+    line-height: 1.3;
+    font-weight: 600;
+  }
+  h2{
+    font-size: 1.5em;
+    line-height: 1.3;
+    font-weight: 600;
+  }
+  h3{
+    font-size: 1.17em;
+    line-height: 1.3;
+    font-weight: 600;
   }
 }
 
 h1{
-  font-size: 2rem;
+  font-size: 1.875em;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+h2{
+  font-size: 1.5em;
+  line-height: 1.3;
+  font-weight: 600;
+}
+
+h3{
+  font-size: 1.25em;
+  line-height: 1.3;
+  font-weight: 600;
 }
 
 h1 a {
@@ -68,8 +99,8 @@ img {
 blockquote {
   margin: 10px 20px 10px;
   padding: 0px 15px;
-  border-left: 0.25em solid #ccc;
-  color: #999;
+  border-left: 0.25em solid rgb(55, 53, 47);
+  color: rgb(55, 53, 47);
   line-height: 1.5;
 }
 
@@ -296,10 +327,10 @@ pre {
 }
 pre code {
   padding: 0;
-  font-size: 140%;
+  font-size: 100%;
   color: inherit;
   background-color: transparent;
-  line-height: 1.4;
+  line-height: 1.5;
 }
 
 /* Horizontal code overflow fix */
