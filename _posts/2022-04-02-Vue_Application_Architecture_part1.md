@@ -22,11 +22,11 @@ FE 팀의 규모도 따라서 함께 커졌는데, 새로 합류하는 동료들
 # Table of Contents
 1. 복잡함을 해결해야 하는 이유
 2. Infra
-2. [API Client - Part2]()
-3. [Domain - Part3]()
-4. [Application - Part4]()
-5. [UI - Part5]()
-6. [마치며 - Part5]()
+2. [API Client - Part2]() (작성중..)
+3. [Domain - Part3]() (작성중..)
+4. [Application - Part4]() (작성중..)
+5. [UI - Part5]() (작성중..)
+6. [마치며 - Part5]() (작성중..)
 
 # 복잡함을 해결해야하는 이유
 
