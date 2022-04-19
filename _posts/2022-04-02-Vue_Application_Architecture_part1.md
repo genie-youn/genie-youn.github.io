@@ -183,7 +183,7 @@ const isEditable = isSameDay(new Date(), article.createdDate);
 날짜/시간대에 대한 일반적 기술의 구현체를 `date-fns`로 변경한다고 한다면 `date-fns`를 사용해 `DateTime`의 인터페이스를 구현하는 `DateFnsAdapter`를 구현한뒤
 
 ```typescript
-import {addDays, isSameDay} from "@/libs/date-time/index";
+import {addDays, isSameDay} from "date-fns";
 import type DateTime from "@/libs/date-time/DateTime";
 
 export default class DateFnsAdapter implements DateTime {
