@@ -18,6 +18,11 @@
 /*
   Base
 */
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 body {
   font-family: "Nanum Gothic", "PT Serif", Georgia, "Times New Roman", serif;
