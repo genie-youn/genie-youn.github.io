@@ -9,9 +9,9 @@ image: DSC04956.jpg
 # Table of Contents
 1. [복잡함을 해결해야 하는 이유 - Part1](https://genie-youn.github.io/journal/Vue_Application_Architecture_part1.html)
 2. [Infra - Part1](https://genie-youn.github.io/journal/Vue_Application_Architecture_part1.html)
-2. [API Client - Part2]()
+2. [API Client - Part2](https://genie-youn.github.io/journal/Vue_Application_Architecture_part2.html)
 3. Domain
-4. [Application - Part4]() (작성중..)
+4. [Application - Part4](https://genie-youn.github.io/journal/Vue_Application_Architecture_part4.html)
 5. [UI - Part5]() (작성중..)
 6. [마치며 - Part5]() (작성중..)
 
