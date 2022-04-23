@@ -27,9 +27,10 @@ title: 윤지수 (genie.youn)
 ```
 ### 네이버 카페
 대한민국 모임의 시작, [네이버 카페](https://cafe.naver.com)
+* 네이버 카페 PC, 모바일 웹 개발
 * 글쓰기 신규 에디터 전환, 네이버 카페의 신규 서비스 “이웃" 등 다양한 과제 개발
 * 네이버 카페 앱 인앱 페이지 개발
-* 카페 서비스 `JSP Applicatino`를 `Vue Application`으로 전환
+* 네이버 카페 서비스 `JSP Application`를 `Vue Application`으로 전환
 * `Vue Application Architecture` 설계
 * 공통 컴포넌트 구현 (`CrashLogger`, `InfinityScroller`, `StateRestorer`, `HTTPClient`..)
 * `BFF Server` 구축 및 운영
@@ -60,3 +61,9 @@ title: 윤지수 (genie.youn)
 * 결재 양식 개발
 * `JSR 303` & `308 Support Validator` 개발
 * 양식 공통 `Vue Component` 개발
+
+<br>
+
+## 오픈소스
+
+[기여 목록](https://github.com/pulls?q=is%3Apr+archived%3Afalse+sort%3Aupdated-desc+author%3A%40me+org%3Alerna+org%3Avuejs+)
