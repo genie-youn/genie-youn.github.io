@@ -69,19 +69,7 @@ Container는 UI에 관련된 상태를 가지며, 각 Component를 배치하여 
 또한 복잡한 UI의 상태를 관리하기 위한 로직들로 Container가 복잡해지기 시작한다.
 깊은 계층의 Component 트리를 가진 Container는 읽기 어렵고 변경하기 어렵게 되는 결과로 이어진다.
 
-이 글에서는 이러한 상황에서 선택할 수 있는 몇 가지 설계 전략을 비교하여 소개한다.
-
-우선 많은 정보와 복잡한 UI를 표현해야 하는 페이지 PageA가 있다고 가정해보자.
-경험적으로 이러한 PageA의 Container는 깊은 계층의 Component 트리를 갖게 된다.
-
-PageA가 표현해야 하는 많은 정보들은 대부분 페이지와 동일한 라이프 사이클을 가지게 된다.
-(물론 일부 개별적인 라이프 사이클을 갖는 정보들은 Store에서 전역적으로 관리되고 있을 것이다.)
-
-다시 말해 페이지를 벗어나면 더 이상 의미 없는 정보를 가지며, 이 정보는 깊은 계층의 Component 트리는 페이지 전역에서 접근이 가능해야 한다.
-
-> 하나의 페이지가 꼭 하나의 Context를 갖는건 아니다. 페이지는 더 작은 단위의 Context들의 집합으로 구성될 수 있으며, 이 경우 페이지 Container는 더 작은 Container로 구성되게 될 것이다.
-
-이러한 상황에서 선택할 수 있는 패턴으로는 다음과 같이 총 4가지의 패턴이 있다.
+이 글에서는 UI 계층을 설계할 때 선택할 수 있는 다음 네 가지 전략을 비교하여 소개한다.
 
 1. Presentational and Container Components
 2. Provide/Inject
@@ -94,9 +82,9 @@ PageA가 표현해야 하는 많은 정보들은 대부분 페이지와 동일�
 
 Dan Abramov은 이제는 해당 역할을 hooks가 더 잘 수행해낼 수 있으므로 더 이상 무의미 하게 나누지 않는 편이 좋다고 설명하고 있지만, 개인적으로는 다음과 같은 이유들로 여전히 잘 사용하고 있다.
 
-상태관련 복잡한 로직을 Container가 아닌 hooks (vue에는 동일한 개념의 composition api가 있다) 로 분리하더라도 Container에겐 "코드 베이스에 표현되는 Context의 단위"라는 의미있는 역할이 있다.
+상태관련 복잡한 로직을 Container가 아닌 hooks (vue에는 동일한 개념의 composition api가 있다) 로 분리하더라도 Container에겐 **코드 베이스에 표현되는 Context의 단위**라는 의미있는 역할이 있다.
 
-클라이언트 애플리케이션에서 사람이 인지하는 기본적인 단위는 "페이지"이기 때문에 이를 Container의 기본적인 단위로 삼는다.
+클라이언트 애플리케이션에서 사람이 인지하는 기본적인 단위는 **페이지**이기 때문에 이를 Container의 기본적인 단위로 삼는다.
 
 예를들어, 아래 페이지는 "여행 이력"라는 하나의 Context를 가지며 이 정보는 이 페이지에서만 유효하고 페이지와 그 라이프 사이클을 함께한다.
 
@@ -106,7 +94,7 @@ Dan Abramov은 이제는 해당 역할을 hooks가 더 잘 수행해낼 수 있�
 
 <img width="628" alt="스크린샷 2022-04-20 오후 11 37 59" src="https://user-images.githubusercontent.com/16642635/164255807-c667514a-b4b4-48ec-b83f-27f52f492a2a.png">
 
-모듈의 이름은 페이지 Container의 이름을 따 `my-trips`라는 이름을 부여하고 이 모듈 내부엔 `MyTripsPageContainer`와 페이지에 포함되는 Component들이 `component` 디렉토리에 페이지에서 사용하는 composition이 `composition` 디렉토리에 포함되어 있다.
+모듈의 이름은 페이지 Container의 이름을 따 `my-trips`라는 이름을 부여하고 이 모듈 내부엔 `MyTripsPageContainer`와 페이지에 포함되는 Component들이 `component` 디렉토리에 페이지의 container와 component에서 사용하는 composition이 `composition` 디렉토리에 포함되어 있다.
 
 하나의 페이지에 여러 Context가 존재하는 경우도 있다.
 
@@ -120,17 +108,21 @@ Dan Abramov은 이제는 해당 역할을 hooks가 더 잘 수행해낼 수 있�
 
 마찬가지로 모듈의 이름은 페이지 Container의 이름을 따 `home`라는 이름을 부여하고 이 모듈 내부엔 `HomePageContainer`와 각 Context를 각각의 모듈 `search-box`, `flex-search`, `recommend-area`, `recommend-activity` 로 구성한다.
 
-`search-box` 모듈에는 `SearchBoxContainer`와 이 Context에 포함되는 Component들이 `components` 디렉토리에 포함되어 있다.
+`search-box` 모듈에는 `SearchBoxContainer`와 이 Context에 포함되는 Component들이 `component` 디렉토리에 포함되어 있으며 마찬가지로 페이지의 Container와 Component에서 사용중인 Composition들이 `composition` 디렉토리에 포함되어 있다.
 
 정리하면, Container는 Context를 코드 베이스에서 표현하는 하나의 단위이자 경계이다.
 
 Context별로 모듈을 나누고 Container를 마치 모듈의 엔트리포인트처럼 사용하여 개발자로 하여금 Context의 경계를 명확하게 인지하도록 한다.
 
+> 결국 각 디렉토리에 해당하는 Container가 하나의 컴포넌트가 아닌가? 하는 생각이 들 수 있다. 맞다. 각 Container 디렉토리는 독립적으로 동작할 수 있는 하나의 컴포넌트이다. 디렉토리 내부에 포함된 Component와 Composition을 각 Container에 플랫하게 구현하면 그러한 모습이 될 것이다. 하지만 우리는 앞서 설명했듯 복잡함을 다루기위해 책임을 기준으로 최소한의 단위로 작게 나누어 관리하고 싶어한다. 이러한 의도로 작게 나누어진 Component와 분리된 Composition이 하나의 맥락이라는 경계를 제공하기 위해 사전적 의미 그대로의 Container를 두고 디렉토리로 코드 베이스에 표현한 것이다.
+
+다양한 Context에서 공통으로 사용되는 `Button`, `List` 같은 요소들은 `atom` 디렉토리를 두어 관리한다. 이 컴포넌트들은 최대한 순수하게 관리되어야 할 것이다.
+
 `Presentational and Container Components` 패턴은 Container와 Component를 나누고 Container에게 Context에 필요한 상태를 관리하는 책임을 부여한다.
 
-Component는 props를 통해 Context에 관련된 필요한 상태를 주입받아 UI를 렌더링하고, 사용자의 인터렉션이 발생하면 이를 Container에게 event로 알린다.
+Component는 `props`를 통해 Context에 관련된 필요한 상태를 주입받아 UI를 렌더링하고, 사용자의 인터렉션이 발생하면 이를 Container에게 `event`로 알린다.
 
-Container는 Component로 부터 event를 받아 상태를 변경한다.
+Container는 Component로 부터 `event`를 받아 상태를 변경한다.
 
 문제는 이 과정에서 Component의 복잡함을 낮추기 위하여 더 작은 단위의 Component들로 세분화 하였고 이로 인해 깊은 계층의 Component 트리를 갖게 되었을 경우이다.
 
@@ -145,6 +137,14 @@ cons:
 - prop drilling 이 발생한다.
 - 컴포넌트가 순수하게 유지될 수 있도록 하기위해 side-effect를 일으킬 수 있는 함수를 `props`로 전달하거나 prop drilling의 역으로 이벤트를 전달받아야 한다.
 - 상태 관리 로직이 복잡할경우 컨테이너가 가진 다른 관점의 책임들 (레이아웃을 구성하고, 자신의 자식 컴포넌트간의 관계를 설정하고, 자신의 자식 컴포넌트가 참여하는 flow 로직을 처리하는 등) 과 섞여 복잡해진다.
+
+우선 많은 정보와 복잡한 UI를 표현해야 하는 페이지 PageA가 있다고 가정해보자.
+경험적으로 이러한 PageA의 Container는 깊은 계층의 Component 트리를 갖게 된다.
+
+PageA가 표현해야 하는 많은 정보들은 대부분 페이지와 동일한 라이프 사이클을 가지게 된다.
+(물론 일부 개별적인 라이프 사이클을 갖는 정보들은 Store에서 전역적으로 관리되고 있을 것이다.)
+
+다시 말해 페이지를 벗어나면 더 이상 의미 없는 정보를 가지며, 이 정보는 깊은 계층의 Component 트리는 페이지 전역에서 접근이 가능해야 한다.
 
 ### Provide/Inject
 컨테이너-컴포넌트 구조를 유지하면서 prop drilling을 해결하기 위해 Vue의 Provide/Inject를 사용할 수 있다. 필요한 상태와 side-effect를 일으키는 콜백 provide를 통해 주입받으면 컨테이너-컴포넌트의 단점을 해결할 수 있다.
