@@ -12,8 +12,8 @@ image: DSC04956.jpg
 2. [API Client - Part2](https://genie-youn.github.io/journal/Vue_Application_Architecture_part2.html)
 3. Domain
 4. [Application - Part4](https://genie-youn.github.io/journal/Vue_Application_Architecture_part4.html)
-5. [UI - Part5]() (작성중..)
-6. [마치며 - Part5]() (작성중..)
+5. [UI - Part5](https://genie-youn.github.io/journal/Vue_Application_Architecture_part5.html)
+6. [마치며 - Part5](https://genie-youn.github.io/journal/Vue_Application_Architecture_part5.html)
 
 > [Part2](https://genie-youn.github.io/journal/Vue_Application_Architecture_part1.html) 에서 이어집니다.
 

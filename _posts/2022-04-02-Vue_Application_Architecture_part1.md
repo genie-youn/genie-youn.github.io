@@ -25,8 +25,8 @@ FE 팀의 규모도 따라서 함께 커졌는데, 새로 합류하는 동료들
 2. [API Client - Part2](https://genie-youn.github.io/journal/Vue_Application_Architecture_part2.html)
 3. [Domain - Part3](https://genie-youn.github.io/journal/Vue_Application_Architecture_part3.html)
 4. [Application - Part4](https://genie-youn.github.io/journal/Vue_Application_Architecture_part4.html)
-5. [UI - Part5]() (작성중..)
-6. [마치며 - Part5]() (작성중..)
+5. [UI - Part5](https://genie-youn.github.io/journal/Vue_Application_Architecture_part5.html)
+6. [마치며 - Part5](https://genie-youn.github.io/journal/Vue_Application_Architecture_part5.html)
 
 # 복잡함을 해결해야하는 이유
 
