@@ -23,6 +23,8 @@ image: DSC04956.jpg
 
 그리고 이 두 계층 모두 Vue 라는 프레임워크 위에 구현되게 된다.
 
+<img width="1024" alt="스크린샷 2022-04-19 오후 9 05 27" src="https://user-images.githubusercontent.com/16642635/163999425-3bddd4a8-3656-4f1e-bb3c-6587c24cae56.png">
+
 # Application
 
 해당 계층엔 애플리케이션이 동작하도록 하는데 관심을 갖는 객체들로 구성된다.
