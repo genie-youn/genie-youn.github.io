@@ -425,3 +425,5 @@ const action = async () => {
 <img width="619" alt="스크린샷 2022-04-19 오후 10 01 02" src="https://user-images.githubusercontent.com/16642635/164009874-9e7008a2-7520-4ecf-81ac-0b9750a2cf22.png">
 
 <img width="1137" alt="스크린샷 2022-04-20 오후 10 39 40" src="https://user-images.githubusercontent.com/16642635/164243393-2e8909a7-41d0-4001-b139-c113f430e667.png">
+
+> [Part2로 이어집니다.](https://genie-youn.github.io/journal/Vue_Application_Architecture_part2.html)

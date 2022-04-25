@@ -530,3 +530,5 @@ API에 변경 사항이 생기면 API Client 계층만 수정하고, UI는 변�
 <img width="625" alt="스크린샷 2022-04-20 오후 10 38 41" src="https://user-images.githubusercontent.com/16642635/164243288-c9871c9b-adf2-4f99-8201-3f296f77ed6b.png">
 
 <img width="1536" alt="스크린샷 2022-04-20 오후 10 40 46" src="https://user-images.githubusercontent.com/16642635/164243598-c186087c-525e-4408-bf4a-3f6f5f3c2e78.png">
+
+> [Part3로 이어집니다.](https://genie-youn.github.io/journal/Vue_Application_Architecture_part3.html)

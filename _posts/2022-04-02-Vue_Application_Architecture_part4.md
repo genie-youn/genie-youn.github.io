@@ -77,3 +77,5 @@ image: DSC04956.jpg
 <img width="619" alt="스크린샷 2022-04-20 오후 10 48 01" src="https://user-images.githubusercontent.com/16642635/164245140-ffce8331-7bbb-4905-bcf5-eb37b499b9e4.png">
 
 <img width="1680" alt="스크린샷 2022-04-20 오후 10 48 30" src="https://user-images.githubusercontent.com/16642635/164245223-cbe7b01d-30f0-48be-8cce-5adc8574a3ba.png">
+
+> [Part5로 이어집니다.](https://genie-youn.github.io/journal/Vue_Application_Architecture_part5.html)

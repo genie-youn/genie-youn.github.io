@@ -246,3 +246,5 @@ Domain 계층을 구성하는 방법은 여러가지가 있겠지만 그 중 잘
 남아있는 UI 와 관련된 관심사들은 크게 두 계층 Application 과 단어적 정의 그대로의 UI 로 나눈다.
 
 그리고 이 두 계층 모두 Vue 프레임워크 위에 구현되게 된다.
+
+> [Part4로 이어집니다.](https://genie-youn.github.io/journal/Vue_Application_Architecture_part4.html)
