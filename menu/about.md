@@ -33,7 +33,7 @@ title: 윤지수 (genie.youn)
 * 네이버 카페 서비스 `JSP Application`를 `Vue Application`으로 전환
 * `Vue Application Architecture` 설계
 * 공통 컴포넌트 구현 (`CrashLogger`, `InfinityScroller`, `StateRestorer`, `HTTPClient`..)
-* `BFF Server` 구축 및 운영
+* FE 인프라 구축 및 운영
 * `CI&CD` 구축 및 운영
 * 모노레파지토리 구축 운영 (Lerna)
 * 업무 프로세스 개선
