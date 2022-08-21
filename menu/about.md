@@ -19,10 +19,16 @@ title: 윤지수 (genie.youn)
 
 <br>
 
+## Toss Payments
+```
+기간: 2022.08 ~ 현재
+기술스택: React, JavaScript, TypeScript
+```
+
 
 ## Naver Corporation
 ```
-기간: 2019.01 ~ 현재
+기간: 2019.01 ~ 2022.07
 기술스택: Vue, Vuex, JavaScript, TypeScript, Webpack, Jest, Lerna
 ```
 ### 네이버 카페
